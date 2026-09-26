@@ -23,7 +23,7 @@ A realm is a story whose chapters open by **realm age** (days since it opened), 
 | 1 (Mon) | The Founding (§2) | new cities land here; newcomer peace ward ([onboarding.md](onboarding.md)); Firsts of the Realm (§9); one race per day, each open 72 h | cloud-forge, gameplay-forge |
 | 3 / 14 / 28 / 42 | Charter steps | keep cap L25 / L27 / L29 / L30 (§1.2): t8–t9 trainable from day 3, t10 from day 14, cavalry t11 from day 42 | gameplay-forge |
 | 8 (Mon) | The Settling | the weekly frame (§6.3); landmark tier 1 contestable on war days with the realm's own window pair (§3.3, [world.md](world.md)) | world-forge |
-| 15 / 17 | — | landmark tier 2 (Mon 15); first Warlord's Hold (Wed 17) | world-forge |
+| 15 / 17 / 22 | — | landmark tier 2 (Mon 15); first Warlord's Hold (Wed 17); tiers 3–4 (Mon 22; [world.md](world.md) §2 founding calendar) | world-forge |
 | 21–35 | — | registration closes (§1.1 rule 1) | cloud-forge |
 | 27 (Sat) | The First Crown | the realm's crown seat contested for the first time, in both war windows | world-forge |
 | 35 (Sun) | Founding chapter | chronicle chapter 1 names the first crown and the realm's Firsts | story-forge |
@@ -86,19 +86,19 @@ On the rail the Founding is ONE icon, shared with onboarding.md §6's founding c
 
 Season track top = 0.70 × 35 × 100 = 2,450, rounded up → **2,500** points (25 full days of 35; core-loop §7 formula; monetization.md §7's 25 levels × 100 give the same top). The Writ of Passage sits at 1,500 (§7). monetization.md §7 dresses the track as the plain chronicle; its paid illuminated lane is that file's question.
 
-**3.2 War days.** Tue and Thu of contest weeks are **campaign** war days (the campaign map); Sat is the **home** war day (the realm's own landmarks and crown seat, world.md); none in the Truce week. War windows exist only on war days (core-loop §8.3's two windows 12 h apart, ≤ 60 min each); a window belongs to the war day (UTC) on which it starts, even when it ends after 00:00. Cross-realm fighting is lawful only inside them; "the Truce holds" on the other days (fiction: the medieval Truce of God limited fighting by weekday). One window per war day is enough for full renown, so scheduled war is **≤ 3 h per week, ≤ 12 h per season** per player.
+**3.2 War days.** Tue and Thu of contest weeks are **campaign** war days (the campaign map); Sat is the **home** war day (the realm's own landmarks and crown seat, world.md); none in the Truce week. War windows exist only on war days (core-loop §8.3's two windows 12 h apart, ≤ 60 min each); both start and end inside the war day in UTC (§3.3), so the 00:00 reset, a Labours stage change or the field camp striking at 23:59 ([world.md](world.md) §14) never cuts a window. Cross-realm fighting is lawful only inside them; "the Truce holds" on the other days (fiction: the medieval Truce of God limited fighting by weekday). One window per war day is enough for full renown, so scheduled war is **≤ 3 h per week, ≤ 12 h per season** per player.
 Home cities are never attackable by another realm: players fight on the campaign map (working name "the Debatable Land", world.md) from a field camp, and a lost camp sends survivors home under [combat.md](combat.md)'s field context. No realm can burn or zero another realm's city (owner decision). Median war-day losses heal in ≤ 8 h without speed-ups (core-loop §8.3).
 
-**3.3 Time-zone fair windows.** The window pair (t, t+12 h) is fixed per campaign group at the draw, from the group's active-player time-zone histogram (last 14 days), maximising mean quality: start 17:00–22:00 local = 1.0; 08:00–17:00 or 22:00–23:00 = 0.6; 23:00–08:00 = 0. For ANY t, every UTC offset has exactly one window starting between 08:00 and 20:00 local. Offsets are read from the players' current clocks (summer time included); the pair stays fixed in UTC for the campaign, so a summer-time change inside it moves local times by 1 h, and the Board always shows local time. A realm not yet in a campaign uses the same war days, all three as home war days, with its own window pair (picked on realm day 5 from its players so far).
+**3.3 Time-zone fair windows.** The window pair (t, t+12 h) is fixed per campaign group at the draw, from the group's active-player time-zone histogram (last 14 days), maximising mean quality: start 17:00–22:00 local = 1.0; 08:00–17:00 or 22:00–23:00 = 0.6; 23:00–08:00 = 0. `t` runs 00:00–11:00 UTC in 30-min steps, so the second window ends by 24:00 UTC. For ANY t, every UTC offset has exactly one window starting between 08:00 and 20:00 local. Offsets are read from the players' current clocks (summer time included); the pair stays fixed in UTC for the campaign, so a summer-time change inside it moves local times by 1 h, and the Board always shows local time. A realm not yet in a campaign uses the same war days, all three as home war days, with its own window pair (picked on realm day 5 from its players so far).
 ```python
 def q(h):                                   # quality of a window starting at local hour h
     h %= 24
     return 1.0 if 17 <= h < 22 else 0.6 if (8 <= h < 17 or 22 <= h < 23) else 0.0
 def pick(hist):                             # hist = {utc_offset_h: share of active players}
     return max((sum(w * max(q(t + z), q(t + z + 12)) for z, w in hist.items()), t)
-               for t in [x / 2 for x in range(24)])   # -> (mean quality, t in UTC)
+               for t in [x / 2 for x in range(23)])   # t = 00:00..11:00 UTC -> (mean quality, t)
 ```
-Worked: EU-heavy (55% UTC 0/+1, 30% Americas, 15% Asia) → 05:30 and 17:30 UTC, mean 0.85, 63% get an evening window. Americas-heavy → 11:30 and 23:30 UTC, 0.90, 75%. Asia-heavy → 11:30 and 23:30 UTC, 0.96, 90%.
+Worked: EU-heavy (55% UTC 0/+1, 30% Americas, 15% Asia) → 05:30 and 17:30 UTC, mean 0.85, 63% get an evening window. Americas-heavy (70% UTC −5 to −8) → 11:00 and 23:00 UTC, 0.90, 75%. Asia-heavy (75% UTC +7 to +9) → 00:30 and 12:30 UTC, 0.96, 90%.
 
 **3.4 Scoring — we score ground, not corpses.** Points = landmarks held at window end (hold value by landmark tier 1 / 2 / 4 / 8) + captures (1× the hold value, once per landmark per window). Kills of player troops score 0 toward standings and rewards: the genre's kill points reward zeroing weak players. [combat.md](combat.md) §6's **honour** (the casualty tally, with its weak-target factor) stays a report, feed and chronicle statistic only; the campaign's personal score is a different word, **renown**, earned by ground.
 Realm and alliance war-day score = **max(window A, window B)**, so a one-time-zone alliance is not behind a global one. Personal renown per war day is capped at `renown_cap`, reachable in ≈ 40 min of one window. Contest-week weights **1 / 1.5 / 2 / 3** (sum 7.5): the last week is 40% of the season, and 67% of the weight is still open after two weeks, so a trailing realm still plays for the win.
@@ -106,7 +106,7 @@ Group standing 1–4 gives realm colours in the chronicle and a pennant to membe
 
 **3.5 The draw (Truce day 5, Friday).** Groups of 4 realms (3 allowed; a lone realm runs a home campaign on its own crown seat). Strength `S_realm` = Σ power of its 200 strongest players active in the last 72 h. Sort eligible realms (realm day ≥ 28) by `S_realm` and cut consecutive groups of 4, inside one age band (< 90 d, 90–365 d, > 365 d) when the pool allows. Target max/min `S_realm` ≤ 1.25 per group; a group above it is flagged to ops before publication. The draw runs after migration (Truce days 1–4) and merges (Truce day 1) so it measures the realms as they will fight. War-day dates are on the Board from T−21 and never move; groups and window times are published at the draw, 4 days before the first war day, and hold for the campaign.
 
-**3.6 What the Truce resets.** Resets: campaign-map holdings, season scores and renown, the season track, the season rule (§9), the home crown seat (→ neutral; world.md decides). Never touched: city, troops, lords, gear, items, resources, research, alliance, cosmetics, titles, chronicle.
+**3.6 What the Truce resets.** Resets: campaign-map holdings, season scores and renown, the season track, the season rule (§9), the home crown seat and home landmark tiers 3–4 (→ neutral guardians; tiers 1–2 keep holders: [world.md](world.md) §15 A6). Never touched: city, troops, lords, gear, items, resources, research, alliance, cosmetics, titles, chronicle.
 **No season-only power**: no season tech and no stat that exists only in a season, so a realm in its first campaign fights on the same stat sheet as a veteran realm. Balance changes ([lords.md](lords.md) §12) land only on Truce day 1, posted on the Herald's Board ≥ 14 days before.
 
 | Fails when | Caught by |
@@ -247,7 +247,7 @@ Why 300: the draw measures a realm's 200 strongest active players (§3.5), and 4
 
 1. **Timeline**: health checked on campaign day 15 → announced on the Herald's Board and by mail the same day (21 days' notice) → dry run on a copy by day 29 → executed on Truce day 1 at the realms' lowest-activity hour; all merging realms read-only ≤ 30 min.
 2. **Pairing**: 2 realms, or 3 when two Dying realms (each < 300) cannot reach 600 together; same age band; `S_realm` ratio ≤ 1.5; post-merge DAU₇ between 600 and `A_design`; prefer Dying and Thinning realms; the realm with more DAU₇ hosts (its map and name stay); the merged realm takes the older realm's charter ([progression.md](progression.md) §9).
-3. **Placement**: cities land by alliance in blocks on the host's reserve land (world.md keeps it). Cities inactive ≥ 30 days AND at S ≤ 3 are archived, not placed; they return to an open slot with nothing lost when the owner comes back (no ghost cities, no farm targets).
+3. **Placement**: cities land by alliance in blocks on the host's reserve land (world.md §2: the Fens, ≈ 1,450 castles). Castles archived under world.md §15 A8 (e.g. 30 days offline at any age) are not placed; they return to an open slot with nothing lost when the owner comes back (no ghost cities, no farm targets).
 4. **People**: names stay; a clash adds the old realm's short tag. A 72 h merge ward for every arrival (breaks on attack); one free local relocation within 7 days. Nothing claimable is lost.
 5. **Story**: the absorbed realm's chronicle is bound into the host's as a named chapter; its last crown holder keeps the title "Last Crown of <realm>" (cosmetic).
 
@@ -269,7 +269,7 @@ Limits: ≤ 1 feed entry per realm per day; one chapter per campaign, on Truce d
 | The Season of Beacons | tier-1 landmarks reveal marches within 10 tiles to their holders | new splash |
 | The Season of Floods | two river fords close in alternate contest weeks | new splash |
 | The Season of the Lists | Lists wins add up to 10% of `renown_cap` | new splash |
-| The Season of the Long Winter | marches 15% slower; landmark hold values +50% (holding beats raiding) | new splash |
+| The Season of the Long Winter | marches 15% slower, field-camp supplies 20 h (world.md §14); landmark hold values +50% (holding beats raiding) | new splash |
 
 ## 10. Ops calendar template
 
@@ -332,4 +332,4 @@ Calendar row fields (one per event): `id, type, frame, scope (realm | group | le
 5. War days Tue / Thu (campaign) and Sat (home), and the 00:00 UTC reset (also core-loop owner decision 6).
 6. In the Lists and the Grand Melee, every lord at lords.md's loss-free template, owned or not (affects what owning a lord is worth).
 7. `N_fill` (8,500 or 12,000), with world.md's map capacity `A_design`.
-8. In-world names (story-forge canon): the Founding, the Settling, the Truce (not combat.md's 8 h breach truce: story-forge may rename one), renown, the Debatable Land, the Crown's Labours, the Warlord's Hold, the Lists, the Grand Melee, the Banner League, the Trial Grounds, the Writ of Passage, the Herald's Board, Firsts of the Realm, the five season frames.
+8. In-world names (story-forge canon): the Founding, the Settling, the Truce (not combat.md's 8 h breach truce: story-forge may rename one), renown, the Debatable Land, the Crown's Labours, the Warlord's Hold, the Lists, the Grand Melee, the Banner League, the Trial Grounds, the Writ of Passage (beside core-loop's weekly writ and world.md's seat-move writ: three writs), the Herald's Board, Firsts of the Realm, the five season frames.

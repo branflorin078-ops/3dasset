@@ -61,12 +61,14 @@ below the key and never outshines it (≤ 80% of the key side's brightness).
 
 ## Read tests for lords
 
-- **56 dp battle chip and 96 px HUD chip** (battle-forge presentation §3 and §5): all 8 lords
-  side by side at 56 px, a critic who has not seen the prompts names each one — 8 of 8.
+- **Chip size** (battle-forge presentation §3 and §5: the 96 px HUD chip is the smallest; the
+  56 dp battle chip is ≈ 140–168 px): all 8 lords side by side at 96 px, a critic who has not
+  seen the prompts names each one — 8 of 8. If ui-forge ships a smaller lord chip, the test
+  moves to that size.
 - **Identity matrix** — each pair of lords differs in at least TWO columns (derived from the
   cast below; commander-forge's per-lord briefs extend it):
 
-| lord | head shape at 56 px | hair / face value | palette accent | signature object |
+| lord | head shape at 96 px | hair / face value | palette accent | signature object |
 |---|---|---|---|---|
 | Edwin | bare head, older | grey temples (mid-light) | crimson mantle | — (infantry lord, the anchor) |
 | Alric | bare, heavy-set, wide shoulders | dark | wolf-pelt grey-brown | wolf-pelt shoulder |
@@ -140,7 +142,7 @@ are Blender figurine renders from `tools/blender/portraits.py`.
 | Dead eyes, or catchlights in two places | [ ] rule 6 at 256 px |
 | Figurine: frontal, symmetric, posed | [ ] rules 3 and 10; the head turn measured |
 | Cartoon exaggeration creeping in | [ ] rule 1–2 proportions measured on the image (eye line, thirds) |
-| Two lords confused at chip size | [ ] 8-lord sheet at 56 px, blind-named 8/8 |
+| Two lords confused at chip size | [ ] 8-lord sheet at 96 px, blind-named 8/8 |
 | Costume louder than the face | [ ] readability.md §9 FOCAL: top cells on the face |
 | The hall figure and the painting disagree | [ ] side-by-side: same face structure, accent, object |
 | Off the anchor's style | [ ] beside `commanders/edwin.png`: same finish, light, temper |
@@ -150,7 +152,7 @@ are Blender figurine renders from `tools/blender/portraits.py`.
 
 - [ ] Row in `commanders` (or HLP / SGL / SKL register); conditioned on the Edwin anchor.
 - [ ] The 13 rules of the standard checked; the numbers for 1, 3, 4 and 6 noted.
-- [ ] 8-lord identity sheet at 56 px re-run when a lord's painting changes.
+- [ ] 8-lord identity sheet at 96 px re-run when a lord's painting changes.
 - [ ] readability.md §9 with the face as the focal box; rubric ≥ 24 / 30.
 - [ ] For Faber and Fable: `art_status` flipped only after install.
 - [ ] commander-forge told when a lord's face changes (its hall figure matches the painting).

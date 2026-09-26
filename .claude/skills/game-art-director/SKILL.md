@@ -51,7 +51,7 @@ Two output forms:
    weathered face, warbow as tall as the frame…").
 5. **Read at real size, value first — no empty looks** (owner: "no empty looks — high
    quality details and contrast"). Every asset is judged at its smallest display size
-   (44 px icons, 128 px cards, 56 dp lord chips — [readability.md](references/readability.md)
+   (44 px icons, 128 px cards, 96 px lord chips — [readability.md](references/readability.md)
    §1) and passes the read test: 3–5 value groups in the squint, one focal area with the
    image's highest local contrast (≥ 2.0 × the median), the 60/30/10 detail budget, a contact
    shadow, edge highlights on the lit side, one honest history mark. A result that fails is

@@ -11,6 +11,9 @@ quality bar (references/qa.md). Plain Python + Pillow + numpy; no Blender.
   (figure_kit.write_meta). Paintings: pass --face by hand.
 - Prints one line per check:  CHECK <name> <value> <op> <target> PASS|FAIL|INFO
   then:                        FIGURE_CHECK <file> kind=<k> pass=<n> fail=<m>
+- --lineup a_mask.png b_mask.png ...: the silhouette lineup pre-check - every
+  mask scaled to 128 px tall, feet aligned, centred; prints pairwise overlap
+  (IoU). Two lords above 0.80 are too alike (qa.md section 3).
 - --pair: the same shot with the lord UNSWORN; checks that the sworn gilt rim
   reads (edge band on the rim side: L* and yellowness b* both rise).
 - Exit code 1 when any check FAILS (so a chain stops on a red figure).
@@ -251,6 +254,35 @@ def sworn_delta(sworn_path, unsworn_path, mask_path=None, rim="right"):
     return {"sworn_dL": float(La[e].mean() - Lb[e].mean()), "sworn_db": float(Ba[e].mean() - Bb[e].mean())}
 
 
+def _lineup_mask(path, h=128, w=96):
+    img = Image.open(path).convert("RGBA")
+    m, _ = load_mask(path, img, path)
+    ys, xs = np.nonzero(m)
+    crop = m[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+    s = h / crop.shape[0]
+    im = Image.fromarray((crop * 255).astype(np.uint8)).resize(
+        (max(1, round(crop.shape[1] * s)), h), Image.BILINEAR)
+    c = np.asarray(im) > 127
+    out = np.zeros((h, max(w, c.shape[1])), bool)
+    x0 = (out.shape[1] - c.shape[1]) // 2
+    out[:, x0:x0 + c.shape[1]] = c
+    return out
+
+
+def lineup(paths):
+    """Pairwise IoU of silhouettes normalised to 128 px tall, feet aligned."""
+    ms = [_lineup_mask(p) for p in paths]
+    w = max(m.shape[1] for m in ms)
+    ms = [np.pad(m, ((0, 0), ((w - m.shape[1]) // 2, w - m.shape[1] - (w - m.shape[1]) // 2))) for m in ms]
+    rows = []
+    for i in range(len(ms)):
+        for j in range(i + 1, len(ms)):
+            inter = float((ms[i] & ms[j]).sum())
+            union = float((ms[i] | ms[j]).sum())
+            rows.append((os.path.basename(paths[i]), os.path.basename(paths[j]), inter / union if union else 0.0))
+    return rows
+
+
 def judge(r, kind):
     rows, fails = [], 0
     targets = dict(TARGETS.get(kind, {}))
@@ -301,7 +333,8 @@ def sheet(path, m, out):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("image")
+    ap.add_argument("image", nargs="?")
+    ap.add_argument("--lineup", nargs="+", metavar="MASK")
     ap.add_argument("--mask")
     ap.add_argument("--face", help="x0,y0,x1,y1 image fractions, y down")
     ap.add_argument("--kind", choices=sorted(TARGETS))
@@ -310,6 +343,18 @@ def main():
     ap.add_argument("--sheet")
     ap.add_argument("--json")
     a = ap.parse_args()
+    if a.lineup:
+        rows = lineup(([a.image] if a.image else []) + a.lineup)
+        worst = max(rows, key=lambda r: r[2]) if rows else None
+        for x, y, iou in sorted(rows, key=lambda r: -r[2]):
+            print("LINEUP %-28s %-28s IoU %.3f %s" % (x, y, iou, "FAIL" if iou > 0.80 else "PASS"))
+        fails = sum(1 for r in rows if r[2] > 0.80)
+        print("LINEUP_CHECK masks=%d pairs=%d fail=%d worst=%s" % (len(rows) and len(set(
+            [r[0] for r in rows] + [r[1] for r in rows])), len(rows), fails,
+            "%s/%s %.3f" % worst if worst else "-"))
+        sys.exit(1 if fails else 0)
+    if not a.image:
+        ap.error("an image is required (or --lineup)")
     face = [float(v) for v in a.face.split(",")] if a.face else None
     r, kind = measure(a.image, a.mask, face, a.kind, a.rim)
     if a.pair:

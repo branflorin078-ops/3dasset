@@ -41,7 +41,8 @@ line medallion — is the section "On the map and in battle" below.
   the gear. The weapon crosses a ≥ 25 L* edge against the vignette; the face's lit side sits at
   60–80 L*, the vignette edge ≤ 30 L*.
 - **One accent, one gold**: the line accent covers ≤ 10% of the card (a sash, a hood, a
-  pauldron, a cloak); GILT appears only from the t9 band up, as ONE fitting.
+  pauldron, a cloak); GILT appears only from the t9 band up, as one fitting or one small
+  group of fittings (≤ 5% of the card) — the Royal Guard's "gilt fittings".
 
 ## The tier kit ladder — cards and 3D kit tell the same story
 
@@ -49,6 +50,9 @@ PROPOSAL built from the rule above ("Levy in patched gambeson … Royal Guard in
 plate with gilt fittings") and the ready fragments below; the shipped `units` rows and TRP
 cards win where they differ. The ranged lines rise in FINISH (cloth, livery, fittings), not in
 plate weight; cavalry is one band ahead in armour (a Knight at t6 already rides in plate).
+Accent-coloured items in the table (surcoat trim, livery, sash) are CARD-ONLY: the 3D token kit
+paints them in OAK, IRON or undyed wool, because on the map and in battle the line accent marks
+only the medallion and the banner trim (battle-forge presentation.md §2).
 
 | band | melee foot (infantry, spearmen) | ranged foot (archers, crossbows) | cavalry | reads at 128 px as |
 |---|---|---|---|---|
@@ -56,7 +60,7 @@ plate weight; cavalry is one band ahead in armour (a Knight at t6 already rides 
 | t3–4 | mail shirt under the gambeson, nasal helm, a round or kite shield | quilted jack, arm guard, a full bow or a light crossbow | mail shirt, nasal helm, a spear | first metal on the body |
 | t5–6 | mail plus first plate pieces (couters, greaves), surcoat trim in the line accent | brigandine, a pavise appears (crossbows), a longer bow | maintained plate, great helm (the Knight at t6) | metal and a surcoat |
 | t7–8 | plate harness near complete, heraldic surcoat, pike or great weapon | brigandine with fine fittings, livery in the line accent | plate with barding on the horse's head and chest | a uniform, visibly drilled |
-| t9–10 (11) | full maintained plate, ONE gilt fitting, royal livery | royal livery, ONE gilt clasp (the Royal Arbalestier), weathered master (the Legendary Marksman) | full barding, ONE gilt fitting; t11 the Legendary Knight | a named veteran: finish, not size |
+| t9–10 (11) | full maintained plate, gilt fittings (one group), royal livery | royal livery, ONE gilt clasp (the Royal Arbalestier), weathered master (the Legendary Marksman) | full barding, gilt fittings (one group); t11 the Legendary Knight | a named veteran: finish, not size |
 
 No glow on troops at any band: glow is the rarity channel (items, gear), never a troop tier.
 

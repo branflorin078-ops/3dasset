@@ -10,24 +10,25 @@ thresholds in step with it.
 **Calibration first (once, then on every new anchor).** Thresholds below are STARTING
 values. Run §9 on the three anchors — `commanders/edwin.png` (portrait proof standard),
 `icons/gold.png` (icon anchor), one shipped board from `real art/` — and write their numbers
-into §9's anchor table. A new asset must land within the anchor band or better. If an anchor
+into §9's anchor table. A new asset must land within ± 15% of the anchor on each gate, or on
+the better side of it. If an anchor
 fails a starting threshold, the threshold moves to the anchor, not the other way round, and
 the change is noted in this file.
 
 ## 1. Read distances — the size the player really sees
 
-Sizes are px in the 1080 × 1920 reference layout (1080 px short side). On a 6.1–6.7 inch
-phone 1080 px spans ≈ 65–70 mm, so **≈ 16 px per mm**; the phone is held at 30–40 cm
-(pillar 10 "readable at arm's length").
+Sizes are px in the 1080 × 1920 reference layout (1080 px short side). 1080 px = 360–430 dp
+(ui-forge reference frame: 2.5–3.0 px per dp), so on real phones **≈ 16–19 px per mm**; the
+phone is held at 30–40 cm (pillar 10 "readable at arm's length").
 
 | Asset class | Master size | Smallest display | Other displays | Must read at the smallest size | Test |
 |---|---|---|---|---|---|
-| UI icon (Blender art now; the rule applies to its render) | 128 (`icons` group) | **44 px ≈ 2.8 mm** | 64, 96 (PROPOSAL, ui-forge) | which resource / action; locked or open | §9 `--icon` on PARCHMENT and OAK |
+| UI icon (Blender art now; the rule applies to its render) | 128 (`icons` group) | **44 px ≈ 2.3–2.8 mm** | 64, 96 (PROPOSAL, ui-forge) | which resource / action; locked or open | §9 `--icon` on PARCHMENT and OAK |
 | Line medallion (battle, map, reports) | Blender icon | 44 px (battle-forge presentation §2) | 72 px counter badge | which of the five lines | greyscale 44 px, name the line |
 | Effect icon (boost tray, omens) | 128 | 44 px | 64 | which effect | same as UI icon |
 | Equipment card EQ-* | group size (path to confirm) | 128 px grid thumb | 256 detail | object class; rarity in 0.5 s from rim + glow | 128 px row, all 4 tiers side by side |
 | Troop card TRP-* (4:5) | batch size (upgrade/GEMINI_TROOPS.md) | 128 × 160 | 256 × 320 recruit panel | the line (weapon silhouette) and the tier band (gear richness) | 128 px greyscale, name line + tier band |
-| Lord portrait CMD-* | group size | 56 dp battle chip / 96 px HUD chip | 280 px skill card; lord screen ART SHOWN BIG | WHICH lord: hair or hood mass, head covering, palette accent | 56 px, 8 lords side by side, blind-named |
+| Lord portrait CMD-* | group size | 96 px HUD chip (battle-forge §5) | 56 dp ≈ 140–168 px battle chip; 280 px skill card; lord screen ART SHOWN BIG | WHICH lord: hair or hood mass, head covering, palette accent | 96 px, 8 lords side by side, blind-named |
 | Sigil SGL / alliance ALS | group size | 24 px (chat marker) | 28–40 px banner (battle-forge) | the device in 2 values | 24 px black-fill silhouette |
 | Map overlay marker (camp, landmark, march medallion) | Blender icon | 32 px (PROPOSAL) | 44 px | class + relationship by SHAPE | §4 greyscale + CVD test |
 | City on the realm map (3D cluster) | — | 48–96 px | — | level, owner colour, burning / warded | blender-forge architecture.md §2 |
@@ -40,8 +41,8 @@ Rules:
    15 px at 128 px — and stands ≥ 20 L* from its neighbour. Anything smaller is texture: fine
    as surface, never as the thing that tells the player what the object is.
 3. **Blind name test**: a critic (a person or a sub-agent) who has NOT seen the prompt gets only
-   the downscaled image and names class + state. Icons, medallions, markers and sigils must be
-   named 5 of 5 times; cards and portraits 4 of 5.
+   the downscaled image and names class + state. Icons, medallions, markers, sigils and troop
+   cards must be named 5 of 5 times; equipment cards, portraits and boards 4 of 5.
 4. What must survive the smallest size goes in the prompt's first 15 words: the ALL-CAPS
    subject noun plus the one object that defines the silhouette ("A PIKEMAN AT THE BRACE: pike
    butt set…").
@@ -89,13 +90,14 @@ Value plan per class (L* ranges; the squint must show these masses):
 - when the brief names a focal box: **≥ 4 of the 6** highest-contrast cells lie inside it,
   and the box alone spans **≥ 0.8** of the whole image's value range — the darkest dark and
   the lightest light meet at the focal point;
-- the 6 top cells form one cluster. Two separated clusters = two focal points = fail.
+- the 6 top cells form one cluster: each touches another top cell (8-neighbour) or is one cell
+  away. Two separated clusters = two focal points = fail.
 
 ## 3. Colour channels — each colour has one job
 
 | channel | carries | lives on | never on |
 |---|---|---|---|
-| GILT (the single hot accent) | value, sworn state (gilt rim), "yours" (rally gilt corner) | one fitting per image, ≤ 10% of the area; the sworn rim light | large fields; text on PARCHMENT |
+| GILT (the single hot accent) | worth and prestige, sworn state (gilt rim), "yours" (rally gilt corner) | one fitting per image, ≤ 10% of the area; the sworn rim light | large fields; text on PARCHMENT |
 | WAX | urgency, seals | seals, the HUD alert, ≤ 5% of the area | relationship; decoration |
 | Line accents | which troop line | medallion ring, banner trim, one accent per card | banner fields, chrome |
 | Rarity (forge.TIERS glow + rim) | Issued / Sound / Fine / Masterwork | item cards, gear models | the map layer, markers, chrome |
@@ -180,8 +182,8 @@ Rules:
 3. **Chrome values** stay in OAK / IRON / INK and PARCHMENT. GILT on chrome ≤ **3% of the
    screen**; ornament only at corners (≤ 12% of each edge length), plain rails between — rest
    areas apply to chrome too.
-4. **Chrome is matte and cooler in chroma than the art's focal area**: no painted glow, no
-   rarity colour, never a relationship hue.
+4. **Chrome is matte and less saturated than the art's focal area** (its highest chroma below
+   the focal area's): no painted glow, no rarity colour, never a relationship hue.
 5. Text over art sits on an INK scrim ≥ 70% or carries an INK outline (ui-forge rule 7);
    environments.md's UI safe zones are where that scrim goes.
 
@@ -218,20 +220,20 @@ wool next to polished steel); same-value, same-finish neighbours merge into one 
 | busy everywhere | quiet < 45%, rich share < 30% | detail spread evenly | "the background falls into broad unbroken planes; fine detail only on <focal object>" |
 | the eye lands in the wrong place | < 4 of top-6 cells in the box | contrast on a secondary object | "the brightest light and darkest dark meet at <focal>; <secondary> sinks into shadow" |
 | two focal points | two top-cell clusters | two lit subjects | "<second subject> in half-shadow, lower contrast" |
-| sticker, floating | no dark within 2% of contact | no contact shadow | "a soft contact shadow directly beneath, darkest where it touches" |
+| sticker, floating | eye check: no dark (≤ 20 L*) within 2% of the contact | no contact shadow | "a soft contact shadow directly beneath, darkest where it touches" |
 | plastic, airbrushed | quiet > 75%, no grain | missing surface behaviour | "visible painterly brush texture following the form, matte surfaces, worn and chipped edges" |
 | new, toy-like | — (rubric axis 8) | no history | "one honest history mark: <dent hammered flat / re-stitched strap>" |
 | mush at size | fails the blind name test | key shape < 12% of width | "one bold silhouette; <key element> oversized and clear of the body" |
-| cold (intake code) | no pixels near GILT | no warm key | "warm torchlight … a single hot gold accent on <one fitting>" |
-| gold everywhere | GILT-like pixels > 10% | accent overused | "gold only on <one fitting>; the rest aged oak, iron and parchment" |
+| cold (intake code) | ACCENT < 0.5% and a cool cast | no warm key | "warm torchlight … a single hot gold accent on <one fitting>" |
+| gold everywhere | ACCENT > 10% | accent overused | "gold only on <one fitting>; the rest aged oak, iron and parchment" |
 | dark icon lost on panels | < 20% edge px vs OAK | no rim light | "thick rim highlight along the upper-left edge" |
 | reserved hue in decoration | RESERVED > 0.5% | colour from the wrong channel | "<cloth> in aged oak brown and iron grey" |
 
 ## 8. The critique rubric — score every result
 
 Score each axis 0–3 with one sentence of visual evidence. **PASS = total ≥ 24 / 30 and no axis
-below 2.** Axis 1 must score 3 for icons, medallions, markers, sigils and cards (they live at
-play size — reference-forge improve-loop axis 9 has the same rule).
+below 2.** Axis 1 must score 3 for icons, medallions, markers, sigils and troop cards (they
+live at play size — reference-forge improve-loop axis 9 has the same rule).
 
 | # | axis | 3 | 2 | 1 | 0 |
 |---|---|---|---|---|---|
@@ -316,6 +318,9 @@ def report(path, focal=None, icon=False):
         ref = lab(np.array([[int(hx[i:i+2], 16) for i in (1, 3, 5)]]))[0]
         hit = ((np.linalg.norm(px - ref, axis=1) < 24) & (chroma >= 35)).mean() * 100
         print(f"RESERVED {k:6s} {hit:.2f}% of pixels")
+    gilt = [lab(np.array([[int(h[i:i+2], 16) for i in (1, 3, 5)]]))[0] for h in ("#C9A04C", "#E0BC6A")]
+    near = np.min([np.linalg.norm(px - g, axis=1) for g in gilt], axis=0)
+    print(f"ACCENT   GILT-like pixels (dE76<20, C*>=30) {((near < 20) & (chroma >= 30)).mean()*100:.1f}%")
     if icon:
         a = np.asarray(im.getchannel("A")) > 127; ys, xs = np.nonzero(a)
         print(f"ICON     fill (bbox long side / frame) {max(np.ptp(xs), np.ptp(ys)) / max(a.shape)*100:.0f}%")
@@ -336,6 +341,7 @@ if __name__ == "__main__":
 | FOCAL top cell | ≥ 2.0; box ≥ 0.8 of range; ≥ 4/6 inside | — |
 | DETAIL quiet / supporting / rich | 45–75 / 20–40 / 5–15 %; rich share 30–70% | — |
 | RESERVED | ≤ 0.5% each on map/battle/HUD-layer art | ≤ 0.5% each |
+| ACCENT (GILT-like) | 0.5–10% | ≤ 10% (the gold coin is the exception: it IS the accent) |
 | ICON fill / edge vs PARCHMENT / vs OAK | — | 75–85% / ≥ 70% / ≥ 20% |
 | Anchor values (fill in at calibration) | edwin.png: … · board: … | gold.png: … |
 

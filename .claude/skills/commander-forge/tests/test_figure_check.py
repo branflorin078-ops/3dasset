@@ -96,6 +96,22 @@ def test_solidity_and_windows_basics():
     assert FC.windows(ring) == 1
 
 
+def test_lineup_flags_twins(tmp):
+    a, b, c = (os.path.join(tmp, n + "_mask.png") for n in ("a", "b", "c"))
+    for path, box in ((a, (40, 10, 80, 190)), (b, (42, 12, 82, 192))):
+        im = Image.new("L", (120, 200), 0)
+        ImageDraw.Draw(im).rectangle(box, fill=255)
+        im.save(path)
+    im = Image.new("L", (120, 200), 0)
+    d = ImageDraw.Draw(im)
+    d.rectangle((50, 60, 70, 190), fill=255)
+    d.line([(20, 10), (100, 190)], fill=255, width=6)          # a diagonal pole: a different shape
+    im.save(c)
+    rows = {(x, y): v for x, y, v in FC.lineup([a, b, c])}
+    assert rows[("a_mask.png", "b_mask.png")] > 0.8, rows
+    assert rows[("a_mask.png", "c_mask.png")] < 0.8, rows
+
+
 if __name__ == "__main__":
     tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_")]
     failed = 0

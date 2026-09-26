@@ -74,7 +74,7 @@ Pattern: a ladder of contested places so every alliance size has a goal and the 
 | 1 (1) | **Ford** — stepping stones, toll hut, marker post | 12 | outer | +3% food; crossing before day 15; rally point | (shared) |
 | 2 (2) | **Chapel** — stone chapel with a bell-cote | 12 (8 outer, 4 middle) | outer, middle | +4% food | 3 of tier 2 |
 | 2 (2) | **Pass** — gatehouse in a rock cleft | 8 | outer/middle edge | +4% stone; crossing before day 22; rally point | (shared) |
-| 3 (4) | **Abbey** — cloister, scriptorium, church tower | 8 (2 per hill region) | middle | +6% gold | 2 of tier 3 |
+| 3 (4) | **Abbey** — cloister, scriptorium, church tower | 8 (2 per hill region) | middle | +6% gold (rotates weekly, A10) | 2 of tier 3 |
 | 3 (4) | **Bridge** — fortified bridge, gate tower mid-span | 4 | gorge | +6% iron; crossing before day 36; rally point | (shared) |
 | 4 (8) | **Hillfort** — old royal earthwork and stone hall on a crag | 4 (1 per hill region) | middle | +8% iron; vision 30 tiles; rally point | 1 |
 | crown (16) | **Crown seat** — the old royal hall inside a ring wall | 1 | inner | the **Crown Regent** and five offices | 1 |
@@ -119,6 +119,7 @@ Seeded per region and epoch; a kill writes one record that suppresses the hold u
 **Reward split** = alliance.md §8 (50% equal, 50% by damage), then liveops R8 (floor 40%, cap 3× the median share; clamp, rescale the rest). Worked, 8 marches, pool 100 — damage 35/20/15/10/8/6/4/2 → **23.8 / 16.3 / 13.8 / 11.3 / 10.3 / 9.3 / 8.3 / 7.3** (pure damage share: 35 … 2; smallest ÷ largest 0.31 vs 0.06). One dominant march, damage 70/10/6/5/4/3/1/1 → 41.3 capped at 25.5, the rest rescaled: **25.5 / 14.3 / 11.7 / 11.1 / 10.5 / 9.8 / 8.6 / 8.6**. PROPOSAL to alliance.md: the equal half needs a march ≥ 20% of the rally's median march (stops one-troop leeching). ≤ 5 reward shares per player per day (alliance.md's paid rallies).
 
 **Crown columns** (onboarding.md "Lead a rally", progression.md "The Muster"): a stronghold rally still below its minimum at 50% of the join window gets up to 2 NPC columns at the leader's median march size — for a leader's first 3 stronghold rallies, or an alliance with < 10 members active in the last hour. Their damage counts for the kill; players share 100% of the pool.
+
 **The Warlord's Hold** (liveops §4.2): appears Wed 00:00 on the open site nearest the Hall, 2–4 chunks outside the alliance's border (20 tiles from the Liege's castle without a Hall); only that alliance may attack it; gone Fri 23:59.
 
 **Checks**: [ ] reward-split unit test, 5 distributions + the NPC case — fails when: the smallest qualifying joiner gets < 40% of the median share, or a crown column takes a share.
@@ -136,6 +137,7 @@ Seeded per region and epoch; a kill writes one record that suppresses the hold u
 | Filler | in a Thinning realm (liveops §8), host density × 2 | dead screens ≤ 5% |
 
 Limits: AI lords never hold tier ≥ 2 landmarks, never rank, never get offices, never move, never raid a castle whose owner has not attacked them. The shipped raid-pressure corridor stays the ceiling; this file proposes grudge-only pressure inside it.
+
 **Checks**: [ ] ward_test (onboarding.md) — fails when: an AI raid lands on a warded castle outside the two lessons · [ ] AI unit test — fails when: an unprovoked raid, or a second raid in 24 h, is scheduled.
 
 ## 7. Fog of war and scouting
@@ -210,7 +212,7 @@ There is **no random move**: combat.md §10 rejected it — a scatter throws a p
 
 ## 12. Relationship colours — the reserved channel
 
-The single source of the four values (alliance.md §7 names this file); ux.md, game-art-director `readability.md` and chat-forge `ui.md` cite it and never restate it.
+The single source of the four values (alliance.md §7 names this file); ux.md, game-art-director `readability.md` and chat-forge `ui.md` should cite it, never restate it. **Open conflict**: `readability.md` §4 currently proposes another set (#9ADB6E / #3A8FE0 / #E0482A / #F3F1EC). Same method on both: this set's worst colour-blind pair is 23.7 ΔE00 vs 18.4, and its worst clash with another channel 16.9 (keyline case aside) vs 7.2 (ally vs Sound rarity) — owner decision 6 picks one, the other file then cites it.
 
 | Class | Who | Colour | Hex | Marker (chat-forge set) | March line (1080 px short side) |
 |---|---|---|---|---|---|
@@ -281,6 +283,7 @@ Budgets: region ≤ 150 markers and 0 label overlaps (battle-forge merges ≥ 4 
 | A7 | **Bloc cap**: an Accord pair's combined holdings ≤ 1.5 × one alliance's caps | server-enforced |
 | A8 | **Inactive castles**: shuttered after 72 h offline (plunder yield halves per further day — PROPOSAL to economy.md); **archived** (off the map, nothing lost) when < 7 days old and 72 h offline, or age ≤ III and 14 d offline, or 30 d offline at any age | the map shows players, not farms |
 | A9 | Late joiners: gates open by calendar; wandering camp bands; settled ground (progression.md C2); newcomers routed to new realms (liveops §1.1) | only realms ≤ 35 days old take newcomers |
+| A10 | **Output rotation**: each Monday the resource boosted by every tier-3 and tier-4 landmark moves one step along gold → iron → stone → gold, published on the Herald's Board 14 days ahead (liveops §6.1) | the best landmark moves weekly |
 
 **Targets** (realm_sim, telemetry): top alliance ≤ 25% of points held at window close (season median); ≥ 6 alliances hold a tier ≥ 2 landmark on day 60; ≥ 20% of tier ≥ 2 landmarks change hands per home war day; ≥ 3 different crown holders per 8 weeks.
 
@@ -330,6 +333,7 @@ Read it: the naive stream costs 2.6× the whole €200 budget; the designed one 
 | `core/sd_cost_probe.gd` | map reads and writes per player per day | map ≤ €50 per month at 50,000 players |
 
 **Save migration** (world-forge + gameplay-forge): realms opened after ship get this layout. An existing realm keeps its shipped map and castle positions: world-forge's placer adds landmarks on open ground (tier by distance from the centre) but **no gates** (a gate added around settled castles would trap them); fog bitset = the 5 × 5 start area + every chunk within 20 tiles of a past target; camp unlocks = the shipped record raised to the age floor; no holdings, no crown until its first home war day.
+
 **After ship**: ≥ 95% of first sessions clear the first camp; ≥ 50% of DAU in an alliance holding a landmark by day 30; dead screens ≤ 5%; seat moves with an attack inbound = 0; map line ≤ €50 per month.
 
 ## 19. Owner decisions required
@@ -339,6 +343,6 @@ Read it: the naive stream costs 2.6× the whole €200 budget; the designed one 
 3. The crown rotation limit of 3 terms (A4) and the Truce reset of tiers 3–4 (A6).
 4. Seat-move writs never sold, or sold in Truce weeks only (monetization.md decision 5); the 72 h cooldown.
 5. Archiving inactive castles (A8) and grudge-only AI raids (§6) — both change shipped behaviour.
-6. The relationship palette (§12) as the single source. It conflicts with blender-forge `architecture.md` §7 (owner colour on banners, pennons and roof trims); this file puts the relationship on rings and finials and the alliance's tinctures on cloth.
+6. One relationship palette for the whole studio: this file's §12 set (recommended: worst colour-blind pair 23.7, no clash below 16.9) or game-art-director `readability.md` §4's set (18.4; ally 7.2 from Sound rarity). Also: blender-forge `architecture.md` §7 puts the owner colour on banners, pennons and roof trims; this file puts the relationship on rings and finials and the alliance's tinctures on cloth (alliance.md §7).
 7. Screen orientation: ux.md and ui-forge `hud.md` design 1080 × 1920 portrait; an older studio note says "landscape-only". Every px here is given on the 1080 px short side, so it holds either way.
 8. Names (story-forge canon): Heartlands, Hill Country, Crown Vale, the Fens, the Pinewood, watch-post, ford, chapel, pass, abbey, bridge, hillfort, crown seat, Crown Regent and the five offices, ash-holds, crown columns, finds, the King's road, the spring flood.
