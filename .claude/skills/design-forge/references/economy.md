@@ -315,7 +315,7 @@ has no start day per line: a late resource starts small and grows fast (iron). W
   ]
 }
 ```
-Real output (2026-09-26), the free player at day 30 and 90, and the verdict line:
+Real output (2026-09-26): the free player at day 30, iron at day 90, and the verdict line:
 ```
 == free
   day  res             sources          sinks        balance   ratio
@@ -331,10 +331,10 @@ RED-TEAM #6: free player at day 30 within 0.90-1.10 on every resource with a sin
 ```
 Same run, other players (day-30 ratio / window 61–90): **free_no_map** food 1.10/1.37, wood
 1.25/1.54, stone 1.62/2.20, iron 1.87/2.45, gems 1.36/2.88 · **free_no_upkeep** food 0.77/0.81 ·
-**light** iron 1.08/1.31, rest 0.97–1.11 · **heavy** iron 1.26/1.55, rp 0.90/0.90, rest 0.95–1.08.
-Read it: every free resource sits in band at day 30; iron's day-90 WALL is the named t6+ throttle
-(§4); the map is worth +37% to +145% of pace outside gold (no_map); rations are what keeps food in
-band (no_upkeep); money cannot lift iron (heavy).
+**light** iron 1.08/1.31, other stock 0.97–1.11 · **heavy** iron 1.26/1.55, rp 0.90/0.90, other
+stock 0.95–1.08 (gem lines of paying players are shop-forge's to size). Read it: every free resource
+sits in band at day 30; iron's day-90 WALL is the named t6+ throttle (§4); the map is worth +37% to
++145% of pace outside gold (no_map); rations keep food in band (no_upkeep); money cannot lift iron (heavy).
 
 ## 13. Server cost
 
@@ -342,20 +342,15 @@ State per player: per resource `Y0`, `s0` + one shared `t0` (≈ 70 bytes), pled
 derived from buildings, never stored. Production, rations, sheds, gathering, sacked timers and
 pledge expiry are functions of time: **0 server ticks**. Clients compute stock locally: 0 polling reads.
 
-| Write | Per engaged player per day | Note |
-|---|---|---|
-| Spends, collects, chest resources | 0 extra | ride on the plate start or claim write (core-loop §11) |
-| Gathering result | 0 extra | settled inside the next march order |
-| Plunder | 0.6 | attacker + defender, ≈ 0.3 won assaults per player per day |
-| Caravan | 0.9 | sender + receiver + ledger append, ≈ 0.3 per day |
-| Market, pledge | 0.7 | one player-document write each |
-| Gem vein | 1.0 | occupy rides on the march order; leave = 1 |
-| Device link, flow flags | ≈ 0.1 | only when changed; the nightly audit reads the ledgers |
-| **Total** | **≈ 3.3** | 50,000 × 3.3 ≈ 165,000 per day ≈ 5 M per month = 5.7% of core-loop's 87 M |
-
-Budget line: at core-loop's break-even price (€2.30 per million writes uses the whole €200) the
-economy's 5 M would cost ≤ €11.50; real store prices must be far lower. Measure with
-`core/sd_cost_probe.gd` before tuning; ledgers kept 30 days.
+Economy writes per engaged player per day: spends, collects and chest resources **0 extra** (they
+ride on the plate-start or claim write, core-loop §11) · gathering result 0 (settled inside the next
+march order) · plunder 0.6 (attacker + defender, ≈ 0.3 won assaults) · caravan 0.9 (sender +
+receiver + ledger append, ≈ 0.3 per day) · market and pledge 0.7 · gem vein 1.0 (occupy rides on the
+march order; leave = 1) · device link and flow flags ≈ 0.1 → **≈ 3.3**. At 50,000 players (upper
+bound: all engaged) ≈ 165,000 per day ≈ 5 M per month = 5.7% of core-loop's 87 M; at core-loop's
+break-even price (€2.30 per million uses the whole €200) ≤ €11.50. Rule: **one player-document write
+per player action** — an economy feature that adds its own write per action is redesigned. Measure
+with `core/sd_cost_probe.gd` before tuning; ledgers kept 30 days.
 
 ## 14. Harness and metrics
 

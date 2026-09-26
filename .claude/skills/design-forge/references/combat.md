@@ -23,6 +23,8 @@ Reference model (for tuning; the frozen resolver's shape wins and the probe meas
 | r | draw ratio: t(n) troops per t(n+1) troop, same line, no modifiers | 1.40 | tier test |
 | Q = r^(1+α) | quality step per tier (attack × HP per troop) | 1.71 (attack and HP ×1.31 each) | — |
 | TS of a multiplier M; of a troop ratio x | `ln M / ln Q`; `ln x / ln r` | 2× troops = +2.06 TS | ablation |
+| E-point ([lords.md](lords.md) §6: % extra troops for a draw) | `TS = ln(1 + E/100) / ln r` | 1 TS = 40 E; 30 E = 0.78 TS | mirror test |
+| R_med | rounds in a median field battle (lords.md's Order cadence uses it) | 24 (verify) | median over the LOSS battery |
 
 | TS | q multiplier | e.g. attack / damage taken | same as troops × |
 |---|---|---|---|
@@ -70,6 +72,7 @@ Why this unit: any resolver can be measured in it (bisect the troop count until 
 
    Read it: an even split is safe and gains nothing; a scouted counter-pick gains +0.25 to +0.5 TS; a wrong guess costs as much. That is what scouting buys (§11), and why money-driven stat gaps are capped BELOW it (§5).
 7. The send and rally screens show MI from the latest scout as "+0.4 tier" with the scout's age (battle-forge presents; the value comes from this rule).
+8. **The ring is whole only when all five lines are open.** Until crossbows open, cavalry has no prey and archers no hunter. progression.md opens crossbows in Age III (engaged free: day 1–3), inside the 7-day peace ward, so no PvP runs on a broken ring; Age II camps ([world.md](world.md)) field ≤ 40% archers. Line halls teach the ring in this order: archers hunt infantry (Age I); spearmen stop cavalry, infantry get inside spearmen (Age II); crossbows beat archers, cavalry rides down crossbows (Age III).
 
 Rejected: each line hunting two (10 relations, no single sentence); crossbows hunting cavalry "because bolts pierce armour" (with cavalry hunting crossbows it makes a mutual pair — no rule left); a pierce trait that ignores tier armour (breaks rule 2); a three-line triangle with spearmen and crossbows as sub-types (wastes two canonical lines).
 
@@ -93,7 +96,7 @@ Power per troop `p_t = 10 · r^(t−1)` — numbers.md §3 with `k = r`, so equa
 2. **Power is legible**: equal power, equal stacks, neutral lines → a draw within ±10%. Tooltip: "Power is exact only between neutral lines — counters, lords and walls move it; see the estimate."
 3. **Quality buys slots, mass buys resources.** Banners, rally capacity, reinforcement caps and beds count TROOPS: a t10 fills one slot with 20.7× the power of a t1. Training cost per troop grows `g = 1.45` per tier (> r), so cost per power rises 3.6% per tier; training time per troop ∝ `p_t`, so a muster yard makes constant power per hour. A new tier is a capacity reward; a big low-tier army is cheap power for garrisons and rally fill.
 4. **Doubling troops = +2.06 TS.** Mass matters; capacity caps keep it bounded.
-5. **Promotion** t → t+1: pay the cost difference + 10%; time = the time difference.
+5. **Promotion** t → t+1 (progression.md T2): pay the cost difference, time = the time difference, no fee — no investment is lost to a new tier.
 
 | Line | March speed × | Load × | Its job in one line |
 |---|---|---|---|

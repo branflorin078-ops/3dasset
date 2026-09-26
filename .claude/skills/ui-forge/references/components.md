@@ -127,13 +127,13 @@ from the `panels` group (game-art-director). Both follow these numbers.
 
 | Pair | Full colour vision ΔE | Protan | Deutan | Tritan | Verdict |
 |---|---|---|---|---|---|
-| spearmen #8B8F95 / crossbows #6D8AA8 | **15.9** | 14.5 | 17.0 | 16.1 | collide for everyone |
-| infantry #B4432E / archers #4F7A4A | 60+ | **10.6** | 20.5 | — | collide for protans |
-| archers / crossbows | — | — | — | **12.4** | collide for tritans |
-| Sound #6A8FD8 / Fine #8F6ADB (rarity rims) | 34.3 | 17.7 | **10.8** | 30.7 | collide for deutans |
-| GILT / Masterwork rim #E8A33C | 16.8 | | | | chrome gilt is not a rarity signal |
-| GILT / cavalry #C9A76A | 12.7 | | | | the cavalry band vanishes next to gilt chrome |
-| WAX / infantry | 17.6 | | | | a dot needs its PARCHMENT ring on infantry fills |
+| spearmen #8B8F95 / crossbows #6D8AA8 | **15.9** | **14.5** | **17.0** | **16.1** | collide for everyone |
+| infantry #B4432E / archers #4F7A4A | 71.4 | **10.6** | 20.5 | 83.3 | collide for protans |
+| archers / crossbows | 47.5 | 44.7 | 41.3 | **12.4** | collide for tritans |
+| Sound #6A8FD8 / Fine #8F6ADB (rarity rims) | 34.3 | **17.7** | **10.8** | 30.7 | collide for protans and deutans |
+| GILT / Masterwork rim #E8A33C | **16.8** | **12.2** | **13.3** | **15.9** | chrome gilt is not a rarity signal |
+| GILT / cavalry #C9A76A | **12.7** | **13.8** | **12.2** | **5.8** | the cavalry band vanishes next to gilt chrome |
+| WAX / infantry | **17.6** | **18.6** | **17.5** | **14.0** | a dot needs its PARCHMENT ring on infantry fills |
 
 A pair with ΔE < 20 counts as colliding at icon size. The shape codes:
 
