@@ -97,23 +97,27 @@ iron from t6, [progression.md](progression.md) §6):
 
 Heal bound ([combat.md](combat.md) H4, beds 1.25 × the largest march): 30% × 1.25 × X ≤ 24 h of own
 output → **training one full march of stage S costs ≤ 64 h of the median free player's output**.
-An iron-poor player leans on spearmen and archers: the throttle is a choice, not a wall. Lord gear
-draws on the same iron ([lords.md](lords.md) rule 3): **craft Issued 0.25 d · temper Sound 0.5 d ·
-Fine 1.25 d · Masterwork 3 d** of `I_med(S, iron)` → a four-piece Masterwork set ≈ 20 days of iron.
+An iron-poor player leans on spearmen and archers (20–25% iron): the throttle is a choice, not a wall.
+Lord gear draws on the same iron ([lords.md](lords.md) §9 rule 3): **craft Issued 0.25 d · temper Sound
+0.5 d · Fine 1.25 d · Masterwork 3 d** of `I_med(S, iron)` → a four-piece Masterwork set ≈ 20 days of
+iron; on lords.md's timeline (Masterwork pieces ≈ 30 days apart) ≈ 10% of late iron income.
 
-Supply rules: mine ≤ 30% of a free t6+ player's iron demand (model 20%); seams (node level ≥ 3)
-≥ 50% (54%); camps from level 5 ([world.md](world.md) ladder) 20%; market buy ≤ 2 H/day; goods in `P`;
-caravans only from S4 senders; iron donations = 15 min of own mine output. Model (§12, window
-61–90): daily demand passes supply on **day 48**; free 1.13, light 1.31, heavy 1.55, no-map 2.45.
-Heavy wants 1.8× the free pace and reaches 1.8 / 1.55 = 1.16 against the free 1 / 1.13 = 0.88 →
-**money buys ≤ 1.31× the free t6+ pace**, not 1.8×.
+Supply rules (share of a free t6+ player's iron income): mine ≤ 30% (model 20%); seams (node level
+≥ 3) ≥ 50% (54%); camps from level 5 ([world.md](world.md) §4) 20%; market buy ≤ 2 H/day; goods in
+`P`; caravans only from S4 senders; iron donations = 15 min of own mine output.
+**When it binds** (model §12, header calendar): iron is in every t6+ cost from day 2 yet stays in band
+while t6–t9 open (day-30 ratio 0.94); daily demand passes supply on **day 48** — Age VI, 16 days after
+t10, inside the realm's first 35-day campaign ([liveops.md](liveops.md) §1, §3.1: first contest week on
+realm day 36–64). Window 61–90: free 1.13, light 1.31, heavy 1.55, no-map 2.45. Heavy wants 1.8× the
+free pace and reaches 1.8 / 1.55 = 1.16 against the free 1 / 1.13 = 0.88 → **money buys ≤ 1.31× the
+free t6+ pace**, not 1.8×.
 
-Verify before proposing: [ ] `data/troops.gd` iron share per tier by the §1 weights (t1–t3 = 0,
-t6+ ≥ 30%) · [ ] which archetype makes iron (mine?) and its share of t6+ demand · [ ] heal iron ≤ 10% ·
-[ ] iron's first cost at S2 (the "new resource" beat, numbers.md §2) and its bar icon shown only
-from then · [ ] troop costs sacred? → this section is an owner proposal.
+Verify before proposing: [ ] `data/troops.gd` iron share per tier by the §1 weights (t1–t5 = 0,
+t6+ ≥ 30%) · [ ] which archetype makes iron (mine?) and its share of t6+ iron income · [ ] heal iron
+≤ 10% · [ ] iron's first cost at S3 (keep 11, the "new resource" beat, numbers.md §2) and its bar icon
+shown only from then · [ ] troop costs sacred? → this section is an owner proposal.
 
-**Checks**: [ ] econ_sim free iron day-30 ≤ 1.00 (model 0.94) — fails when: iron blocks t4–t5 for a
+**Checks**: [ ] econ_sim free iron day-30 ≤ 1.00 (model 0.94) — fails when: iron blocks t6–t9 for a
 player who gathers · [ ] CSV window 61–90 in 1.05–1.20 — fails when: no throttle, or a hard wall ·
 [ ] heavy window ≥ 1.35 (model 1.55) — fails when: money lifts the throttle (heavy/free pace > 1.5).
 

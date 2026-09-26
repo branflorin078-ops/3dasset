@@ -182,7 +182,7 @@ Heavy lords (0.21 / 0.39 / 0.48 / 0.50) apply only if paid Seals are accepted (l
 2. **PvE never kills** (rows 1–2); a warded player's fights follow onboarding.md §4. Lord utilities may move ≤ 10 points of severe into light (lords.md §6 rule 2).
 3. **Wounded in beds are safe**: never killed, never plundered.
 4. **Overflow warning before every send**: expected severe = troops × the row's severe share; above free beds the send card says "May overflow your beds by ~6,250 — they would die" (§7 worked) (icon + words, never colour alone; 0 extra taps).
-5. **Honour** (the casualty tally in reports and the alliance feed) = Σ enemy (severe + dead) × power per troop (routed count 0), × the weak-target factor `clamp((P_def/P_att − 0.3)/0.3, 0, 1)` (0 below 30% of your power, full from 60%), × `0.5^(n−1)` for the n-th fight between the same two houses inside 24 h. Events score ground, never honour ([liveops.md](liveops.md) §3.4) — nothing pays for corpses.
+5. **Honour** (the casualty tally in reports and the alliance feed) = Σ enemy (severe + dead) × power per troop (routed count 0), × the weak-target factor `clamp((P_def/P_att − 0.3)/0.3, 0, 1)` (0 below 30% of your power, full from 60%), × `0.5^(n−1)` for the n-th fight between the same two houses inside 24 h. Events and campaigns score ground (renown), never honour ([liveops.md](liveops.md) §3.4) — nothing pays for corpses. `losses` prints the factors: 0.00 / 0.50 / 1.00 at 30% / 45% / 60%; decay 100 / 50 / 25%.
 
 Worked (row 5; `python tools/combat_model.py losses` also checks every row sums to 100 and rows 1–3 and 9 kill 0): a lost field march of 25,000 → 8,750 walk home, 13,750 to beds, 2,500 dead.
 
@@ -191,13 +191,13 @@ Worked (row 5; `python tools/combat_model.py losses` also checks every row sums 
 | # | Rule | Number |
 |---|---|---|
 | H1 | Beds at stage S = β × C_march(S); C_march = the largest single march (gameplay-forge data) | β = 1.25 (1.0–1.5) |
-| H2 | The worst normal day fits: max(lost field march 0.55; two lost window castle assaults 2 × 0.50; lost home defence of 1.25 marches × 0.70) × C_march | 1.00 ≤ 1.25 |
+| H2 | The worst normal day fits: max(lost field march 0.55; two lost war-window castle assaults 2 × 0.50; lost home defence of 1.25 marches × 0.70 = 0.875) × C_march | 1.00 ≤ 1.25 |
 | H3 | Full beds of the stage's top tier heal with 0 speed-ups in | ≤ 8 h ([core-loop.md](core-loop.md) §2) |
 | H4 | Healing full beds costs, in the median free player's own production at that stage | ≤ 24 h (economy.md checks) |
 | H5 | Beds grow only from the infirmary tier and research (alliance charters included) — never sold (core-loop rule 1) | — |
 | H6 | Heal cost per troop vs training (economy.md sets 30%); heal time per troop vs training | ≤ 40%; ≤ 25% |
 
-Worked (C_march 25,000 at S4 is an EXAMPLE value): beds 31,000. A lost field march puts 13,750 in beds; two lost castle assaults 25,000; a lost home defence with 40,000 at home 28,000 — all fit. A third lost assault would add 12,500 to the 6,000 free: the §6 warning shows "~6,500" before that send. Heal time per top-tier troop ≤ 28,800 s / 31,000 = 0.93 s; lower tiers `∝ p_t`. Above 1.5 × C_march losses become free and fights weightless; below 1.0 × the genre's overflow spiral returns.
+Worked (`python tools/combat_model.py beds --march 25000`; C_march 25,000 at S4 is an EXAMPLE value): beds 31,250. A lost field march puts 13,750 in beds; two lost castle assaults 25,000; a lost home defence with 1.25 marches (31,250) at home 21,875 — all fit. A third lost assault would add 12,500 to the 6,250 free: the §6 warning shows "~6,250" before that send. Heal time per top-tier troop ≤ 28,800 s / 31,250 = 0.92 s; lower tiers `∝ p_t`. Above 1.5 × C_march losses become free and fights weightless; below 1.0 × the genre's overflow spiral returns.
 
 | Fails when | Caught by |
 |---|---|
