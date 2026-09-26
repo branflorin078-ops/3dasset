@@ -53,8 +53,9 @@ Exit code 1 on any FAIL, so a chain stops on a red lord.
    (85 mm, framed on the tallest lord, so heights compare), through
    `render_with_mask`.
 2. Pre-check: `figure_check --lineup` on the eight masks — every pair's
-   overlap (IoU, 128 px tall, feet aligned) ≤ 0.80. A pair above is
-   re-posed or re-kitted before the human test.
+   overlap (IoU; every mask scaled to 128 px tall and centred, feet aligned,
+   so it compares SHAPE, not height) ≤ 0.80. A pair above is re-posed or
+   re-kitted before the human test.
 3. Human test: the masks as black shapes at 128 px, shuffled, unlabelled
    (tile with `blender-forge/tools/rarity_sheet.py lineup.png m1.png …
    --labels 1,2,…,8`). A reviewer who did not build them names each lord:

@@ -3,7 +3,7 @@
 **The pattern (our words):** at map distance an army is shown as a small
 squad of a few figures, the commander's banner and a troop-line icon —
 never a count-true crowd — so it reads and renders the same at 500 troops
-or 50,000. **Our version:** the LORD is recognised by his banner (house
+or 50,000. **Our version:** the LORD is recognised by the lord's own banner (house
 field + division + sigil), the squad shows the lead line and its tier, and
 the relationship (self / ally / enemy / neutral) lives in a reserved ring
 and the march line — never in the banner.
@@ -20,7 +20,7 @@ composition spec and the read tests.
 
 | Part | What it is | Real size | Built by |
 |---|---|---|---|
-| Banner | pole, crossbar, finial, cloth with the house field, division and sigil | pole 3.0 m, cloth 0.9 × 1.2 m, then ×1.6 for the map read (forms.md: ornament scaled up ~1.6×) | blender-forge (this file §3) |
+| Banner | pole, crossbar, finial, cloth with the house field, division and sigil | pole 2.6–3.0 m (Edwin's standard ≈ 2.6 m), cloth 0.9 × 1.2 m, then ×1.6 for the map read (forms.md: ornament scaled up ~1.6×) | blender-forge (this file §3) |
 | Lord map figure | the hall figure's map LOD walking at the front: same helm silhouette, mantle colour, signature object | 1.7–1.85 m | figure lane → LOD (§6) |
 | Squad | 1 / 3 / 5 figures of the lead line at the march's top tier | 1.7 m | hero3d people rig + soldier kit |
 | Line icon | the lead line's icon, the line accent as its rim | 36–44 px on screen | ui-forge + blender-forge |
@@ -51,7 +51,7 @@ token's targets at the map's three distances (PROPOSAL):
 
 ## 3. The banner — build recipe (blender-forge pipeline)
 
-- **Finial**: `examples/_template_asset.py` already builds a banner-pole
+- **Finial**: blender-forge `examples/_template_asset.py` already builds a banner-pole
   finial (lathed socket, wire wrap, bulb, spike); each lord's finial is a
   variant of it with the set motif (kit-sets.md §4).
 - **Pole and crossbar**: `lathe` profiles with a 2–3 mm bevel, iron
@@ -92,7 +92,7 @@ token's targets at the map's three distances (PROPOSAL):
 - Turns rotate over 200–300 ms (ease-in-out), never snap; arrival: squad
   settles, banner planted, idle.
 - Rallies and garrisons: the leading lord's banner on the front token; a
-  joined lord adds a small pennant of his colours, never a second full
+  joined lord adds a small pennant in that house's colours, never a second full
   banner (one lord per token reads fastest).
 
 ## 6. The lord's map figure (LOD of the hall figure)

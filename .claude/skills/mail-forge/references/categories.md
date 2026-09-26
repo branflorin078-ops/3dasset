@@ -35,8 +35,8 @@ Herald and Steward offices ([alliance.md](../../design-forge/references/alliance
 |---|---|---|---|---|---|---|---|---|
 | **Notices** | `n` | maintenance, patch notes, news, event opening notices, policy and security | send job (ops, liveops) | copied into each player's node ([backend-cost.md](backend-cost.md) §3) | never | template key + args + painted header id | never | never |
 | **Rewards** | `w` | event milestones (liveops R7), rankings (cosmetic), season chronicle, compensation, welcome, lord refit notes (lords.md) | send job | each player's node | yes — [attachments.md](attachments.md) | template key + args | yes, until claimed | never |
-| **Alliance** | `a` | officer mail to all members; alliance system mail to one member (alliance.md §13) | Liege or Herald office (function); alliance system (server) | alliance-wide: once per alliance · to one member: that member's node | never | officer text ≤ 1,000 characters, or a template | yes, unread and < 7 d old | alliance-wide: opt-in, ≤ 1 per day |
-| **Personal** | `l` | letters between players, diplomacy between alliance leaders | players (through the send function) | recipient's node | never — players cannot send goods (economy.md owns transfers) | plain text ≤ 500 characters + ≤ 1 share card | yes, from known senders, < 7 d old | known senders only, ≤ 1 per 30 min |
+| **Alliance** | `a` | officer mail to all members; alliance system mail to one member (alliance.md §13) | Liege or Herald office (function); alliance system (server) | alliance-wide: once per alliance · to one member: that member's node | never | officer text ≤ 1,000 characters, or a template | yes, unviewed and < 72 h old | alliance-wide: opt-in, ≤ 1 per day |
+| **Personal** | `l` | letters between players, diplomacy between alliance leaders | players (through the send function) | recipient's node | never — players cannot send goods (economy.md owns transfers) | plain text ≤ 500 characters + ≤ 1 share card | yes, from known senders, unviewed < 72 h | known senders only, ≤ 1 per 30 min |
 | **Reports** | `r` | a row per battle, defence, scout, rally, hunt order, daily gathering ledger | the report writer (resolver side) | each participant's node (row only) | never | report-forge content | never | never (battle-forge owns attack alerts) |
 
 **Requests** is a list inside Personal: letters from strangers wait there, text hidden until the
@@ -105,19 +105,20 @@ the delete, so no client bug and no batch action can do it.
 
 ## 4. Badges (red dots)
 
-The HUD letter icon shows ONE number badge (ui-forge rule 10: dots only for something claimable,
-idle or addressed to the player; core-loop A7: ≤ 3 dots at open for the median player).
+The HUD letter icon (H4 in ui-forge hud.md §3) shows ONE count. ui-forge hud.md §5 gives the
+priorities: an attachment is P2 (marked until claimed) and personal mail is P3 (marked 72 h
+unviewed). The core-loop A7 budget allows ≤ 3 marks at open for the median player.
 
 ```
 badge = unclaimed Rewards letters
-      + unread Personal letters from known senders, sent < 7 d ago
-      + unread Alliance mail (to you or alliance-wide), sent < 7 d ago
-      + unread account notices (statement of reasons, security) — the only Notices that count
-shown: 1–9, then "9+"; 32 px digits; hidden at 0
+      + unviewed Personal letters from known senders, sent < 72 h ago
+      + unviewed Alliance mail (to you or alliance-wide), sent < 72 h ago
+      + unviewed account notices (statement of reasons, security) — the only Notices that count
+shown: a count pill, 32 px digits, capped at "99+" (ui-forge hud.md §5); hidden at 0
 ```
 
-1. **Never counted**: Notices (except account notices), Reports, Requests, anything older than 7
-   days, and Kept.
+1. **Never counted**: Notices (except account notices), Reports, Requests, letters older than
+   72 h, and Kept (ui-forge: "unread system mail without an attachment" is never marked).
 2. Inside the screen every tab shows its own unread count, including Notices and Reports.
 3. **Batching**: arrivals within 10 s make ONE toast ("3 letters · 2 with rewards"). There is at most
    1 mail toast per 5 min, never over battle presentation (battle-forge), and never during a ceremony
@@ -153,9 +154,10 @@ needs the sender online. Sequence at resume:
    counter moved. The client runs the auto-claim and the lazy purge (§2).
 3. Opening the screen shows the local cache at once (≤ 300 ms, [ui.md](ui.md) §11). A delta fetch
    runs only if the head moved after step 2.
-4. Offline: the cache is readable. Claim, send and delete are disabled with the words "Needs a
-   connection". Nothing is queued to be sent later, so an offline tap can never grant or lose
-   anything.
+4. Offline: the cache is readable and marked "Saved 14:20". Claim, send and delete are disabled with
+   the words "Needs the realm road" (ui-forge states.md §4). Nothing is queued to be sent later, so an
+   offline tap can never grant or lose anything. Marking read is local and optimistic (ui-forge
+   allows it).
 5. A new phone or reinstall downloads the node once (the resync line in the cost model).
 
 ## 7. Letters — who may write, and the limits

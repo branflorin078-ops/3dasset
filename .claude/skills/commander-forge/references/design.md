@@ -160,7 +160,7 @@ never baked into any image.
    different banner division (token-lane.md §4).
 4. All three lanes are planned at once; a lord never ships with a figure and
    no portrait, or a portrait and no token.
-5. A reworked lord keeps his art; the rework notice and any refund are UI
+5. A reworked lord keeps the same art; the rework notice and any refund are UI
    (screens.md §6), not a repaint.
 
 ## 9. Failure modes

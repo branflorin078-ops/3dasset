@@ -9,7 +9,8 @@ The painted world is the product. The UI is the frame around it. It must never h
 the art, never make the player hunt for an action, and never talk about money
 where the player expects a war. This skill turns design-forge's UX principles
 (`design-forge/references/ux.md`) and each system's SYSTEM.md §9 into Godot 4
-scenes. Every rule has a number, and a harness checks every number.
+scenes. Every rule has a number, and every number has a check: a harness, a
+script in qa.md, or a measured screenshot.
 
 **Every value here is a PROPOSAL unless it quotes a canonical fact.** The owner's
 repo (D:/CastleConquest) is not in this folder. Check the shipped Theme, scenes
@@ -47,17 +48,17 @@ shipped value wins until the owner decides, and this skill records the differenc
    [references/icons.md](references/icons.md). Never white, monochrome, line or
    pixel glyphs. Never words baked into art.
 3. **One continuous space.** Castle ⇄ realm is one camera move (transition-forge,
-   ≤ 700 ms), and the HUD changes in place during it. No scene change, no loading
-   screen, no second HUD.
+   ≤ 700 ms). The HUD changes in place: a 150 ms crossfade when the camera crosses
+   B2 (`level_changed`). No scene change, no loading screen, no second HUD.
 4. **≤ 3 taps** from HUD rest to commit any core action
    ([architecture.md](references/architecture.md) §3). Every screen is ≤ 3 taps
    deep. Count taps from the route table and `ux_flow_probe`; never estimate them.
 5. **Touch.** Hit rects ≥ 132 px (≥ 7.0 mm on the device); ≥ 144 px (7.6 mm) for
-   primary and frequent actions and anything a design spec calls "48 dp". Hit rects never overlap. Visual targets are ≥ 16 px apart. A buy
-   button is ≥ 48 px (16 dp) from any frequently tapped control, and never sits
-   where Claim or Help all sit on other screens (monetization.md §9). No
-   horizontal gesture starts within 72 px of the left or right edge (the system
-   back gesture).
+   primary and frequent actions and anything a design spec calls "48 dp". Hit
+   rects never overlap. Visual targets are ≥ 16 px apart. A buy button is ≥ 48 px
+   (16 dp) from any frequently tapped control, and never sits where Claim or Help
+   all sit on other screens (monetization.md §9). No horizontal gesture starts
+   within 72 px of the left or right edge (the system back gesture).
 6. **Thumb zones.** An action used ≥ 3 times per check-in sits in the easy zone
    (y ≥ 1150, right hand by default; the Hand setting mirrors it). The top 700 px
    holds read-only information and entries used once a day or less
@@ -82,7 +83,8 @@ shipped value wins until the owner decides, and this skill records the differenc
    No red dot, rail slot, bubble or pulsing countdown on an offer.
 10. **Red dots only for something claimable, idle or addressed to the player.**
     ≤ 3 visible at session open for the median player (core-loop A7); ≤ 1 event
-    badge at a time (liveops C8). Dots auto-expire. Never on offers, news or "new
+    badge at a time (liveops C8). A claim dot clears only when claimed; an
+    "addressed" dot expires after 72 h unviewed. Never on offers, news or "new
     event" ([hud.md](references/hud.md) §5).
 11. **Every list and data screen ships all of its states**: loading, empty, error,
     offline, and locked where a gate applies. Each state has art, one line and one
@@ -110,8 +112,8 @@ shipped value wins until the owner decides, and this skill records the differenc
    SYSTEM.md → stop and route it to design-forge (game-director hard rule 9).
 2. **Read the shipped UI first.** Read the Theme resource, the screen's scene, the
    route table and the ledger rows (paths to confirm). Take a screenshot of the
-   current state at 1080×1920 before you change anything. That screenshot is the
-   "before" image.
+   current state at 1080×1920 before you change anything: the "before" image. Copy
+   every file you will touch into the dated checkpoint (game-director hard rule 2).
 3. **Route it.** Add or confirm its route string, entry points and tap depth
    ([architecture.md](references/architecture.md) §4–5). Core actions ≤ 3 taps.
 4. **Lay it out** on the 1080×1920 grid, in the HUD zones
@@ -196,3 +198,18 @@ A UI task is finished only when the reply carries all of these:
    constants), or the word "none".
 
 "Looks good" is not a result.
+
+## Owner decisions this skill is waiting for
+
+1. **Icon swap, family by family**: replace the shipped painted icons with
+   Blender-made ones (icons.md §8). Each family needs a checkpoint and a
+   side-by-side.
+2. **Minimum sizes against sibling proposals**: chat-forge proposes 34 px message
+   text, 26–28 px tab labels and a 120 px ticker hit. This skill requires 36 / 32 /
+   132 px. The stricter rule applies until the owner rules (qa.md §7).
+3. **Hand default**: right-hand layout by default, with the mirror in Settings
+   (hud.md §10).
+4. **Diegetic names** on the surfaces (architecture.md §8; core-loop §12.4).
+5. **HUD coverage budget**: ≈ 35% of the screen on this plan, with a clear window
+   of ≥ 40%. Keep it, or trim the ticker or the rail (hud.md §3; the numbers are
+   ux.md's to set).

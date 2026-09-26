@@ -6,13 +6,14 @@ cost), **world-forge** (nodes, seams, veins, territory), **shop-forge** (goods, 
 (resource bar, warehouse card), **qa-forge** (harness). Genre: [benchmark.md](benchmark.md) §3. **Every
 number is a PROPOSAL** unless canonical; check `data/buildings.gd`, `data/troops.gd`, `data/items.gd`
 (paths to confirm) first — a sacred constant keeps its shipped value and the gap goes to the owner
-(§16). `S1–S6` = keep stage ([progression.md](progression.md)).
+(§16). `S1–S6` = keep age I–VI (the `A` of [progression.md](progression.md)). Calendar used everywhere:
+progression.md §6, §9 engaged free founder — t6 on day 2, Age VI day 23, t10 day 32, keep 30 day 70 (casual 4 / 29 / 40 / 86).
 
 ## 0. The four questions
 
 - **Want**: the next upgrade's cost in hand; later the t6+ troops and Masterwork gear that iron buys.
 - **Obstacle**: income per hour (city + map), exposure of saved surplus above the warehouse, iron from t6.
-- **Wait**: week 1 — any upgrade costs ≤ 4 h of income (affordable after one gap); month 1 ≤ 12 h; endgame — a spine upgrade costs 2–5 days of income, saved under a pledge (§7).
+- **Wait**: keep level L costs `G · K(L)` hours of the median free player's income (progression.md §7): `G` < 1 to Age III (time gates), 1.0 / 1.2 / 1.4 in Ages IV–VI → keep 20 ≈ 15 h, keep 25 ≈ 4 days, keep 30 ≈ 14 days — saved under a pledge (§7).
 - **Witness**: plunder in reports and the alliance feed; territory on the map; prestige works on the keep (§3 layer 6).
 
 ## 1. Resources and the measuring hour
@@ -22,8 +23,8 @@ number is a PROPOSAL** unless canonical; check `data/buildings.gd`, `data/troops
 | food | bread and fodder | S1 | 1 | above allowance | yes | 2 : 1 |
 | wood | timber, shafts, bows | S1 | 1 | above allowance | yes | 2 : 1 |
 | stone | masonry, wall repair, siege shot | S2 | 1.5 | above allowance | yes | 2 : 1 |
-| iron | arms, armour, fittings | S2 (mine); throttle from t6 (§4) | 2 | above allowance | sender S4+ | buy 4 : 1 (≤ 2 H/day), sell 2 : 1 |
-| gold | coin: wages, research, lords, fees | S1 | 4 | above allowance | yes | 2 : 1 |
+| iron | arms, armour, fittings | S3 (mine, keep 11); troop cost from t6 (§4) | 2 | above allowance | sender S4+ | buy 4 : 1 (≤ 2 H/day), sell 2 : 1 |
+| gold | coin: wages, research, lords, fees | S2 (keep 6) | 4 | above allowance | yes | 2 : 1 |
 | gems | premium, bound to the account | — | — | never | never | — |
 | rp | research ink, bound to the account | S1 | — | never | never | never |
 
@@ -36,7 +37,7 @@ value. Gold is **not gathered** on the map — its home is people (taxes, trade,
 - `H(r) = max(P(r), ½ · I_med(S, r))`, where `I_med(S, r)` = the stage-median total hourly income of
   `r` for a free player (tuning table from §12, then telemetry). Sizes **rewards** (chests, events),
   the **warehouse allowance**, **transfer**, **market** and **plunder caps**. **Camps** pay in the
-  `I_med` of the stage their level serves ([world.md](world.md) ladder), never the attacker's H —
+  `I_med` of the stage their level serves ([world.md](world.md) §4: five camp levels per stage), never the attacker's H —
   a strong castle farming low camps earns low loot.
 
 Why two: `P(iron)` is ~20% of iron income late. Earned iron is measured generously (`H`), bought iron
@@ -50,12 +51,12 @@ delivery**, never later: holding an unopened reward must never grow its value.
 | food | 51% farms, mill | 29% fields | 6% | 13% | training 74 · upkeep 17 · healing 9 | 0.93 / 0.97 |
 | wood | 47% lumber, sawmill | 35% woods | 5% | 12% | construction 71 · training 26 · donations 3 | 0.99 / 0.99 |
 | stone | 33% quarry, stonemason | 54% outcrops | 6% | 7% | construction 93 · donations, wall repair 7 | 0.96 / 1.01 |
-| iron | 20% mine | 54% seams | 20% | 6% | t4+ training 66 · arms and gear 21 · S5+ fittings 14 | 0.94 / **1.13 named** |
+| iron | 20% mine | 54% seams | 20% | 6% | t6+ training 66 · lord gear, engines 21 · S5+ fittings 14 | 0.94 / **1.13 named** |
 | gold | 63% houses, market | 0% | 27% | 10% | research 55 · lords 26 · t4+ wages 11 · fees 9 | 1.03 / 1.04 |
 | gems | — | veins | — | events, milestones | hourglass finishes, goods, cosmetics | 0.92 / 1.17 |
 | rp | 100% library, academy, university | — | — | — | research 100 | 0.93 by design (the timer binds first) |
 
-All five in value: city 58% / map 21% / camps 9% / chests 12% in days 1–30 → 44 / 36 / 10 / 10 in
+All five in value: city 58% / map 21% / camps 9% / chests (daily + writ) 12% in days 1–30 → 44 / 36 / 10 / 10 in
 days 61–90. Archetype roles are PROPOSALS (verify which archetype yields what in `data/buildings.gd`).
 
 ## 3. Layered sinks
@@ -63,9 +64,9 @@ days 61–90. Archetype roles are PROPOSALS (verify which archetype yields what 
 | Layer | Sinks | Free share (vu, 61–90) | Grows with | Its job | Valve |
 |---|---|---|---|---|---|
 | 1 Growth | construction, research | 46% | levels (`C(L) = C1·r^(L−1)`, [numbers.md](numbers.md) §2) | the spine of progress | cost ratio `r` |
-| 2 Army | training, healing, upkeep, arms and gear | 49% | army size × tier, fights | ties war to the economy | upkeep `D(t)`, heal share |
+| 2 Army | training, healing, upkeep, lord gear, engines | 48% | army size × tier, fights | ties war to the economy | upkeep `D(t)`, heal share |
 | 3 Lords | lord levels and skills (gold) | 3% | lords ([lords.md](lords.md)) | investment in people | lord costs |
-| 4–5 Social, friction | donations, rally provisions · market spread, caravan tax, plunder spoil, moving the seat | 3% (one model line) | alliance; trade and raid volume | collective goods; anti-inflation, anti-farm | Merit; tax % |
+| 4–5 Social, friction | donations, rally provisions · market spread, caravan tax, plunder spoil | 3% (the fees+donations lines) | alliance; trade and raid volume | collective goods; anti-inflation, anti-farm | Merit; tax % |
 | 6 Prestige | works on the monument, wonder, palace: stat-free tiers, realm titles, feasts | 0% free; open-ended | surplus | absorbs the top without power | — |
 
 1. From its opening stage, every resource has ≥ 2 sink layers (stone: construction + wall repair and siege shot, [combat.md](combat.md) §10, siege-forge).
@@ -83,13 +84,14 @@ late throttle pushes players onto contested land — a gold wall rewards staying
 gates **growth, not fighting**: heal cost is ≤ 10% iron; (3) it exists already in the game and the
 fiction; (4) money cannot lift it (goods sized in `P`, §1).
 
-Troop cost mix — share of one unit's value (same total value per tier across lines, [combat.md](combat.md) rule 1):
+Troop cost mix — share of one unit's value (equal quality, so equal value, per tier across lines: [combat.md](combat.md) §3 rule 1;
+iron from t6, [progression.md](progression.md) §6):
 
 | Band | food | wood | iron | gold | Line signature at t6–t8 (food/wood/iron/gold) |
 |---|---|---|---|---|---|
 | t1–t3 | 55 | 45 | 0 | 0 | infantry 35/15/40/10 · spearmen 35/30/25/10 |
-| t4–t5 | 45 | 30 | 20 | 5 | archers 35/35/20/10 · crossbows 30/20/40/10 |
-| t6–t8 | 35 | 20 | 35 | 10 | cavalry 45/10/35/10 (fodder, barding, shoes) |
+| t4–t5 | 50 | 45 | 0 | 5 | archers 35/35/20/10 · crossbows 30/20/40/10 |
+| t6–t8 (mean of the lines) | 36 | 22 | 32 | 10 | cavalry 45/10/35/10 (fodder, barding, shoes) |
 | t9–t10 (cavalry t11) | 30 | 15 | 40 | 15 | siege engines: wood 50 / stone 20 / iron 20 / gold 10 (siege-forge) |
 | heal, any tier: 30% of training value | 60 | 10 | ≤ 10 | 20 | within combat.md H6 (≤ 40%) |
 

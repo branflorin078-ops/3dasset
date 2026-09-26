@@ -243,8 +243,8 @@ func apply_claimed(letters: Dictionary) -> void:          # id -> letter from th
 | Request | one PATCH with every selected id's `c` (≤ 50 ids) over cloud.gd's open connection, `print=silent` | one function call, ≤ 20 ids |
 | Success | HTTP 204 → set `c` locally → `apply_claimed` → one ceremony | `out[id].r` GRANTED or ALREADY → update the balance → same ceremony |
 | Refused | HTTP 401 → GET the delta → ids that are still claimable are sent again ONCE; the rest show their reason from the fetched state (claimed elsewhere → counted as success; expired; revoked) | per-id reason codes |
-| No answer | retry the same body after 1 s and 3 s; then GET and decide as above | retry the same ids after 1 s and 3 s; then at next start |
-| Offline | buttons disabled, "Needs a connection" — nothing is queued | same |
+| No answer (10 s) | **no automatic re-send** (ui-forge states.md §2): the client GETs the letters (an idempotent read, retried 1 s, 2 s, 4 s) and shows the true state; if still unclaimed the button returns to Claim, and a new tap is safe | same: the next start re-calls letters with `c` and no confirmed answer (§6 rule 4) |
+| Offline | buttons disabled, "Needs the realm road" (ui-forge wording) — nothing is queued | same |
 
 - **Claim-all** sends the Class I PATCH and the Class P call in parallel. It shows one merged
   summary ("Claimed from 7 letters · 1 expired") and one ceremony ([ui.md](ui.md) §5).
@@ -252,7 +252,8 @@ func apply_claimed(letters: Dictionary) -> void:          # id -> letter from th
   `c` is claimed through the same two paths. A digest line appears: "The Chancery claimed 3 rewards
   for you." There is no ceremony. Overflow above 200 Rewards letters auto-claims the oldest the same
   way.
-- A claim never waits on a push notification, a timer or a server tick.
+- A claim never waits on a push notification, a timer or a server tick. During Busy a second tap
+  does nothing (ui-forge); if it did send, the gate would refuse it anyway.
 
 ## 8. Send-once — game-sent letters
 

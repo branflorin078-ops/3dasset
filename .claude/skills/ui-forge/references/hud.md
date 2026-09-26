@@ -95,7 +95,7 @@ count toward the budget.
 
 | Priority | Source | Mark | Clears when | Expires |
 |---|---|---|---|---|
-| P1 | a claim that ends in < 24 h; a war call the player pledged to | dot | claimed / answered | at the claim's end (the reward is auto-claimed at reset, core-loop §7.4) |
+| P1 | a claim that ends in < 24 h; a war call the player pledged to | dot | claimed / answered | at the claim's end (daily chests auto-claim at reset, core-loop §7.4; event rewards go to mail, liveops R7) |
 | P2 | a claimable reward: chest, attachment, milestone, gift | dot | claimed | never, until claimed |
 | P3 | addressed to the player: @mention, personal mail, application (officers) | dot or count | viewed | 72 h unviewed |
 | P4 | an idle plate | Idle tag on its chip | the plate starts | never |
@@ -123,7 +123,7 @@ One always-visible tracker holds every plate (core-loop §2 rule 2). An idle pla
 from running (architecture.md §3).
 
 **Chip (132 × 132)**: plate-type icon 72 px (Blender art, icons.md). Around the icon, a 6 px
-progress ring (GILT on INK 40%) for the plate that ends soonest. At the bottom, a tag of
+progress ring (GILT on a solid INK track, 7.26:1) for the plate that ends soonest. At the bottom, a tag of
 88 × 40 with the busy count "2/3" in 32 px bold INK on PARCHMENT. **Idle**: the frame gets a
 6 px GILT_LIT outline, and the tag says "Idle" instead of the count. Not colour alone, never
 flashing.
@@ -197,10 +197,10 @@ two-step, components.md §5).
 
 ## 9. Ticker, next goal, digest, Help all
 
-- **Chat ticker (H9)**: the last line of the selected channel (alliance by default). Sender in
-  bold, 36 px, one line, cut with an ellipsis. Rally calls and system lines start with their
-  icon. Mentions show a count pill at its end. It is hidden while a full screen is open.
-  Settings can turn it off.
+- **Chat ticker (H9)**: the last line of the selected channel (chat-forge ui.md §1 owns the
+  source and cadence rules). Sender in bold, 36 px, one line, cut with an ellipsis. Rally calls
+  and system lines start with their icon. Mentions show a count pill at its end. Hidden while
+  a full screen, a battle presentation or a ceremony is on screen. Settings can turn it off.
 - **Next-goal card (H8)**: one goal (data from gameplay-forge / story-forge): icon 96, one
   line ≤ 40 characters in English at 36 px, then progress ("2/3") or time. A tap opens its
   route. The card stays stable until the goal is done; then a 1.5 s seal (feel-forge) and the

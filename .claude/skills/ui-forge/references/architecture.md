@@ -40,7 +40,7 @@ and its thresholds with hysteresis. ui-forge maps every HUD element onto its lev
 | Status bubble | 104 px visual, 144 hit | live | resolves itself | world | one action on one building (hud.md §7) |
 | Drawer | 720 × ≤ 1100, from the hand-side edge, bottom at y 1416 | live, dimmed 30% | tap outside, swipe to the edge, back | HUD | the tracker's plate lists (hud.md §6) |
 | Sheet | snap heights 40% / 70% / 92% (768 / 1344 / 1766 px) | live, dimmed 40%; camera frames the subject above | drag down ≥ 25% of its height or fling ≥ 1800 px/s; tap on the dimmed world; back | HUD, drawer | a building card, a tile, a resource, a lord preview |
-| Full screen | whole safe area | paused (`disable_3d`), motion.md §5 | back control (footer, hand side), system back | HUD | deep management: lords, alliance, research tree, shop, settings, rankings |
+| Full screen | whole safe area | paused (`disable_3d`), motion.md §5 | back control (footer corner opposite the hand, §6.3), system back | HUD | deep management: lords, alliance, research tree, shop, settings, rankings |
 | Picker | sheet at 40% | the surface below, dimmed 40% | choose, or back | sheet, full screen | hourglasses, quantity, lord preset |
 | Modal | ≤ 960 wide, height fits content | scrim INK 60% | explicit buttons only | any | irreversible or paid confirms, ≤ 1 at a time |
 | Toast | 880 × ≤ 2 lines, y 316 | untouched | time, swipe up, tap → deep link | any | results, social moments, errors that need no decision |
@@ -49,8 +49,9 @@ and its thresholds with hysteresis. ui-forge maps every HUD element onto its lev
 Choosing rules:
 1. **A sheet if the player must keep seeing the world** (building, tile, march). A full
    screen only when the content needs > 1766 px of height or > 5 sections.
-2. **A modal only for a decision that costs something that cannot be undone**: gems ≥ the
-   two-step threshold, dismissing troops, leaving an alliance, breaking the peace ward
+2. **A modal only for a decision that costs something that cannot be undone**: gems at or
+   above shop-forge's large-spend threshold (smaller gem spends use the two-step Premium
+   button, components.md §5), dismissing troops, leaving an alliance, breaking the peace ward
    (onboarding.md §4), spending an item worth ≥ 8 h. Never a modal to say "done": that is
    a toast.
 3. **Never two modals.** A second confirm inside a modal replaces it.
@@ -112,7 +113,7 @@ HUD REST (castle or realm)
 │   └─ batch tab (while it applies): Refill all · Heal all · Resend all (1) → confirm (2)
 ├─ H7 Help all (1)         H8 next-goal card → target surface (1) → act (2)
 ├─ H9 chat ticker ──────── chat (1) [chat-forge]
-├─ WORLD TAP  castle: building → building card sheet (1) → Upgrade / function tab (2) → act (3)
+├─ WORLD TAP  castle: building → building card sheet (1) → Upgrade (2) · Work → function surface (2) → act (3)
 │             realm:  tile → tile sheet (1) → Scout / Attack / Gather / Rally (2) → composer → Send (3)
 └─ H10 bottom bar
     ├─ Lords ───────────── roster (1) → lord (2) → tab: skills · talents · gear · pairing (3)

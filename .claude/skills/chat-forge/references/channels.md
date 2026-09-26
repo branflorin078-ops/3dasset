@@ -184,10 +184,11 @@ pushes cannot overspend it between them.
 
 - **Slots**: chat's own rows (whispers, mentions, `@all`, `@council`) use at most **2 of the 4**
   A8 slots per day by default; alliance.md adds ≤ 1 alliance push per member per day besides
-  pledged rallies. When the counter is full, pledged-rally pushes still go (the player pledged —
-  ui-forge hud.md §5 treats a pledged war call as P1) and everything else waits for the next
-  in-game session as an unread count. A player who turns on "every whisper" may exceed A8 for
-  whispers only — the player's explicit choice (owner decision #4 in SKILL.md).
+  pledged rallies. **Priority when slots run short**: pledged rally (ui-forge hud.md §5 treats
+  a pledged war call as P1; one slot stays reserved on a day the player has a pledge) > whisper >
+  mention > `@all`/`@council` > rally launched. What does not fit waits for the next session as
+  an unread count — A8 is never exceeded, except by a player's own "every whisper" setting
+  (owner decision #4 in SKILL.md).
 - **Quiet hours** hold every chat push until 08:00 local, then deliver ONE grouped push
   ("3 whispers, 1 mention"), which uses one slot.
 - Message text on the lock screen: opt-in, adults only.
@@ -198,7 +199,8 @@ pushes cannot overspend it between them.
 - **Language rooms**: when ≥ 20% of a realm's weekly senders write in one other language
   (server language-id on sent text), the realm offers `r:<realm>:<lang>`; fan-out per room is
   smaller, so cost falls. Players choose their room; the realm room stays.
-- **Season / cross-realm coalition channel** (design-forge liveops.md seasons): one channel per
+- **Season / cross-realm coalition channel** (design-forge liveops.md §3 campaign seasons on
+  world.md §14's Debatable Land): one channel per
   coalition; fan-out = coalition online members. Add its line to the cost tool (`mix` + a
   recipients term) before it ships; cap 20 msg/min like a realm.
 - **Voice**: out of scope (moderation cost and minors risk); any proposal goes to the owner.
@@ -212,6 +214,8 @@ pushes cannot overspend it between them.
 | Tidings floods the Fireside in a war hour (> 30 lines) | [ ] Tidings merge unit test at 100 events/hour |
 | `@all` used more than 3 times a day | [ ] server cap test |
 | Chat push arrives in quiet hours or for Market Cross | [ ] `chat_push_probe` with a fake clock |
+| Chat + alliance + battle pushes pass 4 in one day for one player | [ ] `chat_push_probe` day replay with all three sources: ≤ 4 unless "every whisper" is on |
+| A help line or a warning line appears in Tidings | [ ] Tidings merge unit test fed alliance.md §13's event list |
 | Council history visible to a newly promoted member | [ ] membership probe promotion case |
 
 ## 11. Channel checklist (any change to channels)
@@ -221,4 +225,5 @@ pushes cannot overspend it between them.
 - [ ] Cost tool line updated (`mix`, recipients, retention) and re-run; result pasted.
 - [ ] Push row decided (default off unless it is a whisper, a mention or a rally).
 - [ ] Membership events (join, leave, kick, disband, migrate, block, delete) each have a rule.
-- [ ] Diegetic name sent to story-forge; strings to l10n-forge.
+- [ ] Diegetic name sent to story-forge; strings to l10n-forge; the name grepped across every
+      skill first (the Hall/Herald clash of the naming note in §1 must not repeat).

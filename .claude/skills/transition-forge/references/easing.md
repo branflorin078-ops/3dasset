@@ -19,6 +19,7 @@ done (measured numerically). The peak factor is what the comfort check uses.
 | `QUAD_OUT` | `1 − (1 − t)²` | `TRANS_QUAD`, `EASE_OUT` | `'QUAD'`, `'EASE_OUT'` | 2.00 | 0.00 | 0.68 | 0.90 | tap responses: moves on the next frame (focus pan, zoom step, cold-open dolly) | moves > 1 doubling |
 | `QUAD_IN` | `t²` | `TRANS_QUAD`, `EASE_IN` | `'QUAD'`, `'EASE_IN'` | 2.00 | 1.00 | 0.95 | 0.99 | gravity (`s = ½at²` is exactly quadratic): falls, slams, impacts | camera |
 | `CUBIC_OUT` | `1 − (1 − t)³` | `TRANS_CUBIC`, `EASE_OUT` | `'CUBIC'`, `'EASE_OUT'` | 3.00 | 0.00 | 0.54 | 0.78 | rubber-band return (small distances) | camera moves > 0.25 screen |
+| `QUART_OUT` | `1 − (1 − t)⁴` | `TRANS_QUART`, `EASE_OUT` | `'QUART'`, `'EASE_OUT'` | 4.00 | 0.00 | 0.44 | 0.68 | camera micro-moves ≤ 5% of distance slaved to a ui-forge tween (the full-screen push-in with `full_in`) | anything larger |
 | `CUBIC_IO` | Penner | `TRANS_CUBIC`, `EASE_IN_OUT` | `'CUBIC'`, `'EASE_IN_OUT'` | 3.00 | 0.50 | 0.71 | 0.86 | UI only (ui-forge) | zooms (3× peak) |
 | `CAM_ARRIVE` | CSS `cubic-bezier(0.35, 0, 0.25, 1)` | code (§2) | Bézier handles or sample | 2.43 | 0.29 | 0.65 | 0.88 | jump-to, focus + zoom, the battle dive: gentle start, early peak, long readable arrival | — |
 | `CAM_SETTLE` | back-out, `s = 0.65` → **1.49% overshoot** | code (§2) | `'BACK'`, `keyframe.back = 0.65` | — | — | — | — | the one allowed camera overshoot (focus arrival, full motion only) | reduced motion |

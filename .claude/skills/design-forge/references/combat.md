@@ -1,6 +1,8 @@
 # Combat — the counter ring, tier-steps, losses that cost time, marches as functions of time
 
-The RULES and NUMBERS of fighting. Owners: **gameplay-forge** (frozen resolver, troop data, save), **battle-forge** (the attack and defence experience, played from the resolver's beats), **siege-forge** (engines, inside the class limits of §4), **report-forge** (the "why", from the cause ledger of §12), **world-forge** (marches on the map), **cloud-forge** (march storage, arrival jobs), **qa-forge** (the combat probe, §14). Genre patterns: [benchmark.md](benchmark.md) §combat.
+The RULES and NUMBERS of fighting. Owners: **gameplay-forge** (frozen resolver, troop data, save), **battle-forge** (the attack and defence experience, played from the resolver's beats), **siege-forge** (engines, inside the class limits of §4), **report-forge** (the "why", from the cause ledger of §12), **world-forge** (marches on the map), **cloud-forge** (march storage, arrival jobs), **qa-forge** (the combat probe, §14). Genre patterns: [benchmark.md](benchmark.md) §4.
+
+**Reference model**: `tools/combat_model.py` (plain Python, deterministic) prints every table below; run from `design-forge/`: `python tools/combat_model.py all` → `COMBAT MODEL OK - …`; tests: `python tests/test_combat_model.py` → `PASS all 14 tests`. Each section names its sub-command. After the probe measures the shipped α and r, re-run with `--alpha` and `--r`.
 
 **Every number here is a PROPOSAL** unless it quotes a canonical fact. The counter table, tier stats and resolver constants may be sacred balance constants: measure the shipped game first (§14 step 0); where it differs, the shipped value stays and the gap goes to the owner (§15). Quoted, never redefined: banners (march slots), infirmary, war windows (≤ 60 min, two a day, 12 h apart), Resolve — [core-loop.md](core-loop.md); spine stages `S1–S6` and troop-tier bands — [progression.md](progression.md); the peace ward — [onboarding.md](onboarding.md) §4; lord pairing and skills — [lords.md](lords.md); plunder and protection — [economy.md](economy.md); visibility and relocation — [world.md](world.md).
 
@@ -15,7 +17,7 @@ The RULES and NUMBERS of fighting. Owners: **gameplay-forge** (frozen resolver, 
 
 Every advantage — a tier, a counter, a lord pair, walls, more troops — is measured in ONE unit, so it can be compared, capped and explained. **1 TS = the strength of one troop tier.**
 
-Reference model (for tuning; the frozen resolver's shape wins and the probe measures it): per round a side deals damage `∝ q · N^α` ([numbers.md](numbers.md) §4), so strength is `S = q · N^(1+α)` (N troops, q = attack × HP × multipliers per troop); a fight draws when `S_A = S_B`. The draw condition holds for fights to the end and to a shared rout threshold, and to first order for fixed round counts judged by fraction lost.
+Reference model (for tuning; the frozen resolver's shape wins and the probe measures it): per round a side deals damage `∝ q · N^α` ([numbers.md](numbers.md) §4), so strength is `S = q · N^(1+α)` (N troops, q = attack × HP × multipliers per troop); a fight draws when `S_A = S_B`. For pure-line fights the draw is exact at every round, so it holds for fights to the end, to a shared rout threshold and for fixed round counts judged by fraction lost (`units` prints r = 1.400 for all three); mixed marches follow it within §2 rule 6's tolerance.
 
 | Symbol | Meaning | PROPOSAL | Measured by (§14) |
 |---|---|---|---|
@@ -23,7 +25,7 @@ Reference model (for tuning; the frozen resolver's shape wins and the probe meas
 | r | draw ratio: t(n) troops per t(n+1) troop, same line, no modifiers | 1.40 | tier test |
 | Q = r^(1+α) | quality step per tier (attack × HP per troop) | 1.71 (attack and HP ×1.31 each) | — |
 | TS of a multiplier M; of a troop ratio x | `ln M / ln Q`; `ln x / ln r` | 2× troops = +2.06 TS | ablation |
-| E-point ([lords.md](lords.md) §6: % extra troops for a draw) | `TS = ln(1 + E/100) / ln r` | 1 TS = 40 E; 30 E = 0.78 TS | mirror test |
+| E (the mirror test's raw output: % extra troops the other side needs for a draw) | `TS = ln(1 + E/100) / ln r` | 1 TS = 40 E; 0.50 TS = 18.3 E ([lords.md](lords.md) counts in cTS = 0.01 TS) | mirror test |
 | R_med | rounds in a median field battle (lords.md's Order cadence uses it) | 24 (verify) | median over the LOSS battery |
 
 | TS | q multiplier | e.g. attack / damage taken | same as troops × |
@@ -33,11 +35,11 @@ Reference model (for tuning; the frozen resolver's shape wins and the probe meas
 | 1.00 | 1.71 | +31% / −24% | 1.40 |
 | 2.00 | 2.94 | +71% / −42% | 1.96 |
 
-Why this unit: any resolver can be measured in it (bisect the troop count until the fight draws); factors add in log space, so a battle's causes sum to its margin (§12); a player reads "worth one tier" without a formula. The tables below come from the reference model: per side and round, damage `K · N^α · mean attack`, split by attacker weight × target share × the pair's counter factor, losses = damage / HP. qa-forge keeps it beside the probe (path to confirm).
+Why this unit: any resolver can be measured in it (bisect the troop count until the fight draws); factors add in log space, so a battle's causes sum to its margin (§12); a player reads "worth one tier" without a formula. The tables below come from the reference model (`python tools/combat_model.py units`; any bonus: `ts --mult 1.08 --ratio 1.5 --extra 30`): per side and round, damage `K · N^α · mean attack`, split by attacker weight × target share × the pair's counter factor, losses = damage / HP; attack = HP = `Q^((t−1)/2)` per troop; K 0.05, 400 rounds, 10,000 troops a side.
 
-## 2. The five lines and the counter ring
+## 2. The five lines and the counter ring — PROPOSAL, owner decision
 
-**Spearmen → Cavalry → Crossbows → Archers → Infantry → Spearmen** ("→" = hunts). Said aloud: *the pike stops the horse, the horse rides down the bolt, the bolt beats the bow, the bow breaks the blade, the blade gets inside the pike.*
+**Spearmen → Cavalry → Crossbows → Archers → Infantry → Spearmen** ("→" = hunts). **This ring and its size (§15 #2) are PROPOSALS and likely sacred balance constants**: read the shipped counter table first (`data/troops.gd`, path to confirm); if it differs, the shipped graph stays and this ring goes to the owner. battle-forge, report-forge, progression.md and the art cues of units.md follow whichever ring is decided. Said aloud: *the pike stops the horse, the horse rides down the bolt, the bolt beats the bow, the bow breaks the blade, the blade gets inside the pike.*
 
 | Line (accent) | Hunts | Why (historical flavour, approximate) | Hunted by | The art must show ([units.md](../../game-art-director/references/units.md)) |
 |---|---|---|---|---|
@@ -49,7 +51,7 @@ Why this unit: any resolver can be measured in it (bisect the troop count until 
 
 1. **One hunt, one hunter** per line: 5 of the 10 pairings are counters, 5 are neutral. Five facts, one sentence, one ring icon (Blender-made, in the five accents — ui-forge; never a line glyph).
 2. **A counter is worth exactly 1.0 TS** in a pure-line fight: t(n) hunters draw t(n+1) prey at equal count (`t(n) + counter ≈ t(n+1)`, numbers.md §4); against t(n+2) prey they lose by 1 TS.
-3. **Two-sided, one dial**: the hunter deals `+c` damage to its prey and takes `c` less damage from it, so `(1+c)/(1−c) = Q` and `c = (Q−1)/(Q+1)`. Read c from the MEASURED α and r, never by feel. All values sit inside numbers.md's +20–50% band; a one-sided counter would need +57% to +107% for the same 1 TS.
+3. **Two-sided, one dial**: the hunter deals `+c` damage to its prey and takes `c` less damage from it, so `(1+c)/(1−c) = Q` and `c = (Q−1)/(Q+1)`. Read c from the MEASURED α and r, never by feel (`python tools/combat_model.py counter`). All values sit inside numbers.md's +20–50% band (22–35%); a one-sided counter would need +57% to +107% for the same 1 TS.
 
    | α \ r | 1.35 | 1.40 | 1.50 |
    |---|---|---|---|
@@ -60,19 +62,19 @@ Why this unit: any resolver can be measured in it (bisect the troop count until 
 
 4. **The counter is a constant**, the same for every player, shown as "worth one tier". No talent, gear, research, title, item or event changes c — a counter you can buy up is a spending stat. It is its own multiplicative category, never added into a bonus pool: +26% added to a pool already at +150% is worth 10%. The genre's 5% counter, invisible under stacks, is exactly this mistake.
 5. **Cavalry t11** (Legendary Knight) is the one apex rung; Dragoon Pikemen (spearmen t10) at the brace draw it by rule 2. Any other 11th tier is an owner decision.
-6. **Mixed marches dilute counters.** Matchup index `MI = Σ_i Σ_j sA_i · sB_j · C_ij` (s = troop share; C = +1 hunts, −1 hunted, 0 neutral). In the reference model the counter swing in TS equals MI within ±7%. Worked, t5, equal counts:
+6. **Mixed marches dilute counters.** Matchup index `MI = Σ_i Σ_j sA_i · sB_j · C_ij` (s = troop share; C = +1 hunts, −1 hunted, 0 neutral). In the reference model the counter swing in TS equals MI within 7.0% where |MI| ≥ 0.1, within 0.02 TS where MI = 0 (largest gap 0.035 TS). Worked, t5, equal counts — simulated TS (MI), `python tools/combat_model.py mix`:
 
    | Ours ↓ / enemy → | even 5 × 20% | cavalry 60%, others 10% | crossbows 40, archers 40, infantry 20 |
    |---|---|---|---|
-   | even 5 × 20% | 0.00 | +0.01 | +0.01 |
-   | spearmen 60%, others 10% | −0.01 | +0.25 | −0.10 |
-   | spearmen 100% | −0.02 | +0.47 | −0.21 |
-   | cavalry 50, crossbows 30, infantry 20 | −0.01 | −0.15 | +0.24 |
-   | cavalry 100% | −0.02 | −0.01 | +0.38 |
+   | even 5 × 20% | +0.00 (0.00) | +0.01 (0.00) | +0.01 (0.00) |
+   | spearmen 60%, others 10% | −0.01 (0.00) | +0.24 (+0.25) | −0.10 (−0.10) |
+   | spearmen 100% | −0.02 (0.00) | +0.46 (+0.50) | −0.21 (−0.20) |
+   | cavalry 50, crossbows 30, infantry 20 | −0.01 (0.00) | −0.15 (−0.15) | +0.24 (+0.24) |
+   | cavalry 100% | −0.02 (0.00) | −0.01 (0.00) | +0.38 (+0.40) |
 
-   Read it: an even split is safe and gains nothing; a scouted counter-pick gains +0.25 to +0.5 TS; a wrong guess costs as much. That is what scouting buys (§11), and why money-driven stat gaps are capped inside it (§5).
+   Read it: an even split is safe and gains nothing; a scouted counter-pick gains +0.24 to +0.46 TS (MI +0.24 to +0.50); a wrong guess costs as much. That is what scouting buys (§11), and why money-driven stat gaps are capped inside it (§5).
 7. The send and rally screens show MI from the latest scout as "+0.4 tier" with the scout's age (battle-forge presents; the value comes from this rule).
-8. **The ring is whole only when all five lines are open.** Until crossbows open, cavalry has no prey and archers no hunter. progression.md opens crossbows in Age III (engaged free: day 1–3), inside the 7-day peace ward, so no PvP runs on a broken ring; Age II camps ([world.md](world.md)) field ≤ 40% archers. Line halls teach the ring in this order: archers hunt infantry (Age I); spearmen stop cavalry, infantry get inside spearmen (Age II); crossbows beat archers, cavalry rides down crossbows (Age III).
+8. **The ring is whole only when all five lines are open.** Until crossbows open, cavalry has no prey and archers no hunter. progression.md opens crossbows in Age III (free players: day 1–2, progression.md §6), inside the 7-day peace ward, so no PvP runs on a broken ring; camps a player meets before Age III field ≤ 40% archers (PROPOSAL to [world.md](world.md) §4). Line halls teach the ring in this order: archers hunt infantry (Age I); spearmen stop cavalry, infantry get inside spearmen (Age II); crossbows beat archers, cavalry rides down crossbows (Age III).
 
 Rejected: each line hunting two (10 relations, no single sentence); crossbows hunting cavalry "because bolts pierce armour" (with cavalry hunting crossbows it makes a mutual pair — no rule left); a pierce trait that ignores tier armour (breaks rule 2); a three-line triangle with spearmen and crossbows as sub-types (wastes two canonical lines).
 
@@ -84,12 +86,12 @@ Rejected: each line hunting two (10 relations, no single sentence); crossbows hu
 
 ## 3. Tiers, power, mass versus quality
 
-Power per troop `p_t = 10 · r^(t−1)` — numbers.md §3 with `k = r`, so equal power means an even fight between neutral lines with equal stacks. Display names: units.md.
+Power per troop `p_t = 10 · r^(t−1)` — numbers.md §3 with `k = r`, so equal power means an even fight between neutral lines with equal stacks. Display names: units.md. Table: `python tools/combat_model.py tiers`.
 
 | Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 (cav) |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Power per troop | 10 | 14 | 20 | 27 | 38 | 54 | 75 | 105 | 148 | 207 | 289 |
-| Quality q (× t1) | 1 | 1.71 | 2.94 | 5.03 | 8.6 | 14.8 | 25.3 | 43.3 | 74.2 | 127 | 218 |
+| Quality q (× t1) | 1 | 1.71 | 2.94 | 5.03 | 8.61 | 14.8 | 25.3 | 43.3 | 74.2 | 127 | 218 |
 | Cost per power (× t1) | 1.00 | 1.04 | 1.07 | 1.11 | 1.15 | 1.19 | 1.23 | 1.28 | 1.32 | 1.37 | 1.42 |
 
 1. **Equal quality per tier across lines** (±5%). Lines differ in counters, speed and load, never in raw strength.
@@ -126,36 +128,38 @@ A march moves at its slowest line × (1 + speed pool, ≤ +50%) × terrain (worl
 
 ## 5. Modifier stacks and the lord cap — stats never bury the counter
 
+Table and checks: `python tools/combat_model.py stack` (try other caps with `--lords --realm --temp --cap`).
+
 | Pool | What is in it | Max | q × at max |
 |---|---|---|---|
 | Counter | ring position (§2) — its own category, never modified | ±1.0 TS pure; MI in a mix | 1.71 |
-| Lords | the maxed pair of [lords.md](lords.md) §6: primary level, talents, four-piece set, skills + the secondary's skills | 0.78 TS (30 E) | 1.52 |
-| Realm | research, buildings, titles, alliance charters (+1.5% attack, defence, health ≈ 0.05 TS — [alliance.md](alliance.md)) | 0.30 TS | 1.18 |
-| Temporary | earned items, event boosts, war-window buffs — never sold ([monetization.md](monetization.md)) | 0.15 TS | 1.08 |
-| Structures (defender) | walls and towers, §10 | 0.50 TS × W/W_max | 1.31 |
-| **All non-counter pools** | | **1.25 TS** | 1.96 |
+| Lords | the maxed pair of [lords.md](lords.md) §6: primary level steps, talents, gear and set, skills + the secondary's Order and Passive I | 0.50 TS | 1.31 |
+| Realm | research, buildings, titles, alliance charters (+1.5% attack, defence, health ≤ 0.08 TS: `ts --mult 1.015` × 3 — [alliance.md](alliance.md)) | 0.50 TS | 1.31 |
+| Temporary | earned items, event boosts, war-window buffs — never sold ([monetization.md](monetization.md)) | 0.25 TS | 1.14 |
+| **All non-counter pools** (lords + realm + temporary) | | **1.25 TS** | 1.96 |
+| Structures (defender only, outside the 1.25) | walls and towers, §10; engines exist to remove it | 0.50 TS × W/W_max | 1.31 |
 
-1. Additive inside a pool, multiplicative across pools (numbers.md §9), clamped at resolve time. The clamps are entries in gameplay-forge's clamp ledger (names to confirm). Lord utilities (march speed, structure damage, dead → severe ≤ 10 points) sit outside E under lords.md §6 rule 3 caps.
-2. **Visible caps**: the lord screen shows "Lord strength 0.62 / 0.78 tier"; a capped pool says "Capped". No investment silently does nothing.
-3. **I1 — counter beats stack** (lords.md §6 rule 1 in TS): pure lines, equal tier and count, a counter army with NO lords beats the prey with a maxed pair, +1.0 − 0.78 = +0.22 TS; at the median free day-30 stack it beats the prey at the MAXIMUM stack, +1.0 − (1.23 − 0.60) = +0.37 TS.
-4. **I2 — scouting answers money**: on the same day the heavy spender's lead over the median free player's main march is ≤ 0.30 TS — inside a scouted counter-pick (+0.25 to +0.5 TS).
-5. **I3 — said honestly**: in MIXED marches a maxed pair against an unbuilt one (0.78) outweighs the composition swing (≤ 0.5); once both pairs are built, counters decide. The free focus pair is built by day ≈ 57 (lords.md §0), so this window is the first two months.
+1. Additive inside a pool, multiplicative across pools (numbers.md §9), clamped at resolve time. The clamps are entries in gameplay-forge's clamp ledger (names to confirm). Lord utilities (march speed ≤ +15%, structure damage ≤ +20%, severe → light ≤ 10 points) sit outside TS under lords.md §6 rule 2's caps.
+2. **Visible caps**: the lord screen shows "Lord strength 0.42 / 0.50 tier"; a capped pool says "Capped". No investment silently does nothing.
+3. **I1 — counter beats stack**: pure lines, equal tier and count, a counter army with NO lords beats the prey with a maxed pair by +1.0 − 0.50 = +0.50 TS; at the median free day-30 stack (0.35) it beats the prey at the MAXIMUM stack, +1.0 − (1.25 − 0.35) = +0.10 TS (day 90: +0.35).
+4. **I2 — scouting answers money**: on the same day the heavy spender's lead over the median free player's main march is ≤ 0.30 TS (the targets below peak at 0.25) — less than a pure scouted counter-pick (+0.46 TS, §2 rule 6).
+5. **I3 — lords matter, never alone**: the lord pool is half a counter. In a mixed march a maxed pair against an unbuilt one (0.50) weighs about as much as the best scouted pick (+0.46); a pure counter (1.0) beats either. A lord changes fights through when and where its skills act (lords.md §5); its stat share is capped.
 
-Stack targets, main march (TS, lords + realm; lords.md, progression.md, alliance.md and monetization.md land inside them):
+Stack targets, main march (TS, all non-counter pools; lords.md, progression.md, alliance.md and monetization.md land inside them):
 
-| Day | Free (median) | Heavy | Heavy − free |
-|---|---|---|---|
-| 7 | 0.20 | 0.45 | 0.25 |
-| 30 | 0.60 | 0.88 | 0.28 |
-| 90 | 0.93 | 1.03 | 0.10 |
-| 180 | 1.03 | 1.08 | 0.05 — money buys time to the cap, never a higher cap |
+| Day | Free (median) | of it: lords (lords.md §6) | Heavy | Heavy − free |
+|---|---|---|---|---|
+| 7 | 0.15 | 0.12 | 0.35 | 0.20 |
+| 30 | 0.35 | 0.28 | 0.60 | 0.25 |
+| 90 | 0.60 | 0.43 | 0.85 | 0.25 |
+| 180 | 0.85 | 0.50 | 1.05 | 0.20 — money buys time to the cap, never a higher cap |
 
-Free path (SKILL.md rule 6): lord cap by day ≈ 57 (lords.md), realm cap by day ≈ 240 (progression.md and alliance.md confirm with their curves); other marches' pairs follow lords.md's all-eight path (day 213).
+Heavy lords (0.21 / 0.39 / 0.48 / 0.50) apply only if paid Seals are accepted (lords.md §17 #2); the rest of the heavy lead is realm speed. Free path (SKILL.md rule 6): the lord pool caps at ≈ day 160 (the last Masterwork piece, lords.md §6); the realm pool fills with the city (complete ≈ day 250–300, progression.md §3), so an engaged free player reaches 1.25 TS at ≈ day 250–300.
 
 | Fails when | Caught by |
 |---|---|
-| A maxed pair > 0.78 TS (30 E), or all pools > 1.25 TS | [ ] combat probe STACK (ablation) + lord_balance_probe |
-| Heavy − free median > 0.30 TS at day 7, 30 or 90 | [ ] stack telemetry by cohort (gameplay-forge) |
+| A maxed pair > 0.50 TS, or all pools > 1.25 TS | [ ] combat probe STACK (ablation) + lord_balance_probe (lords.md §14) |
+| Heavy − free median > 0.30 TS at day 7, 30, 90 or 180 | [ ] stack telemetry by cohort (gameplay-forge) |
 | Any data row modifies c | [ ] grep of lord, research and item data for counter fields = 0 |
 
 ## 6. Losses — three buckets, by context
@@ -167,20 +171,20 @@ Free path (SKILL.md rule 6): lord cap by day ≈ 57 (lords.md), realm cap by day
 | 1 | Camp hunt (PvE) | 90 | 10 | 0 | Light | the core loop never kills (onboarding.md §4) |
 | 2 | Rally on a stronghold or AI-lord hold (PvE) | 60 | 40 | 0 | Light | alliance PvE costs only time |
 | 3 | Defending your own castle | 30 | 70 | 0 | **Routed** | home never kills (rule 1) |
-| 4 | Reinforcing an ally; defending an alliance structure | 25 | 60 | 15 | Dead | help costs a little |
+| 4 | Reinforcing an ally; defending an alliance structure | 30 | 60 | 10 | Dead | help costs no more than a field fight |
 | 5 | Field battle: march vs march, a gathering party hit, a campaign field camp ([liveops.md](liveops.md) §3.2) | 35 | 55 | 10 | Dead | map fights mostly recoverable |
 | 6 | Attacking an alliance structure or landmark (war window) | 25 | 50 | 25 | Dead | objective war |
 | 7 | Attacking a castle in a war window | 20 | 50 | 30 | Dead | aggression is a commitment |
-| 8 | Attacking a castle outside war windows (if world.md allows it) | 10 | 30 | 60 | Dead | raids move into the fair windows |
+| 8 | Attacking a castle outside war windows ([world.md](world.md) §10: plunder only, walls untouched) | 10 | 30 | 60 | Dead | raids move into the fair windows |
 | 9 | Tourneys and trial grounds ([liveops.md](liveops.md)) | 100 | 0 | 0 | — | loss-free standard modes |
 
-1. **Home never kills.** Troops defending their own castle cannot die. Beds full → **Routed**: back free after 24 h (not speedable, not healable). A castle can be beaten, plundered and breached (§10), never zeroed — the genre's overflow at home is its main quit trigger ([benchmark.md](benchmark.md)).
-2. **PvE never kills** (rows 1–2); a warded player's fights follow onboarding.md §4. Lord utilities may move ≤ 10 points of dead into severe (lords.md §6).
+1. **Home never kills.** Troops defending their own castle cannot die. Beds full → **Routed**: back free after 24 h (not speedable, not healable). A castle can be beaten, plundered and breached (§10), never zeroed — in the genre, overflow at home feeds death spirals and zeroed players quit ([benchmark.md](benchmark.md) §4).
+2. **PvE never kills** (rows 1–2); a warded player's fights follow onboarding.md §4. Lord utilities may move ≤ 10 points of severe into light (lords.md §6 rule 2).
 3. **Wounded in beds are safe**: never killed, never plundered.
-4. **Overflow warning before every send**: expected severe = troops × the row's severe share; above free beds the send card says "May overflow your beds by ~6,500 — they would die" (icon + words, never colour alone; 0 extra taps).
+4. **Overflow warning before every send**: expected severe = troops × the row's severe share; above free beds the send card says "May overflow your beds by ~6,250 — they would die" (§7 worked) (icon + words, never colour alone; 0 extra taps).
 5. **Honour** (the casualty tally in reports and the alliance feed) = Σ enemy (severe + dead) × power per troop (routed count 0), × the weak-target factor `clamp((P_def/P_att − 0.3)/0.3, 0, 1)` (0 below 30% of your power, full from 60%), × `0.5^(n−1)` for the n-th fight between the same two houses inside 24 h. Events score ground, never honour ([liveops.md](liveops.md) §3.4) — nothing pays for corpses.
 
-Worked (row 5): a lost field march of 25,000 → 8,750 walk home, 13,750 to beds, 2,500 dead.
+Worked (row 5; `python tools/combat_model.py losses` also checks every row sums to 100 and rows 1–3 and 9 kill 0): a lost field march of 25,000 → 8,750 walk home, 13,750 to beds, 2,500 dead.
 
 ## 7. Infirmary sizing — defeat costs one night
 

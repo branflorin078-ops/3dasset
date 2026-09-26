@@ -94,15 +94,18 @@ house, or a two-colour livery (field + division) for each lord?"
 - Weapons, tokens and signature objects: ONE GLB serves the card and the
   figure's hand (pivot at the grip centre, export.md).
 - Armour and helms: the card piece is a display object; the figure wears a
-  FITTED variant built from the same profiles and materials with
-  `plate_on_body` / `helm_shell(radius = head half-width + offset)` —
-  two meshes, one texture set, one tier wiring. Both are listed in the
-  piece's REPORT.md.
-- Tier on the figure: Godot animates `emission_energy` per instance on the
-  rune dial 0 / 0.7 / 1.5 / 2.6 (equipment.md); kit emissive pixels ≤ 3% of
-  the figure at the hall framing; the face stays the lightest large mass.
+  FITTED variant built from the same profiles and materials — plate with
+  `plate_on_body`, helms with `helm_shell(radius = head half-width +
+  offset)`, soft armour (gambeson, hauberk, the brigandine's cloth) from a
+  body cage offset per the layer table (figure-lane.md §7). Two meshes, one
+  texture set, one tier wiring; both listed in the piece's REPORT.md.
+- Tier on the figure: each piece is its own mesh with its own material
+  instance (figure-lane.md §9), so Godot animates `emission_energy` per
+  piece on the rune dial 0 / 0.7 / 1.5 / 2.6 (equipment.md); kit emissive
+  pixels ≤ 3% of the figure at the hall framing; the face stays the
+  lightest large mass.
 - Cross-equip (ASK lords.md): if any lord may wear any piece, fitted
-  variants multiply (6 armours × 8 bodies = 48). PROPOSAL: 3 body shapes
+  variants multiply (6 armours × up to 8 bodies = 48). PROPOSAL: 3 body shapes
   via Surface Deform shape keys (figure-lane.md §7) → 18 armour variants;
   helms by head radius ±5 mm, one variant each.
 

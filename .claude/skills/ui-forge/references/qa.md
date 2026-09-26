@@ -74,7 +74,7 @@ count of frames > 16.7 ms, and the draw calls at rest once the panel has settled
 motion.md §5. A route with a first-open hitch over 33 ms gets pre-instancing or threaded
 loading (motion.md §5.1–2), never a longer tween to hide it.
 
-## 5. Measurement scripts (Pillow + numpy; tested 2026-09-26)
+## 5. Measurement scripts (Python 3; Pillow + numpy for images; tested 2026-09-26)
 
 **Text contrast on a screenshot.** Rects come from `layout_audit`'s dump (ask qa-forge for a
 JSON export of Label rects and font sizes), or are written by hand.
@@ -123,8 +123,40 @@ for kind, m in M.items():
     print("CB", kind, f"{base}_{kind}.png")
 ```
 
-These two scripts and `icon_check.py` are PROPOSED as `ui-forge/tools/` (the lead installs them
-with a test). Until then they live beside the screenshots they judge.
+**Palette check**: reproduces every contrast ratio in components.md §2 and every ΔE in §4.
+Run it again whenever a token or an accent colour changes:
+
+```python
+"""palette_check.py - WCAG contrast of palette pairs + CIE76 dE after Machado 2009 colour-blind simulation."""
+import itertools, math
+C = dict(PARCHMENT="#E8D9B5", INK="#1E1712", OAK="#4A2E1B", IRON="#3B4048", GILT="#C9A04C", GILT_LIT="#E0BC6A",
+         WAX="#8A1F24", infantry="#B4432E", spearmen="#8B8F95", archers="#4F7A4A", crossbows="#6D8AA8",
+         cavalry="#C9A76A", sound="#6A8FD8", fine="#8F6ADB", masterwork="#E8A33C")
+M = {"protan": [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216], [-0.003882, -0.048116, 1.051998]],
+     "deutan": [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413], [-0.011820, 0.042940, 0.968881]],
+     "tritan": [[1.255528, -0.076749, -0.178779], [-0.078411, 0.930809, 0.147602], [0.004733, 0.691367, 0.303900]]}
+lin = lambda c: c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+rgb = lambda h: [lin(int(h[i:i + 2], 16) / 255) for i in (1, 3, 5)]          # linear RGB
+Y = lambda v: 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]
+def ratio(a, b):
+    hi, lo = max(Y(rgb(C[a])), Y(rgb(C[b]))), min(Y(rgb(C[a])), Y(rgb(C[b]))); return (hi + .05) / (lo + .05)
+def lab(v):                                                                  # linear RGB -> CIELAB (D65)
+    x = (0.4124 * v[0] + 0.3576 * v[1] + 0.1805 * v[2]) / 0.95047; y = Y(v)
+    z = (0.0193 * v[0] + 0.1192 * v[1] + 0.9505 * v[2]) / 1.08883
+    f = lambda t: t ** (1 / 3) if t > 0.008856 else 7.787 * t + 16 / 116
+    return 116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))
+def see(name, kind):
+    v = rgb(C[name])
+    return v if kind == "normal" else [min(max(sum(M[kind][i][j] * v[j] for j in range(3)), 0), 1) for i in range(3)]
+for fg in ("INK", "OAK", "WAX", "PARCHMENT", "GILT", "GILT_LIT", "infantry", "cavalry", "fine"):
+    print(f"{fg:<10}", " ".join(f"{bg}:{ratio(fg, bg):5.2f}" for bg in ("PARCHMENT", "OAK", "INK", "IRON")))
+for a, b in [("spearmen", "crossbows"), ("infantry", "archers"), ("archers", "crossbows"), ("sound", "fine"),
+             ("GILT", "masterwork"), ("GILT", "cavalry"), ("WAX", "infantry")]:
+    print(f"dE {a}/{b}", [round(math.dist(lab(see(a, k)), lab(see(b, k))), 1) for k in ("normal", "protan", "deutan", "tritan")])
+```
+
+These three scripts and `icon_check.py` are PROPOSED as `ui-forge/tools/` (the lead installs
+them with a test). Until then they live beside the screenshots they judge.
 
 ## 6. The screen critique — 14 points (inspect every screenshot)
 

@@ -239,6 +239,7 @@ Render frames 0, 4, 18, 28, 32, 68, 84, 90 (`open`) and 0, 6, 20, 42, 44, 51, 77
 | C | B's cues + 12 `gate_chain_strain` · 18, 32, 46, 60, 74 `gate_windlass_heave` · 28, 42, 56, 70 `gate_pawl_clack` · 84 `gate_pawl_catch` | 0 `gate_brake_lever` · 6 `gate_chain_run` (1.2 s, pitch follows speed) · 42 `gate_portcullis_impact` + `fx_dust_gate` · 75 / 77 `gate_door_thud` · 79 `gate_bar_drop` |
 
 Players at `sfx_gate_mech`; `max_distance` = the B2 distance (silent at R/M).
+A departure adds battle-forge's `bt_horn_depart` at f0 of `open`.
 
 ## 5. GateController (Godot 4) — the gate is a function of time
 
@@ -248,8 +249,10 @@ Players at `sfx_gate_mech`; `max_distance` = the B2 distance (silent at R/M).
   Never restart from 0 when late.
 - **Schedule from marches** (functions of time): departure → `open` at the
   send time; arrival → `open` starts at `t_arrive − PASSABLE[band] − 0.25 s`.
-  **Close** when no own march passes within the next 8 s and ≥ 4 s after the
-  last passage. A request during a running clip is `anim.queue()`d, never cut.
+  **Close** only when no own march is due within the next 8 s, ≥ 60 s after
+  the last departure (battle-forge `flows.md` §4: repeat march-outs find it
+  open) and ≥ 8 s after the last arrival. A request during a running clip is
+  `anim.queue()`d, never cut.
 - **Incoming enemy**: battle-forge starts `close` ≥ 3.0 s before the enemy's
   arrival (band C close lasts 2.9 s).
 - Never `play_backwards("open")` as a close: reversed heaves read as a rewind.
@@ -260,7 +263,7 @@ Players at `sfx_gate_mech`; `max_distance` = the B2 distance (silent at R/M).
 - API: `request_open(at_s)`, `request_close(at_s)`, `passable_time() -> float`,
   `is_passable(now_s) -> bool`, signal `passable`.
 
-## 6. MARCH_OUT (every march after the first) — no camera move
+## 6. MARCH_OUT — the choreography of every march-out (no camera move)
 
 1. t_send = the Send tap (optimistic; if the server refuses, the squad turns
    and fades within 400 ms). The gate opens if closed.
@@ -278,8 +281,27 @@ Players at `sfx_gate_mech`; `max_distance` = the B2 distance (silent at R/M).
    speed), speed changes eased over 300 ms `SINE_IO`, gait `speed_scale` =
    displayed speed / nominal (cap 2.2). It catches up after `t_exit − t_send`.
    The ETA on screen is always the server's.
-5. Gate off-screen or level R/M: no choreography; the token starts at the gate
-   point at `pos(t)`.
+5. **The column** (battle-forge `flows.md` §4 owns order and spacing: cavalry
+   vanguard → infantry with the lord's banner → spearmen → archers and
+   crossbows → siege train; one squad every 250 ms on the first march-out of a
+   session, 125 ms on repeats): squad 1 crosses at passable, each next one
+   `spacing` later. The horn `bt_horn_depart` plays on the gate's first open frame.
+6. At the B2 commit (under the veil) the column collapses into the one realm
+   token (battle-forge `flows.md` §5); the token's size then follows distance
+   continuously (battle-forge owns its pixel minimum), so it never pops.
+7. Sent from the realm view (the common case — targets live on the map) or
+   gate off-screen: no choreography; the token appears at the gate point at
+   `pos(t)` with battle-forge's 400 ms banner-raise.
+
+**MARCH_OUT_SESSION** — the first march-out of a session sent from C1/C2
+(battle-forge `flows.md` §4). f0: the gate `open` starts at the tap; camera to
+`cam_gate_*` framing by `ZoomPath` + `CAM_ARRIVE` in 500 ms (30 f60), no yaw
+offset. The shot ends at min(first squad crossing + 600 ms, 2,500 ms): band A
+1,100 ms, B 1,467 ms, C 2,500 ms (squad 1 emerges at 2,267 ms). Input is
+blocked 150 ms, then any tap ends the shot. The camera stays at the gate
+framing (no automatic zoom-out: the player sent it from the castle and may
+stay). Later march-outs in the session find the gate open (§5: 60 s linger)
+and play §6 with no camera move.
 
 ## 7. MARCH_OUT_FIRST — once per account (the first march)
 
@@ -301,10 +323,13 @@ no yaw offset, both moves become dip cuts.
 
 ## 8. RETURN_HOME — the camera never moves
 
-The squad reaches `npc_gate_outer` at t_arrive (the gate opened in time, §5),
-walks in at 3.0 m/s to 3 m past `npc_gate_inner`, fades out in 300 ms (dither).
-The loot count-up and toast are feel-forge / ui-forge. Gate not visible → the
-token fades at the town cluster or icon edge in 200 ms.
+The lead squad reaches `npc_gate_outer` at t_arrive (the gate became passable
+0.25 s earlier, §5). Each squad walks from `npc_gate_outer` to 1 m inside the
+gate line (2 m, 667 ms at 3.0 m/s) and dither-fades over its last 300 ms in
+the passage shadow; a 5-squad column at 125 ms spacing ends at 1,167 ms
+(battle-forge `flows.md` §8: ≤ 1,200 ms). The loot count-up and toast are
+feel-forge / ui-forge. Gate not visible → the token fades at the town cluster
+or icon edge in 200 ms.
 
 ## 9. Failure modes
 
@@ -337,5 +362,7 @@ token fades at the town cluster or icon edge in 200 ms.
 - [ ] Godot import: no loop, optimizer off, FPS 30.
 - [ ] GateController seeks by time, queues requests, drops stale cues.
 - [ ] MARCH_OUT handoff closes the gap at 2 × march speed; ETA unchanged.
+- [ ] MARCH_OUT_SESSION ≤ 2,500 ms, tap ends it after 150 ms, no automatic zoom-out.
 - [ ] MARCH_OUT_FIRST ≤ 3.5 s, band A/B only, once per account.
+- [ ] Gate lingers open 60 s after a departure; column order and spacing from battle-forge.
 - [ ] RETURN_HOME never moves the camera.

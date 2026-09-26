@@ -32,8 +32,8 @@ lord chip (march tracker, report, chat share card, alliance feed).
 
 ## 2. Hall — the lords in person
 
-- The 3D stage (hero3d's `mm_hero_stage.gd`, feel-forge's living light)
-  shows the selected lord on the plinth, figure ≥ 55% of screen height.
+- The 3D hall stage (`godot/ui/mm_hero_stage.gd` per the mapping scripts;
+  hero3d owns the figures, feel-forge its living light) shows the selected lord on the plinth, figure ≥ 55% of screen height.
 - The chip strip at the bottom: all lords at 112–128 px, swipe or tap to
   switch; switching cross-fades the stage ≤ 250 ms (the next lord's GLB
   preloaded while the chip is held).
@@ -53,8 +53,8 @@ lord chip (march tracker, report, chat share card, alliance feed).
 | Tab content | 63–92% | per tab (§4) |
 | Action bar | 92–100% | the primary action at the right thumb |
 
-Rules: the lord never leaves his own screen — on every tab the art zone
-keeps ≥ 45% of the height (SKILL rule 4). On the Kit tab tapping a slot
+Rules: the lord stays on screen on every tab — the art zone keeps ≥ 45%
+of the height (SKILL rule 4). On the Kit tab tapping a slot
 moves the stage camera to that part (helm → head close-up) in ≤ 400 ms
 (transition-forge easing); leaving the tab returns it.
 
@@ -64,7 +64,7 @@ moves the stage camera to that part (helm → head close-up) in ≤ 400 ms
 |---|---|---|
 | Overview | role in one sentence, lead line, level + XP bar with the next level's number, the sworn state and what it does in one line, duplicate currency with the pity counter "N of M" | owned · sworn · max |
 | Skills | per skill: SKL emblem 96 px, name, level pips, active/passive, meter cost as a number, "next level: …" from lords.md; tapping plays the skill moment on the stage (≤ 1.2 s, skippable) | locked · learnable · levelled · max |
-| Talents | the whole tree on one screen, no panning at 1080 wide (≤ 3 branches, nodes 88–104 px); points left; reset cost; one recommended preset per role | node: locked · available · taken |
+| Talents | the whole tree in the content zone (≈ 557 px tall), no panning at 1080 wide: ≤ 3 branches as columns, ≤ 5 rows of nodes 88–104 px, ranks on the node ("2/3") instead of extra nodes; points left; reset cost; one recommended preset per role | node: locked · available · taken |
 | Kit | four slots around the figure (weapon, armour, helm, token), each with its tier frame (Issued · Sound · Fine · Masterwork); set counter 0/4 → 4/4 with the set bonus text from lords.md | slot: empty (outline + where to get) · equipped · upgradeable (an arrow, not a red dot) · locked |
 | Pairing | primary slot 60% width, secondary 40%; the rule in one line; what APPLIES lit (primary talents and gear), the secondary's greyed with the words "applies only as primary"; 3 preset slots (PROPOSAL) | preset: empty · saved · in use |
 

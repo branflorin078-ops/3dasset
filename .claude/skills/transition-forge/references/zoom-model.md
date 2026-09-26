@@ -38,7 +38,8 @@ CameraRig (Node3D)        position = focus point on the ground (y = 0 plane)
   displays while physics ticks at 60 Hz; a camera moved in physics judders.
 - One owner: the autoload `CameraDirector` (path to confirm) owns the rig. Input,
   shots, onboarding and battle-forge all go through it
-  ([shot-library.md](shot-library.md) §1).
+  ([shot-library.md](shot-library.md) §1). `Camera3D.h_offset` / `v_offset` are
+  reserved for battle-forge's shake and stay 0 in every transition.
 
 ## 2. The lens — one lens for the whole realm
 
@@ -160,7 +161,7 @@ Two mechanisms, never mixed for one layer:
 | Status bubbles (ui-forge) | ● | ● | — | — | level | 150 / 120 ms |
 | Building name label | on focus only | on focus only | — | — | tap | 120 / 120 ms |
 | Construction scaffold, smoke, flags | ● | ● | — | — | HLOD with LOD0/1 | — |
-| Own marches as token squads | at the gate only | at the gate only | ● | — | level | 200 / 150 ms |
+| Own marches | column at the gate, real size | column at the gate, real size | one realm token, size follows distance | chevron + line | level (collapse under the veil) | 200 / 150 ms |
 | Other marches (tokens) | — | — | ● | chevrons + lines | level | 200 / 150 ms |
 | March lines (relationship colours) | — | — | ● | ● (self, ally, incoming only) | level | 200 / 150 ms |
 | Neighbour castles | — | cluster form if in view | cluster form | icon + tag | level + range | 200 / 150 ms |

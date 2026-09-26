@@ -3,8 +3,8 @@
 Every screen is built from these parts and nothing else (SKILL.md hard rule 13). Sizes are
 design px on the 1080 × 1920 canvas. The contrast numbers are computed from the canonical
 palette with the WCAG 2.x formula. The colour-blind distances are CIE76 ΔE after the
-Machado 2009 simulation at full severity. Both scripts are in qa.md §5, so anyone can
-reproduce them.
+Machado 2009 simulation at full severity. `palette_check.py` (qa.md §5) reproduces every
+number in §2 and §4.
 
 ## 1. Spacing and type
 
@@ -98,7 +98,7 @@ from the `panels` group (game-art-director). Both follow these numbers.
 | Piece | Source (1×) | Patch margins l/t/r/b | Content margins | Axis stretch | Min display |
 |---|---|---|---|---|---|
 | Full-screen panel (oak frame, parchment centre) | 256 × 256 | 40 | 64 (40 + s5) | TILE_FIT (carved edge) | 400 × 400 |
-| Sheet top edge + grabber | 512 × 96 | 48 / 40 / 48 / 0 | 24 | TILE_FIT | full width |
+| Sheet top edge + grabber | 512 × 96 | 48 / 32 / 48 / 0 | 24 | TILE_FIT | full width |
 | Button L | 192 × 144 | 36 / 28 / 36 / 28 | 40 / 24 | STRETCH | 320 × 144 |
 | Button M | 160 × 120 | 30 / 24 / 30 / 24 | 40 / 20 | STRETCH | 240 × 120 |
 | Button S / chip | 132 × 132 | 24 | 16 | STRETCH | 96 × 96 |
@@ -164,16 +164,16 @@ Label padding ≥ 40 px per side. Button icon 72 / 56 / 48 px, then s3 before th
 |---|---|---|
 | Rest | normal texture | — |
 | Pressed | pressed texture (12% darker, 4 px inner shadow), content 4 px down, scale 0.96 in 50 ms | shown on touch-down, the same frame |
-| Focus | 4 px GILT_LIT ring outside the frame (its own StyleBox); texture unchanged | keyboard, gamepad, screen reader |
+| Focus | 4 px GILT_LIT ring + a 2 px INK outer edge, outside the frame (its own StyleBox); texture unchanged. The INK edge carries 12.66:1 on parchment, where GILT_LIT alone is 1.30:1 | keyboard, gamepad, screen reader |
 | Disabled | 35% OAK fill mix, icon desaturated 60%, INK label | still takes taps: a tap shows the reason toast |
 | Locked | padlock art 48 px + the requirement ("Keep tier 5") | a tap opens the requirement's route |
 | Busy | a turning hourglass (48 px) replaces the icon; the label stays | ignores taps until the server answers; 15 s → error state |
-| Selected | raised parchment + 6 px GILT underline + bold label | tabs, toggles, segments |
+| Selected | raised parchment + bold label + 6 px GILT underline with a 2 px INK edge (GILT alone is 1.74:1 on parchment) | tabs, toggles, segments |
 
 1. **A disabled control without a visible reason is banned.** The reason sits under the
    button, or a tap shows it.
 2. **Commit on release** (`ACTION_MODE_BUTTON_RELEASE`), so a finger can slide off to cancel.
-3. **Two-step gem spend**: the first tap turns the Premium button into "Confirm ◆120" for 3 s;
+3. **Two-step gem spend**: the first tap turns the Premium button into "Confirm [gem] 120" for 3 s;
    the second tap commits. Gem prices also show "≈ €x.xx" (monetization.md §9). A spend at or
    above shop-forge's large-spend threshold opens a modal instead.
 4. **Footer slots**: Primary 440 × 144 on the hand side; Secondary on its inner side; the back
@@ -186,8 +186,8 @@ Label padding ≥ 40 px per side. Button icon 72 / 56 / 48 px, then s3 before th
 
 ## 6. Tabs
 
-- 2–5 tabs, equal widths ≥ 180 px, 112 px high, 42 px labels. Selected = raised parchment +
-  6 px GILT underline + bold. More than 5 means two screens.
+- 2–5 tabs, equal widths ≥ 180 px, 112 px high, 42 px labels. Selected = the Selected state
+  in §5 (raised, bold, INK-edged gilt underline). More than 5 means two screens.
 - **Placement**: the strip always sits directly above the footer, on sheets and full screens
   alike (full screen: y 1576–1688, the easy zone). A strip at the top of a sheet would land at
   y ≈ 600, in the hard zone.
@@ -224,7 +224,7 @@ Label padding ≥ 40 px per side. Button icon 72 / 56 / 48 px, then s3 before th
 | Share card | chat-forge's layouts on this kit | 880 × 320 | — |
 
 Grid columns = `floor((W − 2·24 + 16) / (card + 16))`. At W = 1080: 160 cards → 5 columns,
-128 cards → 6.
+128 cards → 7.
 
 ## 9. Cost lines, timers, progress
 
@@ -233,8 +233,9 @@ Grid columns = `floor((W − 2·24 + 16) / (card + 16))`. At W = 1080: 160 cards
   first, the shop last).
 - **Time**: two units ("1 h 12 m"; "4 m 05 s" under 10 min), rounded UP, never "0 s" while
   running. Holding it shows the local end time (core-loop §4.5).
-- **Bars**: 16 px in rows, 32 px in panels. GILT fill on a 40% INK track (7.26:1). Warning
-  bars use a WAX fill on a PARCHMENT track (6.53:1) plus the words ("Full in 2 h").
+- **Bars**: 16 px in rows, 32 px in panels. GILT fill on a SOLID INK track (7.26:1). A 40%
+  INK track over parchment gives the fill only 1.37:1. Warning bars use a WAX fill on a
+  PARCHMENT track (6.53:1) plus the words ("Full in 2 h").
 - **Rings** on chips: 6 px, same colours.
 - A value change counts up over 800 ms (core-loop A1; motion.md).
 
