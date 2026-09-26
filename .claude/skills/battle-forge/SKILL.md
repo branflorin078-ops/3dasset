@@ -21,11 +21,11 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
 2. **Truth on screen.** The presentation is a pure function of the beat log and its seed
    ([beats.md](references/beats.md) §1). Nothing is invented (no fake near-miss, no hit inside
    a filler), nothing causal is reordered, no slow motion. The compositor may merge, shorten
-   or drop only cosmetic beats; deciding beats (counters, skills, breaches, routs, outcome)
+   or drop only cosmetic beats; deciding beats (counters, Orders, breaches, routs, outcome)
    always play — identical ones may merge into one beat marked "×N", still counted.
 3. **Counters are shown every time they land**, in both directions: flash + badge (attacker
    line → chevron → target line) + sting, the same medallions as the march form and the
-   report ([presentation.md](references/presentation.md) §5). combat.md makes the counter a
+   report ([presentation.md](references/presentation.md) §4). combat.md makes the counter a
    constant worth one tier; the genre's ~5% counter, buried under stat stacks and never shown,
    is the failure we exist to fix.
 4. **Time budgets at 1×**: camp in a hunt order 4 s marker (no battle view); single camp
@@ -36,7 +36,7 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
 5. **Token squads, not crowds**: ≤ 5 squads a side (one per line) at any army or rally size;
    ≤ 70 skinned figures; strength is a bar and a number; attrition drops figures in steps;
    no blood and no bodies left on the field (age rating to confirm).
-6. **VFX restraint, measured**: screen cover ≤ 15% for a normal beat, ≤ 35% for a lord skill,
+6. **VFX restraint, measured**: screen cover ≤ 15% for a normal beat, ≤ 35% for a lord's Order,
    ≤ 40% for a breach, never > 50%; ≤ 500 particles; ≤ 3 luminance flashes per second; every
    effect lights what it touches (game-art-director `effects.md`).
 7. **Losers are respected** ([outcome.md](references/outcome.md)): same plate, size and
@@ -57,8 +57,11 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
     or line glyphs; portraits are the painted lane. No code-built people, no primitive shapes.
 12. **Every number here is a PROPOSAL** until checked against the shipped data. Shipped values
     win; unknown paths are written "(path to confirm)". Facts from the studio's repo mapping
-    notes (`battle_engine.gd` six phases, `camera_rig.gd` 55° pitch, `UI.reduced_motion`,
-    feel-forge's 1,800 ms battle-won rule, PEGI 7) are cited as such and verified first.
+    notes (`battle_engine.gd` six phases, `UI.reduced_motion`, feel-forge's 1,800 ms
+    battle-won rule, PEGI 7) are cited as such and verified first. Rules already written by
+    sibling skills win over this skill's drafts: design-forge `combat.md` (counter ring, losses,
+    rallies, walls, scouting), `lords.md` (Orders), `alliance.md` (rally scheduling),
+    `onboarding.md` (scripted first battles), transition-forge `zoom-model.md` (the rig).
 13. **Evidence or it did not happen**: the probes for the change type, a Movie Maker capture
     looked at frame by frame, and the rubric at ≥ 17/20 with no zero
     ([qa.md](references/qa.md)).
@@ -68,13 +71,13 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
 | Thing | Number | Where |
 |---|---|---|
 | Beat durations | volley 900 ms · charge 1,400 · brace 1,100 · clash 1,100 · full lord moment 2,000 · breach 2,200 | beats.md §3 |
-| Counter badge | 72 px, pop 140→100% in 180 ms, hold 700 ms (450 at 2×) | presentation.md §5 |
-| Full lord moments | ≥ 6 s apart; world dim to 75%; portrait 280 px | presentation.md §6 |
-| Camera | pitch of the realm rig; ≤ 1 move per 3 s; shake ≤ 10 px via `h_offset`/`v_offset` | presentation.md §1 |
+| Counter badge | 72 px, pop 140→100% in 180 ms, hold 700 ms (450 at 2×) | presentation.md §4 |
+| Full Order moments | ≤ 2 per battle, ≥ 6 s apart; world dim to 75%; portrait 280 px | presentation.md §5 |
+| Camera | via transition-forge's `CameraDirector`; FOV 30° fixed; ≤ 1 move per 3 s; shake ≤ 10 px via `h_offset`/`v_offset` | presentation.md §1 |
 | Late beat log | act I hides 1.6 s; clash loop ≤ 3.4 s; retry + "Awaiting word" at 5.0 s (combat.md §8) | beats.md §6 |
 | Warning bands | Detected (any ETA) · Near ≤ 60 s · Contact | defence.md §2 |
 | Rally windows | combat.md §9: 5 / 10 / 30 min vs players, ≤ 60 on PvE strongholds, ≤ 15 joiners; each chip shows who is in reach | rally.md §4 |
-| Frame budget | p95 ≤ 16.7 ms, draw calls ≤ 150, 0 sync loads | presentation.md §10 |
+| Frame budget | p95 ≤ 16.7 ms, draw calls ≤ 150, 0 sync loads | presentation.md §9 |
 
 ## Workflow
 
@@ -108,7 +111,7 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
 | Report schema, "why" explanation engine, scout reports, share cards' content, storage | report-forge | replays from the report; shares the counter derivation |
 | Siege engines, defensive tools: models, clips (`fire`, `reload`, `move`), timings | siege-forge | places them in the timeline |
 | Enter/leave battle view, march-out camera, castle ↔ realm zoom, motion comfort | transition-forge | states what the frame must hold |
-| Lord portraits, emblems, signature effects, per-lord briefs | commander-forge | the skill-moment template |
+| Lord portraits, emblems, signature effects, per-lord briefs | commander-forge | the Order-moment template |
 | Screens, HUD components, tracker, status bubbles, icon kit | ui-forge | layouts and tap budgets |
 | Marches on the map, paths, speeds, map markers | world-forge | what a march tells the player |
 | Walls, gates, towers and their damage and burning states | castle-forge | picks the state from beat values |
@@ -119,14 +122,14 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
 | Ceremony motion rules, banned easings | feel-forge | the outcome timeline |
 | Server resolution, latency, cost, idempotent sends | cloud-forge | latency hiding, 0 spectator reads |
 | Wording and voice; strings | story-forge; l10n-forge | placeholder lines and keys |
-| First battle, first rally, first defence teaching | onboarding-forge | one-line highlights |
+| First-session script, chapters, first-time moments | onboarding-forge (design: design-forge `onboarding.md`) | presents the raid at the gate, the first battle, the first rally and the raid on the walls (flows.md §10) |
 | Probes and fixtures | qa-forge | the probe specs in qa.md |
 
 ## Reference index
 
 | File | Holds |
 |---|---|
-| [references/flows.md](references/flows.md) | target choice, target card, scouting, the march form, march-out, the march on the map, interception, watching, coming home, tap budgets A–G |
+| [references/flows.md](references/flows.md) | target choice, target card, scouting, the march form, march-out, the march on the map, interception, watching, coming home, tap budgets A–G, the four onboarding battles |
 | [references/beats.md](references/beats.md) | the log contract, six acts, the beat → animation/VFX/sound/camera table with ms and frames, the compositor, speed/skip/replay, latency, `T_fight`, Godot pattern |
 | [references/presentation.md](references/presentation.md) | camera rules, token squads and clips, battle HUD, counter badges, lord moments, VFX limits, sound mix, reduced motion, frame budgets |
 | [references/defence.md](references/defence.md) | defence layers, warning bands, watchtower information tiers, defence setup flow, readiness bubble, reinforcements, wall states, wards, response budget |
@@ -152,8 +155,8 @@ Every battle-forge task ends with:
    core-loop audit ran at 1080×1900 — this skill sizes everything at a 1080 px short side.
 2. `T_fight` per context (field 24 s, castle 36 s, rally 40 s): a server constant for when the
    surviving march departs and how long spectators see the clash (beats.md §6).
-3. Scheduled rallies inside war windows (rally.md §1; alliance.md owns scheduling) and an
-   early "Launch now" for rally leaders (combat.md sends rallies at window end today).
+3. An early "Launch now" for rally leaders (rally.md §2; combat.md sends rallies at window
+   end today).
 4. Auto-watch defaults: PvE battle view only for the first 10 battles (beats.md §4).
 5. Age rating (PEGI 7 per the studio notes) → no blood, fallen figures fade (presentation.md §2).
 6. A protective rule after repeated lost defences beyond combat.md's breach truce, if any

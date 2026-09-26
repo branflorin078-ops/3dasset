@@ -70,8 +70,9 @@ of what to do or when it changes. The technical code goes last, at 32 px in INK 
 
 ## 4. Offline and optimistic rules
 
-1. **Offline banner**: an IRON band of 72 px under the resource strip (y 104 on the canvas):
-   the offline line + a connection icon. Spends, claims, marches and purchases are disabled
+1. **Offline banner**: an IRON band of 764 × 72 at the top of the clear world window
+   (x 152, y 316; hud.md §3): the offline line + a connection icon. Toasts move below it
+   (y 404). Spends, claims, marches and purchases are disabled
    with the reason "Needs the realm road". Cached screens stay browsable, marked "Saved
    14:20".
 2. **Optimistic actions** (shown at once, confirmed later, rolled back with a toast on
@@ -138,7 +139,7 @@ error, a 16 s delay and the offline flag, and saves a screenshot of each: 4 stat
 | An empty list with no art or line | "is it broken?" | [ ] `states_probe` screenshots |
 | A raw code alone ("Error 500") | support tickets without context | [ ] a grep of the l10n table for bare codes |
 | An optimistic claim | the reward shows, then vanishes | [ ] review against §4.3 |
-| The offline banner hides the resource strip | the player cannot see their gold | [ ] layout check at y 104 |
+| The offline banner covers the rail, the tracker or a toast | the player loses the HUD when they need it most | [ ] `layout_audit` overlap list with the offline flag on |
 
 - [ ] Every list in §6 has its object, its line and its action (or "—" by design).
 - [ ] Loading shows nothing before 150 ms, a skeleton after, a line at 3 s, Cancel at 10 s, error at 15 s.

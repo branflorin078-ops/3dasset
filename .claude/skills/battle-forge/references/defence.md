@@ -128,7 +128,7 @@ Tapping the bubble opens the Defence panel scrolled to the first failing check (
 
 | Side | Steps | Taps | What they see |
 |---|---|---|---|
-| Defender asks | Near banner → **Call allies** | 1 | a post in the alliance feed + a chat share card (chat-forge): "<name>'s castle — attack in 0:48 — Reinforce" |
+| Defender asks | Near banner → **Call allies** | 1 | a post in the alliance feed + an under-attack card in the alliance channel (chat-forge `channels.md`: ≤ 1 per member per 10 min, members opt in): "<name>'s castle — attack in 0:48 — Reinforce"; inside the 10 min the button reads "Called 4 m ago" |
 | Ally answers | card → Reinforce → Send (defence preset) | 3 | "Arrives 0:38 before the attack ✓" or "Arrives 0:12 after ✗ — will defend the next attack"; the host's free places (cap by embassy tier, 1.0–3.0 × a full march — combat.md §9) |
 | Defender sees help | banner line | 0 | "2 allies marching — first arrives 0:21 before contact" |
 | Defender sends home | Defence panel → ally row → Send home | 2 | the march leaves at once |

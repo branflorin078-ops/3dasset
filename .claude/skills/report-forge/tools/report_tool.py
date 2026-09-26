@@ -7,6 +7,7 @@
   python report_tool.py check   FILE [FILE ...]             invariants (exit 1 on error)
   python report_tool.py cost    [--fixtures DIR] [--players N] [...]
   python report_tool.py golden  FIXTURE_DIR OUT_DIR         expected outputs for report_probe
+  python report_tool.py ledger  HITS.json                   book hit groups -> the why block
 
 Stdlib only (Python 3.8+). Thresholds and tables marked PROPOSAL come from
 references/explain.md and design-forge combat.md; change them there first.
@@ -344,7 +345,7 @@ def headline(rep, v, outcome, band):
     stats = []
     if outcome == "loss":
         stats = [s("rpt.head.home_wounded", n=num(light(S[v]) + hosp(S[v]))),
-                 s("rpt.head.lost", n=num(dead(S[v])))]
+                 s("rpt.head.lost", n=num(dead(S[v]))) if dead(S[v]) else STR["rpt.head.lost_none"]]
     else:
         stats.append(s("rpt.head.enemy_out", n=num(out(S[o]))))
         rs = rep.get("rs")
@@ -354,6 +355,45 @@ def headline(rep, v, outcome, band):
         else:
             stats.append(s("rpt.head.your_out", n=num(out(S[v]))))
     return {"word": word, "margin": STR[f"rpt.margin.{outcome}.{band}"], "vs": vs, "stats": stats}
+
+
+# ---- ledger booking (explain.md section 2.1) -------------------------------------
+def book(doc):
+    """Grade-0 booking over hit groups. doc = {"hits": [[side, cp, {factor: m}, [a_line, a_tier,
+    d_line, d_tier]], ...], "whole": [[side, factor, cp], ...]} -> the why block in per mille.
+    A heal is a "whole" entry with negative cp on the lord factor of the side it undid."""
+    ext = [[0.0] * 8 for _ in range(2)]
+    neutral = [0.0, 0.0]
+    cp = [0.0, 0.0]
+    match = {"counter": [{}, {}], "tier": [{}, {}]}
+    for side, c, mult, pair in doc.get("hits", []):
+        ln = {f: math.log(m) for f, m in mult.items()}
+        ln_r = sum(ln.values())
+        r = math.exp(ln_r)
+        for f, l in ln.items():
+            share = (1.0 - 1.0 / r) * l / ln_r if abs(ln_r) >= 1e-6 else l
+            ext[side][FACTORS.index(f)] += c * share
+            if f in match and share > 0:
+                key = tuple(pair)
+                match[f][side][key] = match[f][side].get(key, 0.0) + c * share
+        neutral[side] += c / r
+        cp[side] += c
+    for side, f, c in doc.get("whole", []):
+        ext[side][FACTORS.index(f)] += c
+        cp[side] += c
+    T = cp[0] + cp[1]
+    pm = lambda x: int(math.floor(1000.0 * x / T + 0.5)) if x >= 0 else -int(math.floor(-1000.0 * x / T + 0.5))
+    ev = {}
+    for f, key in (("counter", "c"), ("tier", "t")):
+        ev[key] = []
+        for side in (0, 1):
+            if match[f][side]:
+                best = max(match[f][side].items(), key=lambda kv: (kv[1], kv[0]))
+                ev[key].append(list(best[0]) + [pm(best[1])])
+            else:
+                ev[key].append([])
+    return {"f": [[pm(x) for x in ext[0]], [pm(x) for x in ext[1]]], "c": ev["c"], "t": ev["t"],
+            "cp": [round(cp[0]), round(cp[1])], "neutral": [pm(neutral[0]), pm(neutral[1])]}
 
 
 # ---- rendering ---------------------------------------------------------------
@@ -758,6 +798,7 @@ def main(argv=None):
     p = sub.add_parser("size"); p.add_argument("files", nargs="*"); p.add_argument("--rally", type=int, default=0)
     p = sub.add_parser("check"); p.add_argument("files", nargs="+")
     p = sub.add_parser("golden"); p.add_argument("fixtures"); p.add_argument("out")
+    p = sub.add_parser("ledger"); p.add_argument("file")
     p = sub.add_parser("cost")
     p.add_argument("--fixtures", default=os.path.join(HERE, "..", "tests", "fixtures"))
     for name, val in (("players", 50000), ("battles", 1.0), ("rallies", 0.3), ("rally_size", 13.0),
@@ -783,6 +824,8 @@ def main(argv=None):
             print(render(load(a.file), a.pov))
     elif a.cmd == "render":
         print(render(load(a.file), a.pov))
+    elif a.cmd == "ledger":
+        print(json.dumps(book(load(a.file))))
     elif a.cmd == "size":
         for f in a.files:
             print(os.path.basename(f), json.dumps(size_report(load(f))))

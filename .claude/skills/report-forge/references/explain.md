@@ -269,7 +269,8 @@ The context names map to combat.md's context table; its exact percentages are sh
 Headline keys ([layouts.md](layouts.md) §1): `rpt.head.vs` "vs {name} [{tag}] · {place} {x}:{y}",
 `rpt.head.vs_notag` "vs {name} · {place} {x}:{y}" (camps, strongholds), `rpt.head.enemy_out`
 "Enemy out of action {n}", `rpt.head.taken` "Taken {n} {res}", `rpt.head.home_wounded` "Wounded
-coming back {n}", `rpt.head.lost` "Lost {n}", `rpt.head.your_out` "Your wounded {n}".
+coming back {n}", `rpt.head.lost` "Lost {n}" (or `rpt.head.lost_none` "None lost" when 0 died),
+`rpt.head.your_out` "Your wounded {n}".
 
 l10n rules (l10n-forge ships the tables; `tools/strings_en.json` is the key list):
 

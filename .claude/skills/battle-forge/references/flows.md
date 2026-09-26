@@ -73,7 +73,7 @@ One screen, opened pre-filled by the last preset used against this target type.
 | Siege row | only when the target has structures: engine chips from siege-forge with load and speed | 1 per engine |
 | Presets | 5 named slots; tap applies, hold saves | 1 |
 | Auto by counter | fills lines against the scouted garrison using combat.md §2's counter ring and §2 rule 6's matchup index (a helper in gameplay-forge; deterministic); greyed with "Scout first" when there is no report | 1 |
-| Matchup strip | each own line → the enemy line it meets, with the favoured / even / unfavoured medallion from presentation.md §5, and the matchup index as "+0.4 tier" with the scout's age (combat.md §2 rule 7) | 0 |
+| Matchup strip | each own line → the enemy line it meets, with the favoured / even / unfavoured medallion from presentation.md §4, and the matchup index as "+0.4 tier" with the scout's age (combat.md §2 rule 7) | 0 |
 | Summary | capacity bar, ETA "2:14 · arrives 14:32", speed (the slowest line governs, named), load, Resolve cost (camps), infirmary line (below) | 0 |
 | Send | bottom-right, thumb zone, 64 dp tall | 1 |
 
@@ -199,7 +199,26 @@ decision itself (pillar 10: every core action ≤ 3 taps).
 | Touch targets under 48 dp on the form or the card | [ ] `ux_touch_probe` |
 | The form breaks on a narrow screen shape | [ ] `w1f_aspect_sweep`: `ASPECT SWEEP OK - 6 shapes, 0 faults` |
 
-## 10. Checklist — a new or changed attack flow
+## 10. Onboarding battles
+
+design-forge `onboarding.md` gives battle-forge four scripted moments (§2 steps 1 and 7,
+chapters 5 and 6; onboarding-forge runs the script). Each is a **real resolver run on tuned
+inputs** (gameplay-forge data), presented by the normal director — never a canned animation,
+so what the player learns is true in every later battle.
+
+| Moment | When | What battle-forge presents | Budget | Proof |
+|---|---|---|---|---|
+| Raid at the gate (step 1) | 0:08–0:40 of the first session | at the own gate, in castle view (no battle-view dive): "Sound the horn" (tap 1) → 8 s of volleys from the wall onto the raiders — the first counter badge with its label "The bow breaks the blade — worth one tier" (archers hunt infantry, combat.md §2) → "Open the gate" (tap 2) → the levy advances and clashes for 10 s → rout → victory banner; the raiders' cart counts into the resource bar (800 ms) | 2 taps; victory ≤ 60 s p90 after the first input (target 32 s) | `ftue_probe`; fixture `ftue_gate_raid` |
+| First battle (step 7) | 5:10–6:00 | the first camp, at the war budget 20–30 s with skip after 3 s (onboarding.md overrides the PvE 10–16 s budget for this one battle); the sworn lord's first Order as a full moment; the outcome card with one casualty line (returned / infirmary / dead) | 1 tap (the card) | `ftue_probe` 3/3 lord picks won; fixture `ftue_first_battle` × 3 picks |
+| First rally (chapter 5, ≈ 80 h) | week 1 | [rally.md](rally.md) flows and its three highlights (§10); AI companions fill the rally if allies are offline | rally.md budgets | `rally_flow_probe` |
+| Raid on the walls (chapter 6, ≈ 100 h) | after the garrison pair is set | an AI raid on the player's castle announced ≥ 5 min ahead so every warning band plays (Detected → Near → Contact) with the Incoming card at the player's watchtower tier ([defence.md](defence.md) §2); the defender's view with the garrison lord chip, towers and tools; tuned to be won — the "walls held" card | castle budget 28–45 s | `warning_probe`; fixture `ftue_wall_raid` |
+
+| Fails when | Caught by |
+|---|---|
+| A scripted battle shows something the resolver did not produce | [ ] fixtures are resolver output (qa.md §3); `battle_determinism_probe` on all three |
+| One of the three first-lord picks loses the first battle | [ ] `ftue_probe`: `3/3 picks won` (onboarding.md §2) |
+
+## 11. Checklist — a new or changed attack flow
 
 - [ ] Each step has taps, seconds, and every failure with its message and next action.
 - [ ] Intel shown is only what the scout tier revealed; unknowns are "?".

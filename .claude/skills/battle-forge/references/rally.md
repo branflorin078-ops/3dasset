@@ -10,7 +10,7 @@ experience. Numbers quoted from combat.md carry its section; the rest are **PROP
 
 | Genre does (design-forge benchmark.md) | Where it hurts players | Our move |
 |---|---|---|
-| A castle building sets rally capacity; the leader picks a wait of 5 or 10 min, up to 8 h | long waits tie players to a clock; time zones decide who can join | combat.md caps windows at 5 / 10 / 30 min against players and 60 min on PvE strongholds; battle-forge shows each window's reach before launch, and offers **scheduled rallies** inside the two daily war windows (PROPOSAL to alliance.md, which owns scheduling) |
+| A castle building sets rally capacity; the leader picks a wait of 5 or 10 min, up to 8 h | long waits tie players to a clock; time zones decide who can join | combat.md caps windows at 5 / 10 / 30 min against players and 60 min on PvE strongholds; alliance.md §8 adds **scheduled rallies** (15 min – 24 h ahead, 15-min grid, each member's local time) with a **Pledge**; battle-forge shows each window's reach before launch |
 | Joiners send troops; the leader's commanders lead | joiners cannot see their part; the battle feels like someone else's | joiners' pennons on the squad banners; a gilt corner on the squads that carry YOUR troops; a personal share line in the outcome |
 | Forts are rally-only; rewards by each participant's damage share | shares are opaque | the share is shown before (expected) and after (actual) |
 | Joining a rally you cannot reach in time fails late | wasted march, wasted attention | Join is blocked before Send with the arrival math |
@@ -23,26 +23,30 @@ experience. Numbers quoted from combat.md carry its section; the rest are **PROP
 | 2 | **Rally** | 1 | 1 |
 | 3 | Window chips: 5 / 10 / 30 min against players, 5 / 10 / 30 / 60 min on PvE strongholds (combat.md §9); last choice remembered, default 5 min inside a war window (PROPOSAL); each chip shows "in reach: 9 of 24" — members active in the last 24 h whose march to the leader fits the window (computed on the client from the alliance roster, 0 extra reads) | 0–1 | 2 |
 | 4 | Lead lord pair + own troops (rally preset pre-filled; matchup strip and "+0.4 tier" vs the scouted target); optional **Post mix** (1 tap): the requested composition from the latest scout (combat.md §9 rule 3) | 0–1 | 5 |
-| 5 | **Launch** | 1 | 1 |
+| 5 | **Launch** — the "Call the alliance" switch is ON by default: the rally card goes to the alliance Hall channel with a Herald line, never where enemies read (chat-forge `share-cards.md`); 0 extra taps | 1 | 1 |
 | | **Total** | **3–5** | **≤ 15** |
 
-**Scheduled rally** (war windows): Rally → **Schedule** → a start slot in the next war window
-(15-minute steps) → Launch = 5 taps. It posts to the alliance feed and calendar; members tap
-**Remind me** (1) and get one push 5 min before the window opens (core-loop A8 push budget).
+**Scheduled rally** (alliance.md §8 owns the rule): Rally → **Schedule** → a slot 15 min – 24 h
+ahead on the 15-min grid (the Marshal's muster hours are marked; each member sees local time) →
+Launch = 5 taps. Members answer with **Pledge** (2 taps): their march leaves at launch if they
+are online, or offline if they allowed it — castle rallies never auto-join offline (alliance.md
+§8). The alliance calendar and the Rallies panel list it with its pledged count.
 
 Leader actions while the window runs (dead air ≤ 90 s, core-loop §8.3):
 
 | Action | Taps | Rule |
 |---|---|---|
-| Call again | 1 | re-posts the chat card; at most once per 60 s |
+| Remind | 1 | one push to members who pledged but have not sent; once per rally (chat-forge allows one rally card per rally, so no re-post) |
 | Scout the target | 2 | refreshes the matchup strip and the posted mix |
 | Cancel | 2 (with confirm) | before departure every march goes home at 0 cost (combat.md §9 rule 4); joiners are told why |
 | Launch now | 2 (with confirm) | PROPOSAL for combat.md, which today sends the rally at window end: leave early with whoever has arrived |
 
 ## 3. Join — the member
 
-Entry points, each 1 tap: the alliance **Rallies** panel row, the chat share card (chat-forge),
-the rally banner over the leader's castle on the map, the push (if opted in).
+Entry points, each 1 tap: the alliance **Rallies** panel row, the rally card in the Hall channel
+(chat-forge), the rally banner over the leader's castle on the map, the push (if opted in).
+**Standing pledges** (alliance.md §8, PvE targets only) fill places still open at 50% of the
+wait — people first; their pennons carry a small seal mark so the leader sees who came by pledge.
 
 | # | Step | Taps | Seconds |
 |---|---|---|---|
@@ -78,7 +82,7 @@ reach, window closing soonest first; unreachable rallies last, greyed with the r
 | 30 min | a planned push outside the busiest hour | ≤ 30 min |
 | 60 min (PvE strongholds only) | far strongholds, large camps | ≤ 60 min |
 
-The leader is never idle for long: Call again, Scout and chat stay ≤ 2 taps away (dead air
+The leader is never idle for long: Remind, Scout and chat stay ≤ 2 taps away (dead air
 ≤ 90 s, core-loop §8.3), and the window countdown sits in the tracker.
 
 The leader's castle shows a rally banner on the map for the whole window: its pennon count
@@ -104,7 +108,7 @@ Context "rally" in [beats.md](beats.md) §4: 30–45 s at 1×, `T_fight` 40 s (P
 | Squads | still ≤ 5 per side (presentation.md §2) with up to 15 joiners (combat.md §9); joined troops merge into the leader's squads by line |
 | Pennons | each squad banner carries the pennons of the players whose troops are in it (≤ 6, "+N") |
 | Your troops | the squads that carry the viewer's troops get a gilt corner mark on their banner; tap-and-hold: "Your 3,200 archers are in this squad" |
-| Lords | only the leader's lord pair casts; their full moments follow presentation.md §6 |
+| Lords | only the leader's lord pair casts; their full moments follow presentation.md §5 |
 | Watch offer | every participant gets the watch toast at contact; each participant's client fetches the log once (N reads per rally of N players — report-forge `storage.md` costs it); the replay is shared from the rally report |
 
 | Fails when | Caught by |
@@ -121,7 +125,7 @@ Each participant gets their own card ([outcome.md](outcome.md)), built from the 
 |---|---|---|
 | Headline | the rally result | the rally result |
 | What came back | their own troops | their own troops |
-| Share | "Rally total: 38,000 troops, 14 players" | "Your share: 3,200 troops (8%) · damage share 11% · 2,400 stone" — or, under 5% of capacity, "Below the 5% floor — no share this time" (combat.md §9 rule 6) |
+| Share | "Rally total: 38,000 troops, 14 players" | "Your share: 3,200 troops (8%) · damage share 11% · 2,400 stone" — or, under 5% of capacity, "Below the 5% floor — no share this time" (combat.md §9 rule 6). On strongholds the card shows alliance.md §8's two parts: "equal part + damage part" |
 | Losses | pro rata by troops given, per line and tier (combat.md §9 rule 5) | the same, into the joiner's own beds under the joiner's own overflow rule |
 | Why | top causes (report-forge explanation engine) | same causes |
 | Next | Heal all · Rally again · Share | Heal all · Share |
@@ -153,9 +157,11 @@ the same formula (combat.md / alliance.md); a gap > 2 points between them is a b
 
 ## 10. Teaching the first rally
 
-The genre's tutorial never teaches rallies; core-loop §10 places a guided first rally as a
-rotating daily order in week 1 (onboarding-forge owns the sequence). battle-forge supplies three
-one-line highlights, each dismissed on tap, each ≤ 40 characters in English:
+The genre's tutorial never teaches rallies; onboarding.md's chapter 5 "The Rally" (about 80 h)
+asks the player to join one rally and lead one, with AI companions filling it if allies are
+offline (onboarding-forge owns the sequence; core-loop §10 adds a guided rally order in week 1).
+battle-forge supplies three one-line highlights, each dismissed on tap, each ≤ 40 characters in
+English:
 1. on Join — "Your troops march to <leader>'s castle";
 2. on the arrival line — "The tick means you will make it in time" (a shape icon, never colour alone);
 3. on the battle view — "The gold corner marks your troops".

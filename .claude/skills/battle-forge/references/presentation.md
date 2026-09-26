@@ -8,15 +8,18 @@ never behind a loading screen (live realm ruling). All numbers are **PROPOSALS**
 
 ## 1. Camera — the battle view
 
-transition-forge owns the shot that enters and leaves the battle view (its `shot-library.md`,
-zoom model and motion comfort limits). battle-forge owns what the frame must hold once there.
+transition-forge owns the shot that enters and leaves the battle view (`BATTLE_ENTER` in its
+`shot-library.md`; the only full-detail dive besides the own castle — `zoom-model.md` §8), the
+rig and the motion comfort limits. Every camera request goes through its `CameraDirector`
+autoload (path to confirm), which writes the rig's five numbers, never the Camera3D transform.
+battle-forge owns what the frame must hold once there.
 
 | Rule | Number |
 |---|---|
-| Pitch | the realm rig's pitch (a fixed 55° per the studio mapping notes of `camera_rig.gd` — verify); no roll, ever |
+| Pitch, lens | pitch from transition-forge's pitch-follows-distance curve at the battle distance (`zoom-model.md` §5); FOV fixed at 30° horizontal; no roll, ever |
 | Framing | both armies inside the central 70% of the width, 15% margins; squads fill 40–60% of the width |
-| Own side | nearest the camera when the rig allows yaw; if yaw is fixed, own banners carry the "self" relationship colour and own strength bars sit on the bottom edge |
-| Moves | only at act boundaries or on A beats; ≤ 1 move per 3 s; pan ≤ 20°/s; push-ins ≤ 8% |
+| Own side | house yaw is fixed (authored shots ±15° at most — `zoom-model.md` §1), so the own side is found by its relationship-colour banners and its HUD total on the left, never by screen position |
+| Moves | only at act boundaries or on A beats; ≤ 1 move per 3 s; pan ≤ 20°/s; push-ins change `distance` by ≤ 8%, never the FOV |
 | Shake | `Camera3D.h_offset`/`v_offset` only; charge 4 px / 180 ms, ram 3 px per hit, breach 10 px / 250 ms; 18–24 Hz decaying; 0 in reduced motion |
 | Hit-stop | 2–3 frames (33–50 ms) on counter impacts and breach only; the first 4 in a battle get it, later ones do not (a stutter every second reads as lag) |
 | Slow motion | none. A slowed replay lies about time; hit-stop is enough |
@@ -92,7 +95,8 @@ Clip set per line (hero3d authors; 30 fps authoring per blender-forge animation.
 | Skip | bottom-right, thumb zone | 48 dp min, 16 dp from the 2× button | fades in over 200 ms at the skip time |
 | 2× | bottom-right | 48 dp | toggles; state remembered |
 | Pause | bottom-left | 48 dp | — |
-| Floating numbers | above the target squad | 30 px text, 3 px INK outline | shown only for counter hits, skills, decisive beats; ≤ 3 on screen; rise 24 px over 700 ms, fade the last 200 ms |
+| Floating numbers | above the target squad | 30 px text, 3 px INK outline | shown only for counter hits, Orders, decisive beats; ≤ 3 on screen; rise 24 px over 700 ms, fade the last 200 ms |
+| Chat ticker | — | — | hidden during the battle and the outcome ceremony; back ≤ 200 ms after (chat-forge `ui.md`) |
 
 Numbers are losses in troops ("−1,240"), never "damage points" the player cannot relate to.
 
@@ -130,23 +134,26 @@ never changed by any bonus) and it is **shown every time it lands**.
 
 ## 5. Lord Order moments
 
-The lord is the player's investment; the cast is the one place the battle is allowed to stop
-and look. commander-forge owns each lord's portrait, emblem and signature effect; battle-forge
-owns the template.
+The lord is the player's investment; an **Order** (a lord's active skill, fired by the war drum —
+design-forge `lords.md` §5: one Order beat per round; a primary fires 2–4 in a median battle,
+the secondary about half as many) is the one place the battle may stop and look. commander-forge
+owns each lord's portrait, emblem and signature effect; battle-forge owns the template.
 
 | t (ms) | Full moment (2,000 ms) | Short moment (900 ms) |
 |---|---|---|
 | 0 | world dims to 75% brightness over 150 ms (never black) | no dim |
 | 150 | portrait card slides in from the caster's side, 280 px tall (painted CMD art — ART SHOWN BIG), ease-out cubic 220 ms | the lord's HUD chip scales 1.0 → 1.7× → 1.0 over 600 ms, emblem beside it |
-| 370 | skill emblem (SKL art) + name, 1 line, ≤ 24 characters in English (+40% room for l10n) | — |
+| 370 | Order emblem (SKL skill-emblem art) + name, 1 line, ≤ 24 characters in English (+40% room for l10n) | — |
 | 500 | signature effect on the field, 800–1,200 ms, ≤ 35% cover | effect ≤ 700 ms, ≤ 20% cover |
 | 1,700 | undim 200 ms; card slides out 180 ms | — |
 
-Rules: each lord's **first** cast in a battle is a full moment, later casts are short; full
-moments are ≥ 6 s apart (a second one inside 6 s plays short); an enemy lord's cast uses the
-same template on the other side; two casts inside 1 s → the second plays short with its effect.
-Repeated casts of the same skill inside one act may merge into one short moment marked "×N" on
-the chip ([beats.md](beats.md) §3 priority rule) — every cast is counted, none is hidden.
+Rules: the **first Order of each side's primary lord** is a full moment (≤ 2 full moments per
+battle); every other Order — later primary Orders, all secondary Orders — plays short. Full
+moments are ≥ 6 s apart (a second one inside 6 s plays short). One Order on screen at a time
+(lords.md): an Order that lands while another plays waits and follows it, short. Repeated Orders
+of the same lord inside one act may merge into one short moment marked "×N" on the chip
+([beats.md](beats.md) §3 priority rule) — every Order is counted, none is hidden. Status effects
+on a lord are light, never particle storms (game-art-director `effects.md`).
 
 Staging per lord — PROPOSAL until commander-forge's per-lord briefs land (roles from
 design-forge `lords.md`, looks from game-art-director `portraits.md`):
@@ -164,7 +171,7 @@ design-forge `lords.md`, looks from game-art-director `portraits.md`):
 
 | Fails when | Caught by |
 |---|---|
-| Moments chain and the battle becomes a slideshow | [ ] timeline probe: full moments ≥ 6,000 ms apart |
+| Moments chain and the battle becomes a slideshow | [ ] timeline probe: ≤ 2 full moments, ≥ 6,000 ms apart; 0 overlapping Orders |
 | A lord's moment is indistinguishable from another's (8 lords, one effect) | [ ] frame review: 8 peak frames side by side, each named by a tester |
 
 ## 6. VFX restraint
@@ -173,7 +180,7 @@ game-art-director `effects.md` owns the art rules (effects are light sources; ho
 falloff; gold-first palette); battle-forge applies them per beat. If `effects.md` publishes a
 stricter number, the stricter number wins.
 
-| Limit | Normal beat | Counter | Skill peak | Breach | Never |
+| Limit | Normal beat | Counter | Order peak | Breach | Never |
 |---|---|---|---|---|---|
 | Screen cover (pixels changed > 10% opacity) | ≤ 15% | ≤ 20% | ≤ 35% | ≤ 40% | > 50% |
 | Burst length (one emitter) | ≤ 600 ms | ≤ 600 ms | ≤ 1,200 ms | ≤ 1,500 ms + haze 3 s at ≤ 15% | endless loops during beats |
@@ -198,7 +205,7 @@ and the mix rules.
 |---|---|
 | Music under battle | ducked −6 dB (attack 150 ms, release 600 ms) |
 | Battle bed | wind + distant host loop, fades in over 400 ms in act I, out over 800 ms after the outcome |
-| Stingers (counter, skill, breach, outcome) | duck other SFX −3 dB for 300 ms |
+| Stingers (counter, Order, breach, outcome) | duck other SFX −3 dB for 300 ms |
 | Voices | ≤ 12 simultaneous battle voices |
 | Variants | ≥ 3 takes per one-shot, chosen by the seeded RNG; pitch ±3%; the same take never within 150 ms |
 | Win and loss stingers | equal loudness (±1 dB); the loss stinger is low and settled, never mocking |

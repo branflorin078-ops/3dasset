@@ -24,7 +24,7 @@ schema (its `schema.md`). The minimum the presentation needs:
 | beat `k` | kind | map shipped names to §2 kinds; an unmapped kind fails `beat_coverage_test` |
 | beat `a`, `t` | actor and target: side + line, a structure, or a lord | — |
 | beat `v` | value: troops removed (split by bucket if given), durability removed | — |
-| beat `f` | flags: counter, skill id, tool id | **counter flag**: derive client-side from combat.md §2's counter ring (the actor's line hunts the target's line). Never ask for a resolver change to get it. |
+| beat `f` | flags: counter, Order id, tool id | **counter flag**: derive client-side from combat.md §2's counter ring (the actor's line hunts the target's line). Never ask for a resolver change to get it. |
 
 Rule: the presentation is a pure function `timeline = compose(log, speed)`; the seeded
 `RandomNumberGenerator` (`rng.seed = seed`) picks every variant (sound take, debris count,
@@ -53,7 +53,7 @@ their names are verified; if the resolver phases differ, the act is taken from t
 | I Approach | squads close | squads close; engines deploy | 1 |
 | II Missiles | volleys, bolts | tower fire, traps, attacker volleys | 2 |
 | III Engines | — (skipped, 0 ms) | engine shots, ram, assault ladders, breach | 3 |
-| IV Contact | charge, brace, clash, skills | garrison lord, reinforcements, charge, brace, clash, skills | 4 |
+| IV Contact | charge, brace, clash, Orders | garrison lord, reinforcements, charge, brace, clash, Orders | 4 |
 | V Break | rout | rout, last breach | 5 |
 | VI Outcome | outcome pose | outcome pose, wall state | 6 |
 
@@ -77,7 +77,7 @@ clips come from the `hero3d` rig, engine clips from `siege-forge`.
 | `charge` | cavalry `charge`: lean 250, gallop 600, impact 300 ms; target knock-back 0.4 m | hoof dust wake; impact ring ≤ 12% | `bt_hooves_roll` (rising), `bt_charge_impact` | shake 4 px, 180 ms at impact | 1,400 (84) | 750 | B |
 | `brace` | spearmen `brace` 200 ms before contact; riders `hit` and stop | spark line along the spear points | `bt_spear_brace`, `bt_horse_rear` | hit-stop 3 frames at contact | 1,100 (66) | 650 | A |
 | `clash` | both squads `attack` loop, 2 swings; losers' figures `fall` | ≤ 4 sparks, low dust | `bt_melee_bed` + 1 `bt_clash` per exchange | lateral drift 2% | 1,100 (66) per exchange | 550 | C |
-| `skill` | caster squad lit; lord chip; signature effect | ≤ 35% cover, ≤ 1,200 ms | lord motif (commander-forge) + effect cue | world dim to 75% brightness; push 5% | 2,000 (120) full · 900 (54) short | 1,000 · 600 | A |
+| `order` | a lord's Order (active skill, war drum — lords.md §5): caster squad lit; lord chip; signature effect | ≤ 35% cover, ≤ 1,200 ms | lord motif (commander-forge) + effect cue | full: world dim to 75% brightness, push 5% | 2,000 (120) full · 900 (54) short | 1,000 · 600 | A |
 | `rout` | banner dips 300 ms; figures `rout`, fall back 1.5 m; squad greys to 50% saturation | none | `bt_rout_horn` (low) | none | 1,000 (60) | 500 | A |
 | `tower_fire` | tower-top archers `volley` | streaks from the tower top | `bt_tower_loose` | none | 700 (42) | 350 | C |
 | `trap` | the defence tool reveals and fires (siege-forge defensive tools: drop-stones, murder holes, hoardings) | ≤ 15% cover, ≤ 800 ms | tool cue | frame the hit squad | 900 (54) | 500 | A first · C repeat |
@@ -94,7 +94,7 @@ Flags on any damage beat:
 
 | Flag | Adds | ms added | Pri |
 |---|---|---|---|
-| `counter` | counter badge + target flash + larger number + `bt_counter_sting` (presentation.md §5); hit-stop 2 frames | +250 hold | A |
+| `counter` | counter badge + target flash + larger number + `bt_counter_sting` (presentation.md §4); hit-stop 2 frames | +250 hold | A |
 | `decisive` (derived: the largest loss beat of the battle, and the beat that drops the loser under its break point) | number shown even if C; 1 frame white-gold flash on the target | +0 | A |
 
 | Fails when | Caught by |
@@ -111,6 +111,7 @@ Budgets per context (1×). The war-session band from `design-forge/references/co
 | Context | Default at contact | 1× budget | Skip appears | `T_fight` (PROPOSAL, §6) |
 |---|---|---|---|---|
 | Camp inside a hunt order | map clash marker only, no battle view | 4 s marker | — | 4 s |
+| First battle of the game (onboarding.md step 7) | battle view | 20–30 s | 3 s | 24 s |
 | Single camp, AI outpost | battle view for the player's first 10 PvE battles, then a result chip with "Watch" | 10–16 s | 2 s | 12 s |
 | Field battle, interception | offer "Watch" (auto if following the march) | 20–30 s | 3 s | 24 s |
 | Castle attack or defence | offer "Watch" | 28–45 s | 3 s | 36 s |
@@ -125,7 +126,8 @@ The compositor runs these passes, in order, and stops at the first pass that fit
    one animation, impacts staggered 120 ms, at most 3 impacts shown; their losses sum into the
    last impact. Clash: at most 3 exchanges per pair per act; engine repeats: at most 3 per
    engine type per act. Identical A beats (e.g. the same counter volley 4 times, the same
-   lord's skill 3 times) merge into one beat marked "×N" with the badge or chip held once.
+   lord's Order twice in one act) merge into one beat marked "×N" with the badge or chip held
+   once.
 3. **Shorten**: B beats go to their "Min 2×" value × 1.4.
 4. **Drop**: remaining C beats are dropped, oldest act first; their losses fold into the next
    shown beat of the same target. A beats and the first beat of each kind are never dropped.
@@ -140,20 +142,20 @@ Worked timeline — castle attack with a breach (1×, after pass 2):
 | I | approach | 1,600 |
 | II | tower_fire ×2 (salvo) 1,400 · trap (first) 900 · volley ×2 1,800 | 4,100 |
 | III | engine_shot first 2,200 + 3 repeats 3,600 · ram_hit 1,500 · breach 2,200 (the fourth won assault of a war window takes Walls & Gate from 20% to 0 — combat.md §10) | 9,500 |
-| IV | garrison_lord 1,200 · reinforce 1,200 · charge 1,400 · brace+counter 1,350 · skill full ×2 4,000 · skill short 900 · clash ×4 4,400 | 14,450 |
+| IV | garrison_lord 1,200 · reinforce 1,200 · charge 1,400 · brace+counter 1,350 · order full ×2 (each primary's first) 4,000 · order short ×4 (two are "×2" merges) 3,600 · clash ×4 4,400 | 17,150 |
 | V | rout ×2 | 2,000 |
 | VI | outcome | 800 |
-| | **Total** | **32,450** (inside 28–45 s) |
+| | **Total** | **35,150** (inside 28–45 s; `T_fight` 36 s) |
 
-Worked timeline — field battle, 5 lines each side, 2 counters (1×): approach 1,600 · volley
-salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 · counter volley 1,150 · skill full ×2
-4,000 · clash ×3 per 2 pairs 6,600 · rout 1,000 · rout 1,000 · outcome 800 = **20,550 ms**
-(inside 20–30 s).
+Worked timeline — field battle, 5 lines each side, 2 counters, 8 Orders at a median 24 rounds
+(1×): approach 1,600 · volley salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 ·
+counter volley 1,150 · order full ×2 4,000 · order short ×4 3,600 · clash ×3 per 2 pairs 6,600 ·
+rout 1,000 · rout 1,000 · outcome 800 = **24,150 ms** (inside 20–30 s; `T_fight` 24 s).
 
 | Fails when | Caught by |
 |---|---|
 | A long battle overruns 45 s, or a one-sided battle is padded with fake hits | [ ] `battle_timeline_probe` fixtures: max, min, and 0 hits inside holds |
-| Merging hides a counter or a skill | [ ] probe: A beats in the log = Σ ×N of A beats shown |
+| Merging hides a counter or an Order | [ ] probe: A beats in the log = Σ ×N of A beats shown |
 | Two beats with a cause→effect link swap order (breach shown before the ram hits) | [ ] probe: for every shown pair, `i` order is kept |
 
 ## 5. Speed, skip, pause, replay
@@ -164,7 +166,7 @@ salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 · counter volley 1
 | Skip | shows at the context's skip time (§4); jumps to the final state (final strengths, structure states) with a 250 ms crossfade, then the outcome ceremony. The outcome card is never skipped | ≤ 1 tap, input free ≤ 100 ms after the tap |
 | Pause | a pause button (bottom-left); while paused, tapping a squad shows its exact counts | 0 ms response target, ≤ 1 frame |
 | Remembered | 2× and "auto-watch" choices persist per player (`ConfigFile` in `user://`) | — |
-| Replay (from a report) | same `compose()`; scrub bar with the six act marks and gilt highlight ticks (counter, skill, breach); a tick jumps to 1,000 ms before its beat | ≤ 2 taps from the report |
+| Replay (from a report) | same `compose()`; scrub bar with the six act marks and gilt highlight ticks (counter, Order, breach); a tick jumps to 1,000 ms before its beat | ≤ 2 taps from the report |
 | Late join | a player who opens a live battle after contact starts at the current act's first beat, with "From the start" offered | never mid-beat |
 
 ## 6. Latency, authority and the live realm
@@ -222,7 +224,7 @@ salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 · counter volley 1
 
 - [ ] The shipped beat kind name is quoted with file:line (or "(path to confirm)").
 - [ ] Animation clip, VFX id, sound cue, camera move, 1× ms, frames, Min 2×, priority — all filled.
-- [ ] VFX cover and burst length inside presentation.md §7 limits.
+- [ ] VFX cover and burst length inside presentation.md §6 limits.
 - [ ] Merge / drop behaviour stated; A beats merge only with identical A beats, shown as ×N.
 - [ ] Cause precedes effect on screen (engine release before impact; ram swing before the gate cracks).
 - [ ] `beat_coverage_test` and `battle_timeline_probe` re-run; verdict lines pasted.
