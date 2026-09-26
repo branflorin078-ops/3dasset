@@ -196,7 +196,7 @@ map texture and fixed-size icons. The 3D terrain dissolves into it across
 shader_type spatial;
 render_mode unshaded, blend_mix, depth_draw_never, depth_test_disabled, cull_back;
 uniform sampler2D map_tex : source_color, filter_linear_mipmap;
-uniform sampler2D paper_noise : filter_linear;      // tiling paper-fibre noise, 512 px
+uniform sampler2D paper_noise : filter_linear, repeat_enable; // tiling paper-fibre noise, 512 px
 uniform float progress : hint_range(0.0, 1.0) = 0.0; // smoothstep of log distance
 uniform float edge_width = 0.04;
 uniform vec3 edge_ink : source_color = vec3(0.118, 0.090, 0.071); // INK #1E1712

@@ -18,7 +18,7 @@ published gem rate, MON-001 (free-viable gem map), MON-002 (billing blocked), FE
 - **Wait**: a purchase is instant; the allowance resets Monday 00:00 UTC (core-loop's reset clock).
 - **Witness**: cosmetics on the keep and on the realm map — never a price, a spend total or a spend rank.
 
-Shop-header promise (story-forge words it): **"Coin can hire one extra shift. In a war season, a quarter shift. Everything else is earned."**
+Shop-header promise (story-forge words it): **"Coin can buy each workplace one extra shift a week — in a war week, a quarter shift. All other strength is earned."**
 
 ## 1. The laws this file rests on
 
@@ -37,11 +37,13 @@ Terms: **Goods** — the five resources and rp, shown as things (sacks, bound lo
 ingots, coin, sealed scrolls; art SHP-*), always sized in **hours of the player's own production**.
 **Works** — hourglasses (Works / Muster / Universal, core-loop §5) and the direct gem finish
 `p(m) = k · m^0.9`; never a crew, desk, yard, bed or banner. **Journeys** — travel and trade: a
-caravan's haul, moving the seat in peace time ([world.md](world.md) rules), a pilgrim's return with
-goods (art JRN-*; definition to confirm with shop-forge). **Cosmetics** — a look with zero stats:
-keep dressings / seat skins, banners, march pennants, lord portrait frames, hall decor, chat seals.
-**Bought** — acquired with money or gems, whatever the gems' origin. **War season** — every week of
-a realm's PvP season ([liveops.md](liveops.md)); **war window** — core-loop §8.3.
+caravan's haul, an in-realm seat move in a Truce week ([world.md](world.md) rules), a pilgrim's return
+with goods (art JRN-*; definition to confirm with shop-forge). **Cosmetics** — a look with zero stats:
+keep dressings / seat skins, banners, march pennants, lord portrait frames, hall decor, chat seals
+(sticker packs: owner decision, chat-forge). **Bought** — acquired with money or gems, whatever the
+gems' origin. **War week** (war season) — each of the 4 contest weeks of the 35-day campaign, plus a
+realm's Founding week; the Truce week is a peace week ([liveops.md](liveops.md) §2, §3.1). **War
+window** — core-loop §8.3.
 
 ## 2. What may be sold
 
@@ -49,12 +51,12 @@ a realm's PvP season ([liveops.md](liveops.md)); **war window** — core-loop §
 |---|---|---|---|---|
 | Goods | crates of 1–24 h own output; rp scrolls | yes, own-output hours | allowance × 0.25 | sheds, gathering, camps, chests |
 | Production boosts | +50% mill output for 24 h | yes, at expected yield (= 12 h of that resource) | as goods | research, events |
-| Works | hourglasses 1 m–24 h; gem finish | yes, when USED | cap × 0.25; muster + infirmary ≤ 480 min per window (core-loop §5 rule 6) | daily orders, writ, alliance shop |
-| Journeys | caravan haul; moving the seat | haul as goods; move: no | move not sold | writ, events |
+| Works | hourglasses 1 m–24 h; gem finish | yes, when USED | cap × 0.25; muster + infirmary ≤ 480 min per window (core-loop §5 rule 6) | daily chests, weekly writ, alliance Merit store |
+| Journeys | caravan haul; in-realm seat move | haul as goods; move: no | move not sold | own caravans ([economy.md](economy.md)); Hall summons (alliance.md §4) |
 | Cosmetics | dressings, banners, pennants, frames | no | sold | plain versions on the chronicle free track |
 | Illuminated chronicle | §7 | its goods and works: yes | sold | the free track |
 | Month's purse | gems each day for 30 days | when converted | sold | gems are also earned (MON-001) |
-| Gems | 6 packs at the published rate | when converted | sold | map gem veins, chests ([economy.md](economy.md)); the alliance join purse ([onboarding.md](onboarding.md)): gems worth 1 h Universal |
+| Gems | 6 packs at the published rate | when converted | sold | gem veins, one-time milestones, event milestones (economy.md §11); the join purse, worth 1 h Universal, if the owner keeps it ([alliance.md](alliance.md) §10, §16) |
 
 Every SKU lists exact contents and quantities (no mystery, no random). Bought goods land in storage,
 never as openable items, with no extra raid protection (economy.md owns protection). Goods sized in
@@ -72,11 +74,11 @@ own-output hours scale with the city, so no offer inflates out of relevance or o
 |---|---|---|---|
 | 1 | Plate count, permanent or rented | the genre's most resented sale: a core queue behind a status rung | grant whitelist |
 | 2 | A lord; a lord first seen or exclusive on a paid surface; talent points, respecs, random draws. Seals and lord XP: recommended never — if the owner accepts [lords.md](lords.md) §17 #2, only named Seals and XP, deterministic, ≤ 35 Seals + 5,040 XP per week | lord power is power (L2); exclusives make a sunk-cost ladder | whitelist; lords.md acquisition table: 0 paid-only rows |
-| 3 | Equipment, sets and their crafting materials | structurally unsellable (L2) | whitelist |
+| 3 | Equipment, sets and their crafting materials (whetstones, gold leaf; iron is goods under §4) | structurally unsellable (L2) | whitelist |
 | 4 | Troops, troop tiers, combat stats, combat boosts (attack, defence, health, march size) | power | whitelist |
 | 5 | Stats on cosmetics, including "set bonuses" on looks | blurs look and power | `skin_contract_test`; cosmetic `stats == {}` |
 | 6 | War imagery on a buy screen; a buy button on a war screen | money-law (L1) | art tags; ux_flow_probe (§10) |
-| 7 | Wards of any kind ("a ward on sale is a shield on sale", onboarding.md §4; owner #5); a seat move in a war season, or while a hostile march is inbound (launch → 30 min after the last arrival) | buying out of an attack | cloud-forge rule test |
+| 7 | Wards of any kind ("a ward on sale is a shield on sale", onboarding.md §4; §13 #5); the Writ of Passage or any cross-realm move (liveops.md §7); a seat move in a war week, or while a hostile march is inbound (launch → 30 min after the last arrival, as combat.md) | buying out of an attack | cloud-forge rule test |
 | 8 | Random items for money or gems: chests, keys, wheels, card flips | gambling law and PEGI-7 (§9) | no `random` grant on any paid SKU |
 | 9 | Earned honours: titles, landmark crests, season-victory banners, war honours, alliance rank — and their reserved laurel-and-seal motif | status must mean deeds | art register: motif only on earned (EVR/RNK) rows |
 | 10 | Activity points, chronicle levels, level skips, point boosters; favour past the weekly cap (§6) | ONE activity counter (core-loop §7) | whitelist |
@@ -92,21 +94,24 @@ Time is the gate every army and every tower passes: resources become troops and 
 through plates. Bounding **bought time** therefore bounds bought power even when goods pile up.
 
 ```
-Pw = crews + desks            Pm = muster yards + 1 (infirmary)
-Aw = (R − 1) · 168 h · Pw     works allowance per week
-Am = (R − 1) · 168 h · Pm     muster allowance per week
-Ag = (R − 1) · 168 h          goods allowance, in hours of own production
-R  = 2.0 in peace weeks, 1.25 in war-season weeks
+per plate: bought time ≤ (R − 1) · 168 h per week  (one extra shift at R 2.0)
+Pw = crews + desks (+1 per other timed plate, e.g. the anvil, lords.md §9)
+Pm = muster yards + 1 (infirmary)
+Aw = (R − 1) · 168 h · Pw     Am = (R − 1) · 168 h · Pm     (sums of the plate caps)
+Ag = (R − 1) · 168 h          goods allowance, in hours of own production P (economy.md §1)
+R  = 2.0 in the Truce week, 1.25 in war weeks (contest weeks and a realm's Founding week)
 ```
-1. **Use cap**: bought time applied per week (bought hourglasses + gem finishes) ≤ `Aw` / `Am` at the
-   week's R; Universal counts against the plate it is used on; war windows keep core-loop's ≤ 480 min.
+1. **Use cap**: bought time applied per week (bought hourglasses + gem finishes) ≤ the plate's cap,
+   so ≤ `Aw` / `Am` in total; Universal counts on the plate it is used on; war windows keep
+   core-loop's ≤ 480 min. Per plate, because a pooled `Am` lets the infirmary's share pour into
+   five yards: training 2.2× the free player's ((848 + 1,008) ÷ 848).
 2. **Hold cap**: bought time held ≤ one peace week's `Aw + Am`; a purchase past it is refused with
    one line. Peace-week stockpiles cannot be dumped into a war season.
 3. Earned time is never capped. The picker spends bought time first until the use cap, then earned
    (switchable); change given back keeps its origin. Cosmetics never count.
 4. The € value of `Aw + Am + Ag` at the published rate is the weekly power-spend ceiling: shop-forge
-   prints it, the owner approves it. If [progression.md](progression.md) keeps part of long timers
-   unskippable, both limits apply; the lower wins.
+   prints it, the owner approves it. [progression.md](progression.md)'s realm charter (§9) and
+   liveops.md's tier ceilings (§1.2) bind payers too; the lower limit wins.
 
 | Profile (core-loop §8) | Pw | Pm | Aw / Am / Ag, peace | Aw / Am / Ag, war season |
 |---|---|---|---|---|
