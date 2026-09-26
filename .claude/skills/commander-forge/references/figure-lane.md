@@ -18,7 +18,7 @@ re-checked before a new lord uses it.
 
 | Source | What it gives | Licence (verify at time of use) | Use |
 |---|---|---|---|
-| MPFB2 (Blender add-on) / MakeHuman | parametric human base, topology built for animation, eyes, eyebrow and hair proxies, a game-engine rig option | code GPL/AGPL; the system assets and exported models are published as CC0 | **default body base**. Generate in a SEPARATE session (the runner's `--factory-startup` does not load add-ons, lessons #22), save `.blend`/`.fbx` into `base/`, then import with `figure_kit.import_base` |
+| MPFB2 (Blender add-on) / MakeHuman | parametric human base, topology built for animation, eyes, eyebrow and hair proxies, a game-engine rig option | code GPL/AGPL; the system assets and exported models are published as CC0 | **default body base**. Generate in a SEPARATE session (the runner's `--factory-startup` does not load add-ons, blender-forge lessons #22), save `.blend`/`.fbx` into `base/`, then import with `figure_kit.import_base` |
 | Blender Studio "Human Base Meshes" bundle | sculpt-ready heads and bodies, clean quads | stated as CC0 at release (2023) | head or body starting point for a sculptor |
 | A commissioned sculptor | the lord's head from the face sheet (portrait-lane.md §4) | work-for-hire with full IP assignment in the contract | **default head route** for all 8 lords |
 | A licensed head scan (commercial store) | real skin detail and anatomy | EULA must allow: commercial game, distribution inside the app binary, modification; a model release included | skin detail and anatomy only; the identity is re-sculpted to the face sheet (rule: original faces) |
@@ -33,7 +33,7 @@ re-checked before a new lord uses it.
 - Heroic realism: 7.5–8 heads tall, head (crown → chin) 0.23–0.25 m. Heights
   (PROPOSAL, the lineup needs ±5–8% spread): Alric 1.85 heavy, Rowan 1.83
   lean, Edwin 1.80, Faber 1.78 broad, Fable 1.75 (−4 cm stoop), Godric 1.72
-  stocky, Maud 1.72, Elena 1.70 lean. Record the MPFB2 macro values (age,
+  stocky, Maud 1.74, Elena 1.70 lean. Record the MPFB2 macro values (age,
   muscle, weight, height, proportions) in the lord card.
 - Topology (check in the viewport and by `quality_report`): all quads on the
   head and joints; ≥ 3 concentric loops around each eye and the mouth; a
@@ -61,7 +61,9 @@ re-checked before a new lord uses it.
   used for heads (it joins copies); call `bake_pbr(low, sources=[sculpt])`
   on the retopologised head so the sculpt transfers through the normal
   channel. Raise `extrusion` / `ray_dist` above the largest sculpt-to-low
-  distance (typically 3–6 mm on a head) or patches bake empty.
+  distance (typically 3–6 mm on a head) or patches bake empty. The baked
+  material is for the GLB; Cycles key-art keeps `mat_skin(albedo=…,
+  rough_map=…, normal_map=<the baked normal>)` on the same low head.
 - Eyes: separate sclera/iris mesh + a cornea shell 0.3–0.5 mm proud
   (`figure_kit.mat_cornea`, IOR 1.376, roughness 0.02) + a thin wet strip
   along the lower lid. Sclera is never white: L* ≈ 80–85, warm, faint
@@ -205,10 +207,10 @@ skin to the inner face of the layer):
 |---|---|---|---|
 | Head + eyes | 5–8k | 2048² albedo, ORM, normal | 1 (+1 cornea if separate) |
 | Body (visible skin, hands, neck) + underclothes | 8–12k | 2048² shared | 1 |
-| Kit (the set, fitted) | 12–20k | 2048² shared by the four pieces | 1 |
+| Kit (the set, fitted) | 12–20k | 2048² shared by the four pieces | 4: one mesh per slot (equip swaps show / hide pieces), one material instance each so each piece carries its own tier energy |
 | Hair, beard | 3–8k | 1024² albedo+alpha, normal | 1 |
 | Signature object | ≤ 6k | its blender-forge set (1024²) | 1 |
-| **Total** | **≤ 45k** | ≈ 25 MiB VRAM (ASTC 6×6: 2.5 MiB per 2048² map with mips) | **≤ 6** |
+| **Total** | **≤ 45k** | ≈ 25 MiB VRAM (ASTC 6×6: 2.5 MiB per 2048² map with mips) | **≤ 9** |
 
 - LOD1 at 50% tris and 1024² maps for the roster and background lords;
   only ONE lord at LOD0 resident at a time (the hall stage).
@@ -267,5 +269,5 @@ mask and meta already wired); swap the stand-in primitives for
 - [ ] Pose §6; `windows_128 ≥ 1`
 - [ ] Every fitted piece `QA_FIT` in range; pose poke-through checked
 - [ ] Bust + full renders with mask and meta; `FIGURE_CHECK … fail=0`; sworn `--pair` PASS
-- [ ] GLB: ≤ 45k tris, ≤ 6 materials, skin re-imported with joints; round-trip render opened
+- [ ] GLB: ≤ 45k tris, ≤ 9 materials (kit = 4 swappable pieces), skin re-imported with joints; round-trip render opened
 - [ ] Godot look-dev match within ±8 L*; REPORT.md with every number verbatim

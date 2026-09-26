@@ -11,7 +11,7 @@ gap honestly.
 |---|---|---|
 | Kit piece | blender-forge qa.md: topology zeros, bake channels inspected, emission at its analytic strength, GLB round trip; budgets (export.md) | the 12-point list; set sheet read as one kit (kit-sets.md §4) |
 | Fitted piece | `QA_FIT` 2 mm ≤ min clearance ≤ 1.5 × intended offset; poke-through in 3 poses | no gap at collar and armpit, no skin through plate |
-| Hall figure | `QA_BASE` pasted; `quality_report` zeros on the game mesh; `FIGURE_CHECK … fail=0` for bust AND full; `--pair` PASS; GLB re-imported with joints; ≤ 45k tris, ≤ 6 materials | §5 figure list F1–F12; lineup §3 |
+| Hall figure | `QA_BASE` pasted; `quality_report` zeros on every game mesh; `FIGURE_CHECK … fail=0` for bust AND full; `--pair` PASS; GLB re-imported with joints; ≤ 45k tris, ≤ 9 materials (blender-forge's one-material gate applies per kit piece, not to the whole figure) | §5 figure list F1–F12; lineup §3 |
 | Portrait | `FIGURE_CHECK --kind bust` with the face box, fail=0 | rubric ≥ 22 / 27 (portrait-lane.md §7); 128 / 64 / 44 px looked at |
 | Token | `FIGURE_CHECK --kind token` on crops; LOD ranges set with margins | read test 18 / 20; colour-blind check (token-lane.md §7) |
 | Screens | the harnesses of screens.md §10 green | art zone ≥ 45% on every tab, every state shown |

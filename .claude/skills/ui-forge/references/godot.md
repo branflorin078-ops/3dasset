@@ -57,11 +57,8 @@ func _apply() -> void:
 	add_theme_constant_override("margin_bottom", maxi(0, int(ins.w)))
 ```
 
-The aspect sweep sets `debug_insets` to real device insets (e.g. top 132, bottom 63), so a
-desktop run shows notch problems too.
-
-**Anchoring**: top zones to the top corners, bottom zones to the bottom; nothing is anchored to
-the centre except the bottom bar's slot row (216 px slots, hud.md §10.3).
+The sweep sets `debug_insets` to real insets (top 132, bottom 63). **Anchoring**: top zones to the
+top corners, bottom zones to the bottom; only the bottom bar's slot row is centred (hud.md §10.3).
 
 ```gdscript
 ## Mirror one HUD zone around the vertical centre line (Hand = Left). Never use RTL for this.
@@ -85,7 +82,6 @@ extends Node
 
 const ROUTES := {   # route head -> [scene, layer]; the full table is architecture.md §5 (paths to confirm)
 	"building": ["res://ui/sheets/building_card.tscn", "panels"],
-	"plates": ["res://ui/hud/tracker_drawer.tscn", "panels"],
 	"lords": ["res://ui/screens/lords.tscn", "panels"],
 }
 var _stack: Array[UIPanel] = []
@@ -204,11 +200,10 @@ var server_offset := 0.0            # set at each sync (cloud-forge)
 var _ends := {}                     # Label -> end_unix
 
 func _ready() -> void:
-	var t := Timer.new()
-	t.wait_time = 1.0
+	var t := Timer.new()                # wait_time defaults to 1.0 s
+	t.autostart = true
 	t.timeout.connect(_tick)
 	add_child(t)
-	t.start()
 
 func watch(label: Label, end_unix: float) -> void:
 	if not _ends.has(label):
@@ -223,10 +218,8 @@ func _tick() -> void:
 
 func _render(l: Label) -> void:
 	var left := ceili(_ends[l] - (Time.get_unix_time_from_system() + server_offset))
-	l.text = UIFormat.duration(left) if left > 0 else tr("TIMER_CONFIRMING")   # never "0 s" while running
+	l.text = UIFormat.duration(left) if left > 0 else tr("TIMER_CONFIRMING")   # "1 h 12 m" / "4 m 05 s", never "0 s"
 ```
-
-`UIFormat.duration()` gives "1 h 12 m" / "4 m 05 s", rounded up (core-loop §4.5).
 
 ## 8. Status bubbles over buildings
 
@@ -266,8 +259,8 @@ static func fit_label(label: Label, max_px: int, min_px: int, max_lines := 1) ->
 	while px > min_px and font.get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x > width:
 		px -= 2
 	label.add_theme_font_size_override("font_size", px)
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if max_lines > 1 else TextServer.AUTOWRAP_OFF
 	label.max_lines_visible = max_lines
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if max_lines > 1 else TextServer.AUTOWRAP_OFF
 	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	if font.get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x > width:
 		label.tooltip_text = label.text               # the long-press tooltip shows it; layout_audit counts it
@@ -303,8 +296,7 @@ func _layout() -> void:
 	var need := ceili(size.y / row_h) + 4
 	while _pool.size() < need:
 		var r: Control = row_scene.instantiate()
-		_content.add_child(r)
-		_pool.append(r)
+		_content.add_child(r); _pool.append(r)
 	var first := maxi(0, scroll_vertical / row_h - 2)
 	for i in _pool.size():
 		var idx := first + i
@@ -330,12 +322,11 @@ chat-forge's variable-height list follows its ui.md §11.
   (it grows the chrome too and breaks the HUD plan).
 
 ```gdscript
-## base = {"Label": {"font_size": 42}, "ButtonPrimary": {"font_size": 50}, ...} captured at boot
-## with theme.get_type_list() and theme.get_font_size_list(type).
+## base = {"Label": {"font_size": 42}, ...} captured at boot via get_type_list() / get_font_size_list().
 static func apply_text_scale(theme: Theme, base: Dictionary, k: float) -> void:
-	for type in base:
-		for size_name in base[type]:
-			theme.set_font_size(size_name, type, roundi(base[type][size_name] * k))
+	for theme_type in base:
+		for size_name in base[theme_type]:
+			theme.set_font_size(size_name, theme_type, roundi(base[theme_type][size_name] * k))
 	theme.default_font_size = roundi(42 * k)
 ```
 
@@ -345,8 +336,7 @@ static func apply_text_scale(theme: Theme, base: Dictionary, k: float) -> void:
 internationalization/pseudolocalization/use_pseudolocalization = true
 internationalization/pseudolocalization/expansion_ratio = 0.4       # the +40% pass; 1.0 for the short-label stress pass
 internationalization/pseudolocalization/replace_with_accents = true # catches clipped ascenders and descenders
-internationalization/pseudolocalization/prefix = "["                # a missing bracket = clipped text
-internationalization/pseudolocalization/suffix = "]"
+internationalization/pseudolocalization/prefix = "["                # with suffix "]": a missing bracket = clipped text
 internationalization/pseudolocalization/fake_bidi = false           # true only for an RTL pass
 ```
 
@@ -379,9 +369,7 @@ ellipsis allowed, counted. RTL (if shipped): locale direction on text containers
 | A 96 px visual button used as its own hit rect | mis-taps; `ux_touch_probe` fails | a 132/144 px parent Control is the hit rect, and the visual sits centred with IGNORE. Prefer this to a `_has_point()` override, which layout tools cannot see |
 | Tweening `position` of a child inside a Container | it snaps back on the next sort | put the moving child in a plain Control wrapper (§5) |
 | Mirroring with `layout_direction = RTL` | English punctuation at the wrong end | swap anchors (§3) |
-| `get_display_safe_area()` on desktop | insets 0, notch bugs unseen | `debug_insets` in the sweep (§3) |
-| `quit_on_go_back` left true | the back button quits from any screen | router `_ready()` (§4) |
-| Fonts without fallbacks | boxes instead of CJK or Cyrillic | FontFile `fallbacks` (l10n-forge) |
+| `get_display_safe_area()` on desktop; `quit_on_go_back` left true | notch bugs unseen; back quits from any screen | `debug_insets` (§3); router `_ready()` (§4) |
 | A Timer or `_process` per countdown label | 16 ticking nodes, CPU at rest | the TimerHub (§7) |
 
 Checklist for any UI code change:

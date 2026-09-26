@@ -58,7 +58,7 @@ Rules:
 
 | Type | Wire kind | Payload | Size cap | Allowed in | Rendering |
 |---|---|---|---|---|---|
-| Text | `x` | UTF-8 text | ≤ 200 graphemes AND ≤ 800 bytes; ≤ 3 line breaks | all player channels | row with name line ([ui.md](ui.md) §3) |
+| Text | `x` | UTF-8 text | ≤ 200 graphemes AND ≤ 800 bytes; ≤ 3 line breaks (the stock input is one line, [ui.md](ui.md) §11; the limit binds modified clients) | all player channels | row with name line ([ui.md](ui.md) §3) |
 | Reply | `x` + `re` | text + id of the quoted message | as text; quote shows ≤ 60 graphemes of the original | all player channels | quote strip above the text |
 | Sticker | `s` | sticker id (u16) | 2 bytes of data | all player channels, all ages | 240 px painted sticker ([ui.md](ui.md) §7) |
 | Quick call | `q` | phrase key + validated args | ≤ 64 bytes | all player channels, all ages | text in the READER's language (§7) |
@@ -88,18 +88,18 @@ Rules:
 | Player joins an alliance | sees the last 50 Fireside messages (alliance setting: 0 / 50 / 200; default 50); never Council history |
 | Promoted into the Council | sees Council messages from the promotion time only |
 | Leaves, is kicked, alliance disbands | Fireside, Council and Tidings access ends at once; the client deletes those channels from its cache on the membership event |
-| Moves to another realm (migration, liveops.md) | Market Cross switches; whispers and Circles move with the player; realm history is not carried |
+| Moves to another realm (the Writ of Passage, liveops.md §7) | Market Cross switches; whispers and Circles move with the player; realm history is not carried |
 | Blocks a player | that player's messages are hidden in every channel for the blocker; whispers stop both ways |
 | Account deleted (GDPR) | [safety.md](safety.md) §11: whispers/Circle messages by the account hard-deleted; public-channel rows replaced by tombstones within 30 d |
-| Alliance hopping | chat adds no rule of its own; alliance.md's cooldowns apply. The Tidings shows "joined / left" lines so hopping is visible |
+| Alliance hopping | chat adds no rule of its own; alliance.md §11 cooldowns apply. Tidings shows "joined / left" lines, so hopping is visible |
 
 ## 4. Mentions
 
 | Mention | Who may use it | Limit | Effect |
 |---|---|---|---|
 | `@name` | anyone in a channel where the target is a member | ≤ 5 per message | mention badge + optional push ([ui.md](ui.md) §5, §8 here) |
-| `@council` | top two ranks | ≤ 10 per day per alliance | mention for every Council member |
-| `@all` (Fireside) | top two ranks | ≤ 3 per day per alliance; ≥ 30 min apart | mention for every member; push only for members who opted in |
+| `@council` | the Liege and any officer (alliance.md §2 row 14) | ≤ 10 per day per alliance | mention for every Council member |
+| `@all` (Fireside) | the Liege and any officer (row 14) | ≤ 3 per day per alliance; ≥ 30 min apart | mention for every member; push only for members who opted in |
 | `@` in Market Cross | anyone T2+ | ≤ 5 per message | mention badge only, never a push (strangers must not push strangers) |
 
 The mention is stored as a player id inside the text (`<@55123>`) and rendered as the current
@@ -108,22 +108,29 @@ Blocked players cannot mention the blocker (silently dropped for that recipient)
 
 ## 5. Announcements and Tidings
 
-- **Pinned announcement**: one per alliance, set by the top two ranks, ≤ 400 graphemes, shows
-  the author and the date; replacing it moves the old one to the Fireside as a normal line. The
-  scheduled announcement tool (leader burnout relief) belongs to alliance.md; chat renders it.
-- **Tidings events** (PROPOSAL list; each owning system emits the key, chat renders it):
+- **Pinned announcement**: one per alliance, set by the Liege or any officer (alliance.md §2
+  row 14), ≤ 400 graphemes, shows the author and the date; replacing it moves the old one to the
+  Fireside as a normal line. Scheduled announcements (Liege or Crier, ≤ 300 characters, ≤ 5
+  queued) belong to alliance.md §9: they become the pinned line on schedule, evaluated on read;
+  chat only renders them.
+- **Tidings events** — the list and wording follow alliance.md §13 (the event owner emits a
+  string key + ids; chat renders it; PROPOSAL where alliance.md is silent):
 
-| Event | Owner | Merge rule |
+| Event | Owner | Tidings rule |
 |---|---|---|
-| member joined / left / kicked / rank changed | alliance (gameplay-forge) | one line each |
-| rally opened (with rally card) | battle-forge | one line per rally |
-| member under attack (with coordinates card) | battle-forge | per member ≤ 1 per 10 min; members opt in |
-| alliance research finished, territory gained or lost, landmark taken | gameplay-forge / world-forge | one line each |
-| gifts received | alliance (gameplay-forge) | aggregated: ≤ 1 line per 10 min ("12 gifts from camp kills") |
+| member joined / left / promoted / released | alliance (gameplay-forge) | one line each; never a line for a warning |
+| help given | alliance | **no line** (digest only, alliance.md §13) |
+| gifts | alliance | Spoils: 1 line each, naming the deed; Hunt, Feast and Newcomer gifts merge into ≤ 1 line per 2 h ("6 feasts, 14 hunts since 14:00") |
+| rally launched (with the rally card) · rally scheduled (pinned card) | battle-forge / alliance.md §8 | one line per rally |
+| member under attack (with the `aid` card, [share-cards.md](share-cards.md) §2) | battle-forge defence.md §5 | ≤ 1 per member per 10 min; sent only when the defender taps Call allies |
+| charter level or Great chest | alliance | 1 line; ≥ 3 in an hour merge into one |
+| pact proposed / signed / notice / ended | alliance.md §12 | 1 line here + 1 line in Realm Tidings |
+| standard fading · Liege absent (countdown pinned from day 7) | alliance.md §7, §9 | 1 line; the countdown is a pinned line |
 | event started / ending in 1 h | liveops (design-forge liveops.md) | ≤ 2 lines per event |
 
-- **Tidings cap**: ≤ 30 lines per hour per alliance; above it, lines merge into a digest line
-  ("8 more alliance events — open Tidings"). Tidings lines never push.
+- **Tidings cap**: ≤ 30 lines per hour per alliance (the hard ceiling alliance.md §13 cites;
+  alliance.md itself emits ≤ 30 per day); above it, lines merge into one "Alliance news" line
+  ("Alliance news: 8 more events — open Tidings"). Tidings lines never push.
 - A Tidings line is not a claim: gifts are claimed in the alliance screen or the inbox (mail-forge).
 
 ## 6. Whispers and Circles
@@ -145,8 +152,8 @@ reader's language, so they are the only chat that crosses a language gap for fre
 
 | Group | Keys |
 |---|---|
-| War | `rally_at {coords}` · `join_rally` · `reinforce {player}` · `under_attack {coords}` · `shield_up` · `hold_line` · `fall_back` · `target {coords}` · `scout {coords}` |
-| Economy | `gather_here {coords}` · `ask_help_timers` · `donate_research` · `thanks_help` |
+| War | `rally_at {coords}` · `join_rally` · `reinforce {player}` · `under_attack {coords}` · `ward_up` (peace ward, onboarding.md §4) · `hold_line` · `fall_back` · `target {coords}` · `scout {coords}` |
+| Economy | `gather_here {coords}` · `ask_help_timers` · `donate_charter` · `thanks_help` |
 | Social | `hello` · `good_night` · `welcome` · `thank_you` · `well_fought` · `sorry` · `ready` · `wait_for_me` · `follow {player}` · `good_luck` · `congrats` |
 
 Arguments are validated by the server (a coordinate on the realm's grid; a player who is in
@@ -158,21 +165,31 @@ The full stream starts when the realm tab opens and stops 5 s after it closes.
 
 ## 8. Push policy (the only chat events that may leave the game)
 
-Push is sent only when the recipient has no open socket, and it shares the day's push budget of
-design-forge core-loop.md A8 (≤ 4 per day, grouped, quiet hours 22:00–08:00 local).
+Push is sent only when the recipient has no open socket, and it shares ONE per-player daily
+counter with every other push of the game: design-forge core-loop.md §9 **A8 — ≤ 4 per day,
+grouped per batch, quiet hours 22:00–08:00 local by default, never for offers**. The counter
+lives in the push worker ([backend-cost.md](backend-cost.md) §6), so chat, alliance and battle
+pushes cannot overspend it between them.
 
-| Event | Default | Coalescing | Lock-screen text |
-|---|---|---|---|
-| Whisper (accepted thread) | on | 1 push per thread per 10 min; later messages update the count | "A whisper from Aldric" — no message text by default |
-| Whisper request from a stranger | off | — | — |
-| `@name` in Fireside, Council or Circle | on | 1 per channel per 30 min | "Aldric mentioned you in the Fireside" |
-| `@all` / `@council` | opt-in | 1 per call | "Your alliance calls: rally at the ford" (from the quick-call key, localized) |
-| Rally call card | opt-in (battle-forge rally flow) | 1 per rally | localized rally key |
-| Market Cross, Tidings, stickers, group chatter | never | — | — |
+| Event | Owner of the rule | Default | Coalescing | Lock-screen text |
+|---|---|---|---|---|
+| Whisper (accepted thread) | chat | on | 1 push per thread per 10 min; later messages update the count | "A whisper from Aldric" — no message text by default |
+| Whisper request from a stranger | chat | off | — | — |
+| `@name` in Fireside, Council or Circle | chat | on | 1 per channel per 30 min | "Aldric mentioned you in the Fireside" |
+| `@all` / `@council` | chat | opt-in | 1 per call | "Your alliance calls: rally at the ford" (from the quick-call key, localized) |
+| Rally launched (card in the Fireside) | alliance.md §13 / battle-forge | opt-in | 1 per rally, only when the wait is ≥ 10 min | localized rally key |
+| Scheduled rally, 10 min before | alliance.md §13 | pledged members only | 1 per rally | localized rally key |
+| Rally "Remind" (leader, once per rally) | battle-forge rally.md | pledged members who have not sent | 1 per rally | localized rally key |
+| Market Cross, Tidings, stickers, Circle chatter | chat | never | — | — |
 
-- Chat pushes use at most **2 of the 4** daily A8 slots by default. A player who turns on
-  "every whisper" may exceed A8 for whispers only — the player's explicit choice
-  (owner decision #4 in SKILL.md).
+- **Slots**: chat's own rows (whispers, mentions, `@all`, `@council`) use at most **2 of the 4**
+  A8 slots per day by default; alliance.md adds ≤ 1 alliance push per member per day besides
+  pledged rallies. When the counter is full, pledged-rally pushes still go (the player pledged —
+  ui-forge hud.md §5 treats a pledged war call as P1) and everything else waits for the next
+  in-game session as an unread count. A player who turns on "every whisper" may exceed A8 for
+  whispers only — the player's explicit choice (owner decision #4 in SKILL.md).
+- **Quiet hours** hold every chat push until 08:00 local, then deliver ONE grouped push
+  ("3 whispers, 1 mention"), which uses one slot.
 - Message text on the lock screen: opt-in, adults only.
 - Never a push for an offer, a shop item or anything paid (money-law).
 

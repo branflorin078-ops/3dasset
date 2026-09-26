@@ -112,7 +112,7 @@ def test_loss_rows():
 
 
 def test_war_score_factors_and_scout_level():
-    assert cm.weak_target(0.29) == 0 and cm.weak_target(0.45) == 0.5 and cm.weak_target(0.6) == 1
+    assert cm.weak_target(0.29) == 0 and near(cm.weak_target(0.45), 0.5, 1e-9) and cm.weak_target(0.6) == 1
     assert cm.scout_level(3, 3) == 3 and cm.scout_level(1, 6) == 1 and cm.scout_level(6, 1) == 5
 
 

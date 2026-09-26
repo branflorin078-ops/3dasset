@@ -82,6 +82,8 @@
   "rpt.act.2": "{name} arrived with {n} troops {t} before contact.",
   "rpt.act.3": "You healed {n} troops {t} before contact.",
   "rpt.act.4": "{lord} took the garrison {t} before contact.",
+  "rpt.hunt.head": "Hunt: {won} of {n} camps cleared",
+  "rpt.hunt.why": "Why (camp {level}): {why}",
   "rpt.mo.1.you": "Your {a_line} countered their {b_line}.",
   "rpt.mo.1.they": "Their {a_line} countered your {b_line}.",
   "rpt.mo.2.you": "{lord}: {skill}.",
