@@ -153,8 +153,8 @@ an "until I'm back" batch early.
 |---|---|---|---|---|---|---|
 | `h_w` (hours of H) | 12 | 14 | 16 | 18 | 21 | 24 |
 
-1. **Sheds** hold 15 h of `P` per building ([core-loop.md](core-loop.md) 15-hour promise) and are never plundered; collect-on-open moves them to the yard.
-2. **Yard** stock `Y(r)` above the allowance is plunderable: `L(r) = max(0, Y(r) − max(0, Wp(r) − I(r)))`.
+1. **Sheds** hold 15 h of `P` per building ([core-loop.md](core-loop.md) 15-hour promise) and are never plundered; collect-on-open moves them to the yard. The promise covers waste (caps, expiry), not war: plunder takes only what the player chose to keep above the allowance.
+2. **Yard** has no cap (nothing is lost to a full store; exposure is the price of holding). Stock `Y(r)` above the allowance is plunderable: `L(r) = max(0, Y(r) − max(0, Wp(r) − I(r)))`.
 3. **Items — the genre loophole closed.** New content creates **no holdable resource item**: chests, events, camps and goods ([monetization.md](monetization.md) §2) land in the yard at delivery (core-loop §7's "protected storage" = the allowance). If shipped resource items exist (`data/items.gd`), their unopened value `I(r)` uses the allowance first, and any value above `Wp` opens into the yard after a 7-day notice. Total untouchable per resource = `Wp` + one pledge — never more.
 4. **Pledge — an honest way to save** (the item loophole was the genre's only one). On a building card, "Save for this" (2 taps) moves stock into a pledge: one pledge at a time; ≤ the remaining cost of one startable upgrade; only once ≥ 50% of that cost is held; ≤ 72 h; consumed when the upgrade starts; after cancel or expiry, 24 h before the next. Pledged stock is not plunderable and not spendable elsewhere.
 5. **Plunder** on a won castle assault: takes `50% · L(r)` per resource, up to the survivors' load; the attacker receives **75%**, **25% is destroyed** (spoiled in the sack — a sink and a tax on raid-feeding).
@@ -168,11 +168,10 @@ Worked (S5, `H(food)` = 10,000/h, warehouse tier 5 → `Wp` = 210,000; yard 500,
 72,500 → sacked 8 h. Loss 217,500 (43% of the yard). With a 250,000 pledge for the keep upgrade:
 `L` = 40,000 → loss 20,000 + 10,000 = 30,000 (6%).
 
-| Fails when | Caught by |
-|---|---|
-| Opening items lifts untouchable stock above `Wp` + pledge ([benchmark.md](benchmark.md) check) | [ ] plunder unit test, items case |
-| One castle loses > 75% of `L` in 12 h, or anything under `Wp` | [ ] plunder unit test, 3-assault case |
-| A pledge outlives 72 h, exceeds one upgrade, or chains with no 24 h gap | [ ] pledge unit test |
+**Checks** (plunder and pledge unit tests, gameplay-forge + cloud-forge): [ ] items case — fails
+when: opening items lifts untouchable stock above `Wp` + pledge ([benchmark.md](benchmark.md) check) ·
+[ ] 3-assault case — fails when: one castle loses > 75% of `L` in 12 h, or anything under `Wp` ·
+[ ] pledge case — fails when: a pledge outlives 72 h, exceeds one upgrade, or chains without the 24 h gap.
 
 ## 8. Upkeep — light rations, no deaths (the decision)
 
@@ -195,7 +194,7 @@ Why not just cut farm output 17%: that taxes every castle alike; rations tax sta
 |---|---|---|---|
 | F1 | Caravans only between members of one alliance, both ≥ 7 d in it | 7 d | cross-alliance feeding, join-drain-leave |
 | F2 | Caravan tax (a sink) | 20%; 15% with Market Rights ([alliance.md](alliance.md) §5) | cheap funnels |
-| F3 | Receive cap per resource per day, all senders together | ≤ 8 H(r) of the RECEIVER | all alts together add ≤ +33% of a main's own city output |
+| F3 | Receive cap per resource per day, all senders together | ≤ 8 H(r) of the RECEIVER | all alts together add ≤ 8 of 24 hours (≈ +33%) of a main's own output |
 | F4 | Send cap by keep stage | S1–S2: none · S3: ≤ 12 H of own, no iron · S4+: ≤ 12 H incl. iron | fresh alts send nothing; an alt sends ≤ half a day of its own output |
 | F5 | Sender account age | ≥ 7 d | throwaway alts |
 | F6 | Travel | 30–90 min by distance; the server may hold and reverse | instant funnels |
@@ -208,11 +207,10 @@ Why not just cut farm output 17%: that taxes every castle alike; rations tax sta
 Device ids stored only as salted hashes, kept 90 days (cloud-forge; privacy law). Chest rewards are
 bound ([core-loop.md](core-loop.md) §7); new or S1–S2 accounts add 0 Treasury ([alliance.md](alliance.md) §4).
 
-| Fails when | Caught by |
-|---|---|
-| A young account moves more than its stage allows | [ ] caravan server test by stage (benchmark.md check) |
-| Linked accounts plunder each other for > 0 | [ ] plunder unit test, linked case |
-| > 2% of active accounts flagged by F10 in a week (heuristic too loose) or 0 flags (too tight) | [ ] cloud-forge weekly flag report |
+**Checks**: [ ] caravan server test by stage (benchmark.md check) — fails when: a young account
+moves more than its stage allows · [ ] plunder unit test, linked case — fails when: linked accounts
+plunder each other for > 0 · [ ] cloud-forge weekly flag report — fails when: F10 flags > 2% of
+actives in a week (too loose) or 0 (too tight).
 
 ## 10. Inflation control
 
@@ -239,7 +237,8 @@ bots and farms pointless, and gems that are never loot. Gem numbers at `k` = 1 (
 1. Veins sit only at N ≥ 3; supply per realm per day = `0.35 × eligible players` veins (70% of the cap demand), so veins are contested.
 2. Eligible: S2+, account ≥ 72 h, one vein cap per device per day (F8), one vein march at a time, no standing order (2 deliberate taps) — a bot earns ≤ 90 per day.
 3. A march beaten on a vein keeps its gems and goes home; the vein passes to the winner.
-4. Steady free income after month 2 ≈ 85–110 gems/day = the price of 2.3–3.1 h of hourglass (`m = (G/k)^(1/0.9)`) — about +25% on the ≈ 10 h/day of hourglasses the chests give.
+4. Steady free income after month 2 ≈ 85–110 gems/day = the price of 2.3–3.1 h of hourglass (`m = (G/k)^(1/0.9)`) — +23% to +31% on the ≈ 10 h/day of hourglasses the chests give.
+5. **Checks**: [ ] vein unit test — fails when: one device collects > 90 gems from veins in a day, or a beaten march loses gems · [ ] telemetry — fails when: < 40% of eligible free players reach 45 vein gems on an average day (supply too thin).
 
 ## 12. The worked model — `tools/econ_sim.py`
 
