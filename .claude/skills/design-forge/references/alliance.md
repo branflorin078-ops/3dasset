@@ -94,7 +94,7 @@ Pattern ([benchmark.md](benchmark.md) §7): collective goods paid by many small 
 | Cap | none; standard upkeep drains it | 10,000 (≈ 28 days of median income); at cap earning pauses and the store says so |
 | Sold for money | never | never |
 
-**Merit per day** in a contest week, median free player (P50) → maximum: helps 150 → 150; donations 125 (10, half on the recommended charter) → 360 (24 × 15); rallies 40 → 100; works 20 → 60; war windows 21 (one window on each of 3 war days: 150 ÷ 7) → 43 (two windows: 300 ÷ 7). **Total ≈ 356 → 713 per day (2,490 → 4,990 per week)**; in the Truce week 335 → 670.
+**Merit per day** in a contest week, median free player (P50) → maximum: helps 150 → 150; donations 125 (10 donations, half on the recommended charter) → 360 (24 × 15); rallies 40 → 100; works 20 → 60; war windows 21 (one window on each of 3 war days: 150 ÷ 7) → 43 (two windows: 300 ÷ 7). **Total ≈ 356 → 713 per day (2,490 → 4,990 per week)**; in the Truce week 335 → 670.
 
 **The Quartermaster** (alliance store). The genre has officers stock the store from collective funds; ours has endless stock and every cap is **per player per week**, carried across alliances.
 
@@ -122,7 +122,7 @@ Weekly shelf capacity **9,080 Merit** > the maximum income of 4,990, so nobody h
 
 ## 5. Charters — alliance research funded by donations
 
-Five branches × six rows; a row opens when the row above it in the same branch is complete. Cost per level `C_r = 3,000 · 1.55^(r−1)` Treasury (rounded to 50) × size factor `s = clamp(A / 40, 0.5, 1)` (`A` = 7-day-active members) × realm discount `(1 − d)`. Progress is stored as a fraction (a donation adds `10 / price_now`), so a change in `A` never loses progress. A charter works the moment it fills: no timer, no tick.
+Five branches × six rows; a row opens when the row above it in the same branch is complete. Cost per level `C_r = 3,000 · 1.55^(r−1)` Treasury (rounded to 50) × size factor `s = clamp(M / 40, 0.5, 1)` (`M` = 7-day-active members) × realm discount `(1 − d)`. Progress is stored as a fraction (a donation adds `10 / price_now`), so a change in `M` never loses progress. A charter works the moment it fills: no timer, no tick.
 
 **Realm discount** (our move — the genre lets the first alliance keep its lead for good): `d = 30%` once ≥ 3 alliances in the realm hold that level, `50%` once ≥ half of the realm's alliances with ≥ 20 members hold it ("Known in the realm: −30%"). `s` counts only ACTIVE members, so releasing inactive players never makes research cheaper; from 20 to 40 actives the price per active member is constant, and growth above 40 costs nothing.
 
