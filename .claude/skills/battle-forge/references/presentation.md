@@ -82,20 +82,7 @@ Clip set per line (hero3d authors; 30 fps authoring per blender-forge animation.
 | Two lines are told apart only by colour | [ ] 64 px greyscale crop of each squad: the tester names the line |
 | Tier is invisible (t2 and t9 squads look alike) | [ ] tier strip render t1/t5/t10 per line, named in 1 s |
 
-## 3. The battle on the map (no battle view)
-
-What spectators, hunts and players who did not open the battle view see at the contact point.
-It uses only the two march records and the result flag (beats.md §6: 0 extra reads).
-
-| Element | Mid zoom | Far zoom |
-|---|---|---|
-| Clash marker | crossed-blades medallion 44 px (Blender icon art), ring split in the two sides' relationship colours + a shape per side | 32 px medallion, pulse ≤ 1 Hz |
-| Motion | low dust loop at the contact point, ≤ 3% of the screen | none |
-| Length | exactly `T_fight` (4 s for a camp inside a hunt order) | same |
-| Result | the winner's banner icon for 10 s; a won camp's banner falls over 400 ms | banner icon 24 px |
-| Tap | opens the battle card: sides, "Watch" for participants only | same |
-
-## 4. Battle HUD
+## 3. Battle HUD
 
 | Element | Place | Size | Behaviour |
 |---|---|---|---|
@@ -109,7 +96,7 @@ It uses only the two march records and the result flag (beats.md §6: 0 extra re
 
 Numbers are losses in troops ("−1,240"), never "damage points" the player cannot relate to.
 
-## 5. Readable counters — the main genre fix
+## 4. Readable counters — the main genre fix
 
 The genre's counter bonus of about 5% (design-forge `benchmark.md`) is buried under stat
 stacks; players conclude that only raw power matters. Our counter is a constant worth one tier
@@ -141,7 +128,7 @@ never changed by any bonus) and it is **shown every time it lands**.
 | The badge cannot be told apart under colour-blind simulation | [ ] probe: mask IoU < 0.6 between the three states; contrast ≥ 4.5:1 vs the field behind it |
 | Badges stack (> 2 on screen) and nothing reads | [ ] probe: max concurrent badges ≤ 2 |
 
-## 6. Lord skill moments
+## 5. Lord Order moments
 
 The lord is the player's investment; the cast is the one place the battle is allowed to stop
 and look. commander-forge owns each lord's portrait, emblem and signature effect; battle-forge
@@ -180,7 +167,7 @@ design-forge `lords.md`, looks from game-art-director `portraits.md`):
 | Moments chain and the battle becomes a slideshow | [ ] timeline probe: full moments ≥ 6,000 ms apart |
 | A lord's moment is indistinguishable from another's (8 lords, one effect) | [ ] frame review: 8 peak frames side by side, each named by a tester |
 
-## 7. VFX restraint
+## 6. VFX restraint
 
 game-art-director `effects.md` owns the art rules (effects are light sources; hot core → soft
 falloff; gold-first palette); battle-forge applies them per beat. If `effects.md` publishes a
@@ -202,7 +189,7 @@ stricter number, the stricter number wins.
 - Particles: `GPUParticles3D` with `one_shot = true` from a pool; `CPUParticles3D` fallback on
   devices ship-forge marks as low tier.
 
-## 8. Sound
+## 7. Sound
 
 audio-forge owns assets, buses and loudness; battle-forge names the cues (`bt_*`, beats.md §3)
 and the mix rules.
@@ -217,14 +204,14 @@ and the mix rules.
 | Win and loss stingers | equal loudness (±1 dB); the loss stinger is low and settled, never mocking |
 | Sound off | every cue has a visual twin (badge, flash, chip) — the battle must read muted |
 
-## 9. Reduced motion and accessibility
+## 8. Reduced motion and accessibility
 
 `UI.reduced_motion` (studio mapping notes — verify the name) switches: shake 0, push-ins 0,
 hit-stop 0, camera moves become 200 ms crossfades, particle counts × 0.5, dim 90% instead of 75%.
 Timings stay the same so the replay is the same length. Text ≥ 28 px at the 1080 px short side;
 subtitles for the lord's voice line if one plays (story-forge writes the line).
 
-## 10. Performance budget (battle view)
+## 9. Performance budget (battle view)
 
 The frame target is ship-forge's (60 fps assumed here: 16.7 ms).
 
@@ -237,10 +224,23 @@ The frame target is ship-forge's (60 fps assumed here: 16.7 ms).
 | Asset load | all battle resources requested at contact − 10 s; 0 synchronous `load()` during a battle |
 | Extra memory | ≤ 64 MB above the realm view |
 
+## 10. The battle on the map (no battle view)
+
+What spectators, hunts and players who did not open the battle view see at the contact point.
+It uses only the two march records and the result flag (beats.md §6: 0 extra reads).
+
+| Element | R region level | M realm level (zoom-model.md) |
+|---|---|---|
+| Clash marker | crossed-blades medallion 44 px (Blender icon art), ring split in the two sides' relationship colours + a shape per side | 32 px medallion, pulse ≤ 1 Hz |
+| Motion | low dust loop at the contact point, ≤ 3% of the screen | none |
+| Length | exactly `T_fight` (4 s for a camp inside a hunt order) | same |
+| Result | the winner's banner icon for 10 s; a won camp's banner falls over 400 ms | banner icon 24 px |
+| Tap | opens the battle card: sides, "Watch" for participants only | same |
+
 ## 11. Checklist — a presentation change
 
 - [ ] Frame captured with Movie Maker at 60 fps (qa.md §4) and the key frames looked at.
-- [ ] Cover, emitters, particles and lights measured against §7, verdict line pasted.
+- [ ] Cover, emitters, particles and lights measured against §6, verdict line pasted.
 - [ ] Counter badge present for every counter beat, in both directions.
 - [ ] Reads with sound off and in reduced motion.
 - [ ] Line identity readable in greyscale at 64 px.
