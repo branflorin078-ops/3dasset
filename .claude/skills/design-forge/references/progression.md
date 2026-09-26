@@ -37,7 +37,7 @@ decision (SKILL.md rule 4).
 | Age (names: story-forge) | Keep L | Visual tier (architecture.md §4) | Keep silhouette step | Opens (plates: core-loop) | Troop tiers (§6) | Resource enters | Age Trial (opens at) |
 |---|---|---|---|---|---|---|---|
 | I Stockade | 1–5 | 1: posts, wattle, thatch | motte, palisade, timber tower | 2 crews, 1 desk, 2 banners | t1 L1, t2 L3 | food, wood | — |
-| II Timber Hall | 6–10 | 2: frame on rubble plinth, shingle | framed hall, first gable, banner pole | — | t3 L6, t4 L9 | stone (L6) | The First Counter (L4) |
+| II Timber Hall | 6–10 | 2: frame on rubble plinth, shingle | framed hall, first gable, banner pole | — | t3 L6, t4 L9 | stone, gold (L6) | The First Counter (L4) |
 | III Framed Keep | 11–15 | 3: dressed plinth, clay tile | 2 storeys, jettied floor, dormers | banner 3; free finish 7 min node | t5 L12, t6 L15 | iron (L11) | Join the Banner (L9) |
 | IV Stone Keep | 16–20 | 4: dressed stone base, slate | arched gate, tower stub | desk 2, banner 4 | t7 L18 | — | Hold the Gate (L14) |
 | V Castle | 21–25 | 5: ashlar, lead roofs | capped towers, buttresses | crew 3, banner 5; free finish 10 min node | t8 L21, t9 L24 | — | The Muster (L19) |
@@ -94,14 +94,14 @@ following 7 days ÷ all required build-minutes. Target ≤ 10% (telemetry, §13)
 
 ## 3. The building roster — each age brings new verbs
 
-A new archetype is itself a progression beat. All 34 archetypes open across the six ages, front-loaded
-so week 1 always has a new building. **Roles are PROPOSALS read from the names — replace each with
+A new archetype is itself a progression beat. An engaged free player meets 32 of the 34 by day ~5;
+after that the beats are levels, troop tiers, research rows and Age VI's two prestige buildings. **Roles are PROPOSALS read from the names — replace each with
 the shipped role from `data/buildings.gd` before use; the pacing is the deliverable.**
 
 | Age | Archetypes opening (proposed role) | Count |
 |---|---|---|
-| I | fortress (spine) · farm (food) · lumber (wood) · house (gold rents) · barracks (infantry) · archery (archers) · warehouse (protection) · hospital (beds) | 8 |
-| II | quarry (stone) · encampment (spearmen) · stable (cavalry) · academy (research) · embassy (alliance help) · tavern (lord recruitment, lords.md) · smithy (lords' gear, lords.md) · market (trade, economy.md caps) | 8 |
+| I | fortress (spine) · farm (food) · lumber (wood) · barracks (infantry) · archery (archers) · warehouse (protection) · hospital (beds) · academy (research desk) | 8 |
+| II | quarry (stone) · house (gold rents) · encampment (spearmen) · stable (cavalry) · embassy (alliance help) · tavern (lord recruitment, lords.md) · smithy (lords' gear, lords.md) · market (trade, economy.md caps) | 8 |
 | III | mine (iron) · arsenal (crossbows) · milacademy (troop drill) · tower (watch, walls) · mill (+food) · sawmill (+wood) · well (fire and repair of a burning castle, combat.md) · huntlodge (camp scouting, lord XP) | 8 |
 | IV | townhall (town charter: gold, trade caps) · stonemason (+stone) · victualler (march supplies) · library (research speed) · church (role to confirm) | 5 |
 | V | university (advanced research rows) · laboratory (healing speed) · monument (realm milestones) | 3 |
@@ -169,17 +169,17 @@ economy tree ([benchmark.md](benchmark.md)). Ours:
 
 Tier `t` opens at keep level `L_t = max(1, 3·(t − 1))`: t1 L1, t2 L3, t3 L6 … t10 L27; cavalry t11
 at L30. **Three keys per tier and line**: keep ≥ `L_t`, that line's hall ≥ `L_t`, and the Drill node
-for tier `t` (shared by all five lines). From t6 the cost includes iron ([economy.md](economy.md)'s
+for tier `t` (shared by all five lines; t1 needs none). From t6 the cost includes iron ([economy.md](economy.md)'s
 late throttle). Display names: [units.md](../../game-art-director/references/units.md).
 
-| Age | Tiers | Infantry · cavalry examples | Kit look (the castle's material ladder) | Engaged / casual free reach (sim §9) |
+| Age | Tiers | Infantry · cavalry examples | Kit look (the castle's material ladder) | Engaged / casual free, day # (sim §9) |
 |---|---|---|---|---|
-| I | t1–t2 | Peasant, Levy · Peasant Outrider, Mounted Scout | padded gambeson, kettle helm | session 1 |
-| II | t3–t4 | Axeman, Swordsman · Hobelar, Light Cavalry | mail shirt, timber shield | day 1 |
-| III | t5–t6 | Man-at-Arms, Heavy Infantry · Mounted Warrior, Knight | mail plus first plate; iron cost | day 1 / day 2–3 |
+| I | t1–t2 | Peasant, Levy · Peasant Outrider, Mounted Scout | padded gambeson, kettle helm | day 1 / day 1 |
+| II | t3–t4 | Axeman, Swordsman · Hobelar, Light Cavalry | mail shirt, timber shield | day 1 / day 1 |
+| III | t5–t6 | Man-at-Arms, Heavy Infantry · Mounted Warrior, Knight | mail plus first plate; iron cost | t5 day 1 / 2 · t6 day 2 / 4 |
 | IV | t7 | Veteran Infantry · Heavy Cavalry | plate harness | day 2 / day 5 |
-| V | t8–t9 | Elite Infantry, Royal Guard · Veteran Knight, Elite Knight | full plate; royal livery at t9 | t8 day 4 / 7 · t9 day 11 / 14 |
-| VI | t10 (+ cav t11) | King's Champion · Royal Knight, Legendary Knight | maintained plate, gilt fittings | t10 day 32 / 39 · t11 day 70 / 86 |
+| V | t8–t9 | Elite Infantry, Royal Guard · Veteran Knight, Elite Knight | full plate; royal livery at t9 | t8 day 5 / 7 · t9 day 12 / 15 |
+| VI | t10 (+ cav t11) | King's Champion · Royal Knight, Legendary Knight | maintained plate, gilt fittings | t10 day 32 / 40 · t11 day 70 / 87 |
 
 - **T1** Tier steps follow [numbers.md](numbers.md) §3 (`k` ≈ 1.35–1.5) and [combat.md](combat.md)'s rule t(n) + counter ≈ t(n+1): a one-tier gap is answerable by choosing the counter line. Target: heavy spender vs engaged free player of the same account age ≤ 1 tier apart on ≥ 95% of days 0–120 (sim: 99%, with or without the charter; heavy vs casual free: 96% with the charter, 93% without).
 - **T2** **Promotion** (PROPOSAL; combat.md and economy.md set cost and time): when a tier opens, existing troops of the tier below can be promoted by paying the cost difference — no investment is lost to a new tier.
@@ -229,10 +229,11 @@ earlier than the phase names. If week-1 telemetry shows stalls, stretch L11–L2
 never lengthen the top.
 
 **Resource gate `G`** = hours of the median free player's income needed for keep level L ÷ `K(L)`
-in hours: **I 0.3 · II 0.5 · III 0.8 · IV 1.0 · V 1.2 · VI 1.4**. `G < 1` (Ages I–III): time is the gate; a player who collects is never blocked by cost. `G ≥ 1`
-(IV–VI): resources become the gate ([numbers.md](numbers.md) §2), so gathering, camps and trade
-shorten the calendar and a passive player waits up to `G · K`. [economy.md](economy.md) turns `G` into
-costs with its income curves and proves them with `tools/econ_sim.py` (day-30 band 0.90–1.10).
+in hours: **I 0.3 · II 0.5 · III 0.8 · IV 1.0 · V 1.2 · VI 1.4**. `G < 1` (Ages I–III): time is the
+gate; a player who collects is never blocked by cost. `G ≥ 1` (IV–VI): resources become the gate
+([numbers.md](numbers.md) §2), so gathering, camps and trade shorten the calendar and a passive
+player waits up to `G · K`. [economy.md](economy.md) turns `G` into costs with its income curves and
+proves them with `tools/econ_sim.py` (day-30 band 0.90–1.10).
 
 ### Why there is no four-month wall
 
@@ -261,7 +262,7 @@ same camera as the city — never a painted promise the model does not keep.
 Toy model (scratch; the progression sim in §13 replaces it): keep path only; keys ready per G5; the
 keep restarts only at a visit; helps at request; free finish; a daily hourglass allowance for the
 keep; income accrues continuously and each level needs `G · K(L)`; alliance joined in session 1.
-Accuracy ±25%. Days of account age (= realm age for founders):
+Estimates to check, not measurements. Days of account age (= realm age for founders):
 
 | Profile | Visits/day | Helps (floor) | Hourglass h/day to keep | Income ×free | Age II | III | IV | V | VI | Keep 30 |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -272,16 +273,17 @@ Accuracy ±25%. Days of account age (= realm age for founders):
 | Heavy spender, realm charter | 9 | 30 (3 m) | 24 | 2.5 | 0.3 | 0.3 | 0.5 | 3.4 | 15.5 | 46 |
 
 With core-loop's A-gates, an engaged free player holds every plate (3 crews, 2 desks, 5 banners)
-by day ~4. **Rush ratio** = heavy days to keep 30 ÷ engaged free days: 0.41 without the charter,
-**0.66 with it** (target ≥ 0.6).
+by day ~4, and Ages I–V land in the first ~4 days (casual ~7); Age VI carries weeks 4–10. For later
+age-ups raise `G` in Ages III–V — never the timer ceiling. **Rush ratio** = heavy days to keep 30 ÷
+engaged free days: 0.41 without the charter, **0.66 with it** (target ≥ 0.6).
 
 **Realm charter** (PROPOSAL): the highest keep level that may be *started* rises with realm age —
 **L20 on days 0–2, L25 from day 3, L27 from day 14, L29 from day 28, L30 from day 42.** How the dates
 are set: the charter delays the casual and engaged free profiles by 0.0 days at every level and the
 light spender by ≤ 1 day; it binds only rushers. Tier gap heavy vs casual ≤ 1 on 96% of days 0–120
 (93% without). The roadmap shows the dates ("Keep 29 opens on realm day 28 — in 3 d 4 h"). Existing
-realms start with every cap open; nobody ever loses a level; migration into a realm whose charter is
-below the migrant's keep level is refused ([liveops.md](liveops.md) owns migration).
+realms start with every cap open; a merged realm takes the older realm's charter; nobody ever loses a
+level; migration into a realm whose charter is below the migrant's level is refused ([liveops.md](liveops.md)).
 
 ## 10. Catch-up — late joiners, returners, slow players
 
@@ -357,7 +359,7 @@ target}`; research node levels; `trials_passed` (5-bit mask); per realm the stat
 the shipped data has 6 levels, `ℓ_new = 5 · T` (top of the same visual tier: nobody sees a smaller
 castle and no next step gets harder); running upgrades finish at the mapped level.
 **Server cost**: no new write type — upgrade and research starts are core-loop plate starts (≈ 15
-per player per day, counted there, 2.9 M/day at 50,000 players). Added: ≤ 1 trial resolution per
+per player per day, inside core-loop's ≈ 2.9 M writes/day at 50,000 players). Added: ≤ 1 trial resolution per
 player per day (a camp-type resolution) and 1 snapshot job per realm per day (median +
 `settled_day`: 31 integers). Timers, discounts and charter caps are computed, never ticked. Measure
 with `core/sd_cost_probe.gd`.

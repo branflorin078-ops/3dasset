@@ -46,6 +46,7 @@ LORDS = ("Edwin", "Alric", "Elena", "Rowan", "Godric", "Maud", "Faber", "Fable")
 EXAMPLE_SKILLS = {(0, 0): "Rally Cry", (1, 0): "Shock", (2, 0): "Volley", (3, 0): "Charge",
                   (4, 0): "Sapper Fire", (5, 0): "Shield Wall", (6, 0): "Temper",
                   (7, 0): "Chronicle"}
+EXAMPLE_ENGINES = {0: "ladders", 1: "rams", 2: "trebuchets", 3: "mantlets"}  # siege-forge owns the catalogue
 LINK_ALLOWED = {"train", "rally", "scout", "research", "siege", "wall", "infirmary", "replay"}
 # Scout information tiers (scout.md section 2): fields allowed per tier, and rounded ones.
 SCOUT_FIELDS = {0: {"ct", "pw", "wb"},
@@ -207,6 +208,8 @@ def advice(rep, v, factor):
     if factor == "tier":
         ev = why["t"][o]
         return ("rpt.next.tier", {"line": line_name(ev[2]), "tier": ev[1]}, ("train", ev[2]))
+    if factor == "defences" and any(u.get("e") for u in rep["s"][v]["u"]):
+        return ("rpt.next.defences_more", {}, ("siege", None))
     table = {"numbers": ("rpt.next.numbers", ("rally", None)),
              "lord": ("rpt.next.lord", ("scout", None)),
              "stats": ("rpt.next.stats", ("research", None)),
@@ -333,8 +336,11 @@ def headline(rep, v, outcome, band):
     if rep["pl"][0] == PLACE_CASTLE and castle_side(rep) == v and outcome != "draw":
         word = STR["rpt.outcome.held" if outcome == "win" else "rpt.outcome.breached"]
     opp = S[o]["u"][0]
-    vs = s("rpt.head.vs", name=name_of(rep, opp["id"]), tag=opp.get("tg", ""),
-           place=STR[f"rpt.place.{rep['pl'][0]}"], x=rep["at"][0], y=rep["at"][1])
+    place = STR[f"rpt.place.{rep['pl'][0]}"]
+    if rep["pl"][0] == PLACE_CASTLE and castle_side(rep) == v:
+        place = STR["rpt.place.own"]
+    key = "rpt.head.vs" if opp.get("tg") else "rpt.head.vs_notag"
+    vs = s(key, name=name_of(rep, opp["id"]), tag=opp.get("tg", ""), place=place, x=rep["at"][0], y=rep["at"][1])
     stats = []
     if outcome == "loss":
         stats = [s("rpt.head.home_wounded", n=num(light(S[v]) + hosp(S[v]))),
@@ -385,6 +391,9 @@ def render(rep, pov=0):
     L.append("YOUR TROOPS              sent   light  infirm.   dead   dealt")
     for u, r in rows(rep["s"][v]):
         L.append(f"  {line_name(r[0]):<10} t{r[1]:<3} {num(r[2]):>9} {num(r[3]):>7} {num(r[4]):>8} {num(r[5]):>6} {num(r[6]):>7}")
+    for u in rep["s"][v]["u"]:
+        for g in u.get("e", []):
+            L.append(f"  {EXAMPLE_ENGINES.get(g[0], g[0]):<10} ×{g[1]:<3} lost {g[2]}, wall damage {pct(g[3])}%")
     for n in e["notes"]:
         L.append("  " + n["text"])
     L.append("THEIR TROOPS             sent  out of action")
@@ -435,7 +444,7 @@ def render_scout(rep):
     rounded = SCOUT_ROUNDED[it]
 
     def fmt(field, n):
-        return s("rpt.scout.about", n=num(n)) if field in rounded else num(n)
+        return s("rpt.scout.about", n=num(n)) if field in rounded and n >= 100 else num(n)
     L.append(f"Castle tier {sc['ct']} · power {fmt('pw', sc['pw'])} · wall {STR['rpt.wall.' + str(sc['wb'])]}"
              + (f" {pct(sc['wl'])}%" if "wl" in sc else ""))
     for field, label, reveal in (("tt", "Troops at home", 1), ("rs", "Resources above protection", 1),
@@ -455,7 +464,7 @@ def render_scout(rep):
             elif field == "l":
                 txt = ", ".join(LORDS[x[0]] + (f" lvl {x[1]}" if len(x) > 1 else "") for x in val)
             elif field == "rf":
-                txt = (f"{val[0]} allies, {fmt('rf', val[1])} troops" if isinstance(val[0], int)
+                txt = (f"allies {val[0]}, troops {fmt('rf', val[1])}" if isinstance(val[0], int)
                        else ", ".join(f"{name_of(rep, a)} {num(b)}" for a, b in val))
             elif field == "bo":
                 txt = "attack +{}%, defence +{}%, health +{}%".format(*[pct(x) for x in val])
@@ -531,7 +540,39 @@ def size_report(rep):
         res["summary_minified"], res["summary_gzip"] = len(sm), len(gz(sm))
         ov = mini(opponent_view(rep, 0))
         res["view_attacker_gzip"] = len(gz(ov))
+        res["list_line_minified"] = len(mini(list_line(rep, 0)))
     return res
+
+
+def list_line(rep, pov):
+    """schema.md section 6: the inbox row mail-forge stores per viewer, so the list and the
+    headline render with 0 extra reads."""
+    e = explain(rep, pov)
+    S = rep["s"]
+    o = 1 - pov
+    top = e["rows"][0] if e["rows"] else None
+    if e["outcome"] == "loss":
+        nums = [light(S[pov]) + hosp(S[pov]), dead(S[pov])]
+    else:
+        nums = [out(S[o]), max(rep.get("rs") or [0]) if pov == 0 else out(S[pov])]
+    return {"r": rep["id"], "k": rep["k"], "ts": rep["ts"], "o": ("win", "loss", "draw").index(e["outcome"]),
+            "m": e["margin"], "p": S[o]["u"][0]["id"], "tg": S[o]["u"][0].get("tg", ""), "pl": rep["pl"][0],
+            "at": rep["at"], "n": nums, "c": [FACTORS.index(top["factor"]), 1 if top["n"] > 0 else 0] if top else []}
+
+
+def synth_rally(n, base):
+    """A rally with n attacking participants built from rally_stronghold.json's joiners, for
+    the storage table (storage.md section 2). Numbers vary so gzip cannot cheat on repeats."""
+    rep = json.loads(mini(base))
+    lead = rep["s"][0]["u"][0]
+    joiners = []
+    for i in range(1, n):
+        line, tier = i % 5, 5 + i % 3
+        sentn = 1500 + 137 * i
+        lt, hp = 40 + 7 * i, 90 + 13 * i
+        joiners.append({"id": 30000 + 97 * i, "tg": "GRY", "t": [[line, tier, sentn, lt, hp, 0, 2000 + 211 * i]], "ho": 0})
+    rep["s"][0]["u"] = [lead] + joiners
+    return rep
 
 
 # ---- invariants (qa.md section 2) ---------------------------------------------
@@ -587,8 +628,19 @@ def check(rep):
         if any(abs(x) > 1000 for x in F[i]):
             E("why.f value outside -1000..1000")
     c = castle_side(rep)
-    if c is not None and (F[c][6] > 0 or F[1 - c][5] > 0):
-        E("siege credit belongs to the attacker, tower/wall credit to the castle side")
+    if c is None and any(F[i][5] or F[i][6] for i in (0, 1)):
+        E("defences/siege factors without structures (st)")
+    if c is not None:
+        if F[c][6] > 0 or F[1 - c][5] > 0:
+            E("siege credit belongs to the attacker, tower/wall credit to the castle side")
+        eng = [g for u in S[1 - c]["u"] for g in u.get("e", [])]
+        if F[1 - c][6] > 0 and not eng:
+            E("siege credit with no siege engines on the attacking side")
+        st = S[c]["st"]
+        if sum(g[3] for g in eng) > st[0] - st[1]:
+            E("engine wall damage exceeds the wall durability lost")
+        if round(1000 * (st[3] + st[5]) / T) > F[c][5] + 1 if T else False:
+            E("tower and trap hits are 100% DEFENCES: F[castle][defences] is too small")
     for fac, key in (("counter", "c"), ("tier", "t")):
         for i in (0, 1):
             ev = rep["why"].get(key, [[], []])[i]
@@ -649,29 +701,33 @@ def check_scout(rep):
 
 # ---- cost (storage.md section 4) -------------------------------------------------
 def cost(a, sizes):
-    P = a.players
-    ov = a.row_overhead
-    rec = {  # records per player per day, bytes kept, days
-        "battle full": (a.battles / 2 + a.rallies / a.rally_size, sizes["battle_gz"] + ov, a.full_days),
-        "battle summary": (a.battles / 2 + a.rallies / a.rally_size, sizes["summary_gz"] + ov, a.sum_days - a.full_days),
-        "beats (replay)": (a.battles / 2 + a.rallies / a.rally_size, a.beats_gz + ov, a.beats_days),
+    """storage.md section 4. One record per battle (shared by every viewer), gzip JSON,
+    30 days; the beats blob 7 days; kept (starred) reports 90 days."""
+    P, ov = a.players, a.row_overhead
+    battle_rec = a.battles / 2 + a.rallies / a.rally_size          # records per player per day
+    rec = {  # name: (records per player per day, bytes per record incl. row overhead, days kept)
+        "battle record": (battle_rec, sizes["battle_gz"] + ov, a.record_days),
+        "beats (replay)": (battle_rec, a.beats_gz + ov, a.beats_days),
         "scout": (a.scouts, sizes["scout_gz"] + ov, a.scout_days),
-        "hunt": (a.hunts, a.hunt_bytes + ov, a.hunt_days),
-        "gather": (a.gathers, a.gather_bytes + ov, a.gather_days),
-        "kept (starred)": ((a.battles / 2) * a.star_share, sizes["battle_gz"] + a.beats_gz + ov, a.star_days),
+        "hunt": (a.hunts, sizes["hunt_gz"] + ov, a.hunt_days),
+        "gather": (a.gathers, sizes["gather_gz"] + ov, a.gather_days),
+        "kept (starred)": (battle_rec * a.star_share, sizes["battle_gz"] + a.beats_gz + 2 * ov,
+                           a.star_days - a.record_days),
     }
     total_gb, lines = 0.0, []
     for name, (per_day, b, days) in rec.items():
         gb = P * per_day * b * days / 1e9
         total_gb += gb
-        lines.append(f"  {name:<16} {per_day:6.2f}/player/day × {b:>5} B × {days:>3} d = {gb:6.2f} GB")
-    writes_day = P * (a.battles / 2 + a.rallies / a.rally_size + a.scouts + a.hunts + a.gathers) * 2
+        lines.append(f"  {name:<15} {per_day:5.2f}/player/day × {b:>5} B × {days:>3} d = {gb:5.2f} GB")
+    records = battle_rec * 2 + a.scouts + a.hunts + a.gathers   # battle record + its beats blob
+    inbox = a.battles + a.rallies + a.scouts + a.hunts + a.gathers  # one list line per viewer (mail-forge)
+    writes_day = P * (records + inbox)
     reads_day = P * a.opens
     egress_gb_month = reads_day * 30 * sizes["battle_gz"] / 1e9
     eur = total_gb * a.eur_gb + egress_gb_month * a.eur_egress
-    lines.append(f"  steady-state storage {total_gb:.2f} GB  -> €{total_gb * a.eur_gb:.2f}/month at €{a.eur_gb}/GB-month")
-    lines.append(f"  writes {writes_day:,.0f}/day (record + inbox row) = {writes_day / 86400:.1f}/s average,"
-                 f" {writes_day / 86400 * a.peak:.0f}/s at the war-hour peak (×{a.peak})")
+    lines.append(f"  steady-state storage {total_gb:.2f} GB -> €{total_gb * a.eur_gb:.2f}/month at €{a.eur_gb}/GB-month")
+    lines.append(f"  writes {writes_day:,.0f}/day (records + beats + inbox rows) = {writes_day / 86400:.1f}/s average,"
+                 f" {writes_day / 86400 * a.peak:.0f}/s at the war-hour peak (×{a.peak:g})")
     lines.append(f"  report opens {reads_day:,.0f}/day; egress {egress_gb_month:.1f} GB/month -> €{egress_gb_month * a.eur_egress:.2f}")
     lines.append(f"  TOTAL ≈ €{eur:.2f}/month = {100 * eur / 200:.1f}% of the €200 budget")
     return "\n".join(lines), eur
@@ -688,16 +744,16 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("explain"); p.add_argument("file"); p.add_argument("--pov", type=int, default=0); p.add_argument("--json", action="store_true")
     p = sub.add_parser("render"); p.add_argument("file"); p.add_argument("--pov", type=int, default=0)
-    p = sub.add_parser("size"); p.add_argument("files", nargs="+")
+    p = sub.add_parser("size"); p.add_argument("files", nargs="*"); p.add_argument("--rally", type=int, default=0)
     p = sub.add_parser("check"); p.add_argument("files", nargs="+")
     p = sub.add_parser("golden"); p.add_argument("fixtures"); p.add_argument("out")
     p = sub.add_parser("cost")
     p.add_argument("--fixtures", default=os.path.join(HERE, "..", "tests", "fixtures"))
     for name, val in (("players", 50000), ("battles", 1.0), ("rallies", 0.3), ("rally_size", 13.0),
                       ("scouts", 1.5), ("hunts", 3.0), ("gathers", 4.0), ("opens", 8.0),
-                      ("full_days", 7), ("sum_days", 30), ("beats_days", 7), ("scout_days", 3),
+                      ("record_days", 30), ("beats_days", 7), ("scout_days", 3),
                       ("hunt_days", 7), ("gather_days", 7), ("star_share", 0.05), ("star_days", 90),
-                      ("beats_gz", 1800), ("hunt_bytes", 260), ("gather_bytes", 150), ("row_overhead", 60),
+                      ("beats_gz", 1800), ("row_overhead", 60),
                       ("eur_gb", 0.25), ("eur_egress", 0.05), ("peak", 15.0)):
         p.add_argument("--" + name.replace("_", "-"), dest=name, type=type(val), default=val)
     a = ap.parse_args(argv)
@@ -719,6 +775,10 @@ def main(argv=None):
     elif a.cmd == "size":
         for f in a.files:
             print(os.path.basename(f), json.dumps(size_report(load(f))))
+        if a.rally:
+            base = load(os.path.join(HERE, "..", "tests", "fixtures", "rally_stronghold.json"))
+            r = size_report(synth_rally(a.rally, base))
+            print(f"synthetic rally, {a.rally} participants: minified {r['minified']} B, gzip {r['gzip']} B")
     elif a.cmd == "check":
         bad = 0
         for f in a.files:
@@ -750,12 +810,11 @@ def main(argv=None):
         win = load(os.path.join(fx, "win_field.json"))
         sc = load(os.path.join(fx, "scout_t2.json"))
         szw = size_report(win)
-        sizes = {"battle_gz": szw["gzip"], "summary_gz": szw["summary_gzip"], "scout_gz": size_report(sc)["gzip"]}
-        a.hunt_bytes = size_report(load(os.path.join(fx, "hunt.json")))["gzip"]
-        a.gather_bytes = size_report(load(os.path.join(fx, "gather.json")))["gzip"]
+        sizes = {"battle_gz": szw["gzip"], "scout_gz": size_report(sc)["gzip"],
+                 "hunt_gz": size_report(load(os.path.join(fx, "hunt.json")))["gzip"],
+                 "gather_gz": size_report(load(os.path.join(fx, "gather.json")))["gzip"]}
         text, _ = cost(a, sizes)
-        print(f"measured sizes (gzip): battle {sizes['battle_gz']} B, summary {sizes['summary_gz']} B,"
-              f" scout {sizes['scout_gz']} B, hunt {a.hunt_bytes} B, gather {a.gather_bytes} B")
+        print("measured sizes (gzip): " + ", ".join(f"{k[:-3]} {v} B" for k, v in sizes.items()))
         print(text)
     return 0
 

@@ -22,15 +22,15 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
    ([beats.md](references/beats.md) §1). Nothing is invented (no fake near-miss, no hit inside
    a filler), nothing causal is reordered, no slow motion. The compositor may merge, shorten
    or drop only cosmetic beats; deciding beats (counters, skills, breaches, routs, outcome)
-   always play.
+   always play — identical ones may merge into one beat marked "×N", still counted.
 3. **Counters are shown every time they land**, in both directions: flash + badge (attacker
    line → chevron → target line) + sting, the same medallions as the march form and the
    report ([presentation.md](references/presentation.md) §5). The genre's ~5% counter,
    buried under stat stacks, is the failure we exist to fix.
 4. **Time budgets at 1×**: camp in a hunt order 4 s marker (no battle view); single camp
    10–16 s; field 20–30 s; castle 28–45 s; rally 30–45 s. Skip at 3 s (PvE 2 s); 2× speed with
-   readable floors; outcome ceremony ≤ 1,800 ms, skippable after 300 ms; input never blocked
-   > 400 ms on a repeat action. (The war band "20–45 s, skip after 3 s" is design-forge
+   readable floors; outcome ceremony ≤ 1,800 ms, skippable after 300 ms; a repeat action never
+   blocks input for more than 400 ms. (The war band "20–45 s, skip after 3 s" is design-forge
    `core-loop.md` §8.3.)
 5. **Token squads, not crowds**: ≤ 5 squads a side (one per line) at any army or rally size;
    ≤ 70 skinned figures; strength is a bar and a number; attrition drops figures in steps;
@@ -51,7 +51,7 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
 10. **Honest information**: unknown intel is "?" with the tier that reveals it; ETAs come from
     server time; a reinforcement or rally join that cannot arrive in time says so before Send.
 11. **The asset lanes hold**: troop figures are the `hero3d` rig + soldier kit; engines and
-    defensive tools are siege-forge through blender-forge; walls and gates states are
+    defensive tools are siege-forge through blender-forge; wall and gate states are
     castle-forge; UI icons (medallions, badges) are Blender-made art, never white, monochrome
     or line glyphs; portraits are the painted lane. No code-built people, no primitive shapes.
 12. **Every number here is a PROPOSAL** until checked against the shipped data. Shipped values
@@ -136,7 +136,8 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
 ## Output contract
 
 Every battle-forge task ends with:
-1. The rows changed or added (beat table, flow table, limits), each with its numbers.
+1. The rows changed or added (beat table, flow table, limits), each with its numbers, in the
+   reference files here and in `design/battle/<topic>/` (path to confirm) for the build team.
 2. Measured taps and seconds for every flow touched, before and after.
 3. The verdict lines of every probe in the release gate for the change type.
 4. The capture sheet path (`art/battle_forge/captures/<fixture>/…`, path to confirm) and the

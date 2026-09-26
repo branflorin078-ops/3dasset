@@ -18,7 +18,9 @@ next.** Every number is a **PROPOSAL**; loss buckets per context are design-forg
 4. **Three next actions at most**, each ≤ 2 taps to its result.
 5. **No purchase on any battle surface** (battle view, outcome card, report, warning banners,
    march form): 0 buy buttons, 0 offers, 0 gem prices. Items the player already holds may be
-   used. This is the money-law applied to war: no war imagery over a buy button.
+   used. This is the money-law applied to war: no war imagery over a buy button. Beyond its own
+   surfaces, battle-forge asks shop-forge for one more rule (owner decision): no offer pop-up
+   anywhere in the game for 10 minutes after a lost battle.
 
 ## 2. The ceremony — ≤ 1,800 ms, skippable after 300 ms
 
@@ -103,9 +105,11 @@ combat.md sizes the beds. The outcome makes the promise visible:
 | Defender raided | Heal all | Ask allies to station troops | Defence setup |
 | Rally (any result) | Heal all | Rally again (leader only) | Share |
 
-**A hard day**: after 2 lost defences inside 12 h, the defender's card replaces button 3 with
-"Ask your alliance for a garrison" (1 tap posts the request). Any protective rule for repeated
-losses (a truce, a cooldown) is combat.md's decision; this card only shows it.
+**A hard day**: after 2 lost defences inside 12 h, button 2 ("Ask allies to station troops")
+posts a request marked "Under repeated attack", pinned at the top of the alliance feed for 2 h
+(1 tap), and the card adds one line naming the attacker's alliance tag and both times. Any
+protective rule for repeated losses (a truce, a cooldown) is combat.md's decision; this card
+only shows it.
 
 | Fails when | Caught by |
 |---|---|
@@ -142,8 +146,8 @@ cloud-forge counts the cost):
 
 Targets (PROPOSAL): in playtests ≥ 80% of testers name the main cause within 10 s of the card
 (pillar 5, "battles that are understood"); in telemetry, ≥ 30% of retries within 30 min of a
-counter-caused loss change the countered line; D1 of players whose first PvP battle was a loss
-within 5 points of those who won.
+counter-caused loss change the countered line; 7-day retention after a player's first PvP
+battle within 5 points between those who lost it and those who won it.
 
 ## 9. Checklist — any outcome change
 

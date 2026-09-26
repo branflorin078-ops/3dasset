@@ -36,8 +36,10 @@ gathered** on the map (its home is people: taxes, trade, plunder) — each resou
 - `P(r)` = the player's own city output of `r` per hour, before upkeep. Sizes **goods** (paid,
   [monetization.md](monetization.md) §2), **donations** (15 min, [alliance.md](alliance.md) §4) and **sheds** (15 h).
 - `H(r) = max(P(r), ½ · I_med(S, r))`, where `I_med(S, r)` = the stage-median total hourly income of
-  `r` for a free player (tuning table from §12, then telemetry). Sizes **rewards** (chests, events,
-  camps), the **warehouse allowance**, **transfer**, **market** and **plunder caps**.
+  `r` for a free player (tuning table from §12, then telemetry). Sizes **rewards** (chests, events),
+  the **warehouse allowance**, **transfer**, **market** and **plunder caps**. **Camps** pay in the
+  `I_med` of the stage their level serves ([world.md](world.md) ladder), never the attacker's H —
+  a strong castle farming low camps earns low loot.
 
 Why two: iron and gold come mostly from outside the city, so `P(iron)` is ~20% of iron income late.
 Earned iron is measured generously (`H`), bought iron strictly (`P`) — so the shop can never buy
@@ -66,18 +68,16 @@ days 61–90. Archetype roles are PROPOSALS (verify which archetype yields what 
 | 1 Growth | construction, research | 46% | levels (`C(L) = C1·r^(L−1)`, [numbers.md](numbers.md) §2) | the spine of progress | cost ratio `r` |
 | 2 Army | training, healing, upkeep, arms and gear | 49% | army size × tier, fights | ties war to the economy | upkeep `D(t)`, heal share |
 | 3 Lords | lord levels and skills (gold) | 3% | lords ([lords.md](lords.md)) | investment in people | lord costs |
-| 4 Social | alliance donations, rally provisions | 2% | alliance | collective goods from small acts | donation Merit |
-| 5 Friction | market spread, caravan tax, plunder spoil, moving the seat | 1% | trade and raid volume | anti-inflation, anti-farm | tax % |
+| 4 Social | alliance donations, rally provisions | 3% with layer 5 (one model line) | alliance | collective goods from small acts | donation Merit |
+| 5 Friction | market spread, caravan tax, plunder spoil, moving the seat | (in layer 4's 3%) | trade and raid volume | anti-inflation, anti-farm | tax % |
 | 6 Prestige | works on the monument, wonder, palace: stat-free tiers, realm titles, feasts | 0% free; open-ended | surplus | absorbs the top without power | — |
 
 1. From its opening stage, every resource has ≥ 2 sink layers (stone: construction + wall repair and siege shot, [combat.md](combat.md) §10, siege-forge).
 2. Layer 6 never grants a stat (money-law; [monetization.md](monetization.md) cosmetics).
 3. When layer 1 ends (max levels), layers 2 + 6 must absorb ≥ 90% of income, or the account HOARDs.
 
-| Fails when | Caught by |
-|---|---|
-| A resource has one sink layer (it dies when that layer ends) | [ ] sink table per stage in SYSTEM.md §5 |
-| Max-level accounts: median held stock > 4 days of income | [ ] telemetry held ÷ daily income |
+**Checks**: [ ] sink table per stage in SYSTEM.md §5 — fails when: a resource has one sink layer
+(it dies when that layer ends) · [ ] telemetry held ÷ daily income — fails when: max-level median > 4 days.
 
 ## 4. Iron — the t6+ throttle
 
@@ -97,6 +97,8 @@ Troop cost mix — share of one unit's value (same total value per tier across l
 | t9–t10 (cavalry t11) | 30 | 15 | 40 | 15 | siege engines: wood 50 / stone 20 / iron 20 / gold 10 (siege-forge) |
 | heal, any tier: 30% of training value | 60 | 10 | ≤ 10 | 20 | within combat.md H6 (≤ 40%) |
 
+Heal bound ([combat.md](combat.md) H4, beds 1.25 × the largest march): 30% × 1.25 × X ≤ 24 h of own
+output → **training one full march of stage S costs ≤ 64 h of the median free player's output**.
 An iron-poor player leans on spearmen and archers: the throttle is a choice, not a wall. Lord gear
 draws on the same iron ([lords.md](lords.md) rule 3): **craft Issued 0.25 d · temper Sound 0.5 d ·
 Fine 1.25 d · Masterwork 3 d** of `I_med(S, iron)` → a four-piece Masterwork set ≈ 20 days of iron.
@@ -114,11 +116,9 @@ t6+ ≥ 30%) · [ ] which archetype makes iron (mine?) and its share of t6+ dema
 [ ] iron's first cost at S2 (the "new resource" beat, numbers.md §2) and its bar icon shown only
 from then · [ ] troop costs sacred? → this section is an owner proposal.
 
-| Fails when | Caught by |
-|---|---|
-| Iron blocks t4–t5 for a free player who gathers | [ ] econ_sim free iron day-30 ≤ 1.00 (model 0.94) |
-| No throttle: free iron window 61–90 < 1.05, or > 1.20 (a wall) | [ ] CSV window ratio 1.05–1.20 |
-| Money lifts it: heavy/free t6+ pace > 1.5 | [ ] heavy window ≥ 1.35 (model 1.55) |
+**Checks**: [ ] econ_sim free iron day-30 ≤ 1.00 (model 0.94) — fails when: iron blocks t4–t5 for a
+player who gathers · [ ] CSV window 61–90 in 1.05–1.20 — fails when: no throttle, or a hard wall ·
+[ ] heavy window ≥ 1.35 (model 1.55) — fails when: money lifts the throttle (heavy/free pace > 1.5).
 
 ## 5. City production vs map gathering
 
@@ -130,11 +130,10 @@ from then · [ ] troop costs sacred? → this section is an owner proposal.
 6. **A decision, not busywork**: the node card shows yield per hour, travel time and danger (hostile marches within 10 tiles in the last hour) in one read; richer nodes lie farther and in contested rings. Resend all = 1 tap (A2).
 7. **Gathering bonuses add inside one category** (numbers.md §9): research ≤ +60%, lord ≤ +30%, territory +20%, gathering writ +20% for 8 h ([alliance.md](alliance.md) Quartermaster) → cap +130%.
 
-| Fails when | Caught by |
-|---|---|
-| Map < 25% of late income (territory is decoration) or > 50% (the city stops mattering) | [ ] model channel shares per stage |
-| Median banner idle > 25% of waking hours | [ ] core-loop loop sim idle plate-hours |
-| A load ends an "until I'm back" batch early | [ ] gameplay unit test: load ≥ 10 h of rate per stage |
+**Checks**: [ ] model channel shares per stage — fails when: map < 25% of late income (territory is
+decoration) or > 50% (the city stops mattering) · [ ] core-loop loop sim — fails when: median banner
+idle > 25% of waking hours · [ ] unit test load ≥ 10 h of rate per stage — fails when: a load ends
+an "until I'm back" batch early.
 
 ## 6. Territory value
 

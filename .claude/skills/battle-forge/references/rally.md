@@ -20,7 +20,7 @@ Rules (capacity, who contributes what, reward shares, loss buckets) are design-f
 |---|---|---|---|
 | 1 | Tap the target (map or Find panel) | 1 | 2 |
 | 2 | **Rally** | 1 | 1 |
-| 3 | Window: 1 / 3 / 5 / 10 min chips (last choice remembered; default 3) | 0–1 | 2 |
+| 3 | Window: 1 / 3 / 5 / 10 min chips (last choice remembered; default 3); each chip shows "in reach: 9 of 24" — members active in the last 24 h whose march to the leader fits the window (computed on the client from the alliance roster, 0 extra reads) | 0–1 | 2 |
 | 4 | Lead lord pair + own troops (rally preset pre-filled; matchup strip vs the scouted target) | 0 | 5 |
 | 5 | **Launch** | 1 | 1 |
 | | **Total** | **3–4** | **≤ 15** |
@@ -84,8 +84,8 @@ joiner (name on tap), so every member sees their own part of the whole before th
 
 - One column, one token: the leader's lord banner + the pennon cluster; speed = the slowest line
   across all joined troops (combat.md), named on the march card ("Speed set by: siege train").
-- The column's line is the leader's relationship colour plus a rally marker shape (never colour
-  alone).
+- The column's line uses the viewer's relationship colour for the leader, plus a rally marker
+  shape (never colour alone).
 - Every participant's tracker shows the rally row with ETA; **Follow** (1 tap) works for all.
 - A rally can be intercepted like any march ([flows.md](flows.md) §6); the whole rally army
   fights the interceptor.
@@ -100,7 +100,7 @@ Context "rally" in [beats.md](beats.md) §4: 30–45 s at 1×, `T_fight` 40 s (P
 | Pennons | each squad banner carries the pennons of the players whose troops are in it (≤ 6, "+N") |
 | Your troops | the squads that carry the viewer's troops get a gilt corner mark on their banner; tap-and-hold: "Your 3,200 archers are in this squad" |
 | Lords | only the leader's lord pair casts; their full moments follow presentation.md §6 |
-| Watch offer | every participant gets the watch toast at contact; the replay is shared from the rally report |
+| Watch offer | every participant gets the watch toast at contact; each participant's client fetches the log once (N reads per rally of N players — report-forge `storage.md` costs it); the replay is shared from the rally report |
 
 | Fails when | Caught by |
 |---|---|

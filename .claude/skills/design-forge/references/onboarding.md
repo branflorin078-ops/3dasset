@@ -88,11 +88,11 @@ The genre asks for its faction choice BEFORE any play, and early choices later g
 money to redo ([benchmark.md](benchmark.md) §10). **Our move**: play first (a win, two buildings),
 choose at minute 2, and make it safe — the pick decides which lord comes FIRST, never which you can have.
 
-| Pick | Lord ([portraits.md](../../game-art-director/references/portraits.md)) | Brings (equal power, [numbers.md](numbers.md) §3) | The line's first lesson |
+| Pick | Lord ([portraits.md](../../game-art-director/references/portraits.md)) | Brings (t1 — t2 opens at keep L3, [progression.md](progression.md) §1; equal power, [numbers.md](numbers.md) §3) | The line's first lesson |
 |---|---|---|---|
-| The shield | Edwin — older infantry lord, crimson mantle | a batch of Levy (infantry t2) | holds the front |
-| The bow | Elena — archer lord, green hood | a batch of Archers (archers t2) | strikes first, from range |
-| The spur | Rowan — young cavalier, plume and kite shield | a batch of Mounted Scouts (cavalry t2) | fastest march |
+| The shield | Edwin — older infantry lord, crimson mantle | a batch of Peasants (infantry t1) | holds the front |
+| The bow | Elena — archer lord, green hood | a batch of Hunters (archers t1) | strikes first, from range |
+| The spur | Rowan — young cavalier, plume and kite shield | a batch of Peasant Outriders (cavalry t1) | fastest march |
 
 1. **Reswear**: free, once per 24 h, until 168 h after founding. Lord XP and levels move 100% to the new first lord; anything spent on the old lord's gear or skills is refunded 100%.
 2. **Chapter 4** gives a SECOND lord: the player picks one of the two not sworn (§6). Other lords follow [lords.md](lords.md) acquisition; every lord has a free path (SKILL.md rule 6).
@@ -211,14 +211,15 @@ the player can use it now, and teaches it with a real action.
 4. **Spacing**: none during the §2 script (the script is the lesson); one at a time; none within 10 min of another FTM or a ceremony, none in a war window's Engage phase ([core-loop.md](core-loop.md) §8.3); queued ones fire at the next quiet moment.
 5. **Practice and replay**: when an FTM fires or is skipped, the matching Trial Grounds stage ([liveops.md](liveops.md) §4.5: fixed armies, loss-free, one-time reward) opens as its practice, with a 20–40 s replay card beside it, forever. The FTM itself stays a real action (§1 rule 2): the trial is the practice, not the lesson.
 6. The first run is tuned to succeed (target ≤ 60% of the player's strength) and pays the normal reward; nothing is handed back artificially afterwards.
+7. **Three lesson surfaces, one job each**: the FTM is the first real use; the Age Trial ([progression.md](progression.md) §1: keep-gated, loss-free, AI lords fill a solo rally) proves the skill before the next age; the Trial Grounds stage is the replayable practice. Where an Age Trial covers the system (join a rally L9, garrison L14, lead a rally L19, the equal-troops bout L24), the FTM fires at whichever comes first — the real situation or the trial — and never twice.
 
 | FTM | Fires when | The real action | The one number shown | Taps | Works if (unaided use ≤ 7 d after) |
 |---|---|---|---|---|---|
 | Hunt order | session 2: Resolve ≥ 50 and ≥ 5 camps in range | one march, up to 5 camps | 10 Resolve per camp; bar full again in 10 h | 4 | ≥ 70% send a hunt |
 | Gathering banner | chapter 2 opens with a free banner | a march to a level-1 node | the node's load and the return time | 4 | ≥ 70% gather again |
-| Join a rally | rallies open + an alliance rally in its join window | join with a preset march | the join countdown and the filled banners | 4 | ≥ 50% join again |
-| Lead a rally | first rally-only stronghold in range | lead; allies or two crown columns join (PROPOSAL, [world.md](world.md)) | capacity and the damage-share reward | 6 | ≥ 30% lead again |
-| Garrison | chapter 6 opens (100 h), at the latest 24 h before the ward ends | set the garrison lord; the raid on the walls | who defends first; free infirmary beds | 6 | ≥ 80% have a garrison lord at ward end |
+| Join a rally | an alliance rally in its join window, or the L9 Age Trial | join with a preset march | the join countdown and the filled banners | 4 | ≥ 50% join again |
+| Lead a rally | first rally-only stronghold in range, or the L19 Age Trial | lead; allies join, or AI lords fill it as in the Age Trials (PROPOSAL outside the trial, [world.md](world.md)) | capacity and the damage-share reward | 6 | ≥ 30% lead again |
+| Garrison | chapter 6 opens (100 h) or the L14 Age Trial; at the latest 24 h before the ward ends | set the garrison pair; the raid on the walls | who defends first (stand-ins if unset, [combat.md](combat.md)); free infirmary beds | 6 | ≥ 80% have SET a garrison pair at ward end (stand-ins do not count) |
 | Reinforce an ally | an ally's attack warning (or chapter 6) | send a march to the ally | arrival ETA vs attack ETA | 4 | ≥ 30% reinforce again |
 | First defeat | first lost battle | the report's ranked cause (report-forge) + one next-step button | the cause's number ("their spearmen: counter vs your cavalry") | 3 | next attack on that target class wins ≥ 60% |
 | First attacked by a player | first player attack after the ward | infirmary, protected resources, ask for help | lost vs protected; hours to recover | 4 | ≥ 70% active 48 h later |
@@ -253,7 +254,7 @@ move once for free, catch up by progression.
 | Return after ≥ 14 d away | a "what changed" digest of ≤ 5 lines; a 24 h return ward (PROPOSAL, shaped like liveops.md's arrival ward), once per 60 d, broken by the same acts as §4 | open FTMs re-queue |
 
 - The first zoom-out names the realm and its age: "The realm of <name>, founded 3 days ago."
-- **Feeder guard** (PROPOSAL to liveops.md §7 rule 5 and [economy.md](economy.md)): a newcomer move into an OLDER realm carries resources only up to the protected amount — otherwise alt accounts gather safely under the ward and then move to a main's realm.
+- **Feeder guard**: a newcomer move carries resources only up to the warehouse allowance `Wp` ([economy.md](economy.md) F11 calls it the passage cap) — otherwise alt accounts gather safely under the ward, then move to a main's realm. liveops.md §7 rule 5 ("resources in full") must name this exception.
 
 | Fails when | Caught by |
 |---|---|
@@ -342,8 +343,8 @@ real castles (once the realm has them) and, if one exists, an alliance's land in
 
 1. The ward: 168 h, the break list, and the growth end (top 30% in realms > 14 d old).
 2. Free reswear for the first 168 h, with 100% move or refund (lord economy; [lords.md](lords.md)).
-3. Crown columns that join a first rally when allies are offline (fiction; [world.md](world.md)).
-4. Two additions to liveops.md's newcomer move: a friend's realm as destination; refused after a ward break; plus the feeder guard (§8).
+3. AI-lord companions for a player's first REAL rally when allies are offline, as progression.md's Age Trials already do inside the trial (fiction; [world.md](world.md)).
+4. Two additions to liveops.md's newcomer move: a friend's realm as destination; refused after a ward break (the `Wp` cap is economy.md's F11).
 5. The newcomer gift to alliance members (alliance.md's gift list and cap).
 6. The 24 h return ward after ≥ 14 d away, once per 60 d (§8).
 7. Names and voice (story-forge canon): the King's Peace, the seven chapter titles, the banner charge; who speaks the first 10 minutes (the steward helper, onboarding-forge STW — verify; the guide never sells, monetization.md).

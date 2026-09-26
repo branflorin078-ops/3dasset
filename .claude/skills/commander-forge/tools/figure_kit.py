@@ -345,14 +345,16 @@ def clearance(kit, body, samples=400):
 
 # ---------------------------------------------------------------- light + camera
 def hero_rig(target, dist=2.0, key=150.0, fill_ratio=0.18, yaw=0.0, sworn=False, eye_light=True,
-             kicker=True):
+             kicker=True, rim_side="right"):
     """The hall/portrait rig, CAMERA-RELATIVE (pass the camera's yaw): warm torch
     key upper-left (the house light), cool fill camera-right at fill_ratio of key
     (0.18 = 5.5:1, ~2.5 stops), a rim behind-right that carries the SWORN state
     (gilt 2.2x key) or not (neutral 0.6x key), a cool kicker behind-left, a faint
     top light, and a small eye light beside the lens for catchlights.
     Figure faces -Y at yaw 0. Energies are watts at dist=2.0 m; they scale with
-    dist^2. Defaults calibrated with figure_check on examples/figure_probe.py."""
+    dist^2. Defaults calibrated with figure_check on examples/figure_probe.py.
+    rim_side="left" moves the rim high behind-left (the painted portraits' warm
+    upper-left rim, portraits.md) and the kicker to the right."""
     t = Vector(target)
     s = dist / 2.0
     k = key * s * s
@@ -363,11 +365,13 @@ def hero_rig(target, dist=2.0, key=150.0, fill_ratio=0.18, yaw=0.0, sworn=False,
     rig = dict(
         key=F.area_light("FigKey", at(-1.25, -1.35, 1.05), t, k, 1.0 * s, color=TORCH),
         fill=F.area_light("FigFill", at(1.6, -1.0, -0.1), t, k * fill_ratio, 2.0 * s, color=COOL_FILL),
-        rim=F.area_light("FigRim", at(1.15, 1.3, 0.55), t, k, 0.3 * s, color=NEUTRAL_RIM, size_y=1.6 * s),
+        rim=F.area_light("FigRim", at(1.15, 1.3, 0.55) if rim_side == "right" else at(-1.05, 1.3, 0.85),
+                         t, k, 0.3 * s, color=NEUTRAL_RIM, size_y=1.6 * s),
         top=F.area_light("FigTop", at(0.0, 0.35, 1.6), t, k * 0.12, 0.8 * s),
     )
     if kicker:
-        rig["kicker"] = F.area_light("FigKick", at(-1.1, 1.2, 0.3), t, k * 0.25, 0.4 * s, color=KICK,
+        kx = -1.1 if rim_side == "right" else 1.1
+        rig["kicker"] = F.area_light("FigKick", at(kx, 1.2, 0.3), t, k * 0.25, 0.4 * s, color=KICK,
                                      size_y=1.2 * s)
     if eye_light:
         rig["eye"] = F.area_light("FigEye", at(0.05, -2.0, 0.18), t, k * 0.03, 0.3 * s, color=TORCH)
