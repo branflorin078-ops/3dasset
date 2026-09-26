@@ -43,7 +43,7 @@ gateway nodes, Postgres `LISTEN/NOTIFY` (payload ≤ 8,000 bytes) or a small pub
 | Poll every 5 s | 10.8 M/day, 6.5 GB/day; €58–€178 | 2.5 s | no |
 | Poll every 15 s | 3.6 M/day, 2.2 GB/day; €19–€59 | 7.5 s — too slow for a rally call | no |
 | Poll every 30 s | 1.8 M/day; €10–€30 | 15 s | no |
-| **WebSocket** | 120k connects + 1.8 M ping frames/day, 0.14 GB/day | < 300 ms p50, ≤ 1 s p95 target | **yes** |
+| **WebSocket** | 120k connects (TLS handshakes 0.72 GB) + 1.8 M ping frames (0.14 GB) = 0.86 GB/day | < 300 ms p50, ≤ 1 s p95 target | **yes** |
 | Long-poll 25 s (fallback only) | ≈ 2.2 M requests/day if every client needed it | ≤ 1 s | only when the socket fails on a network |
 
 Rules: socket open only while the app is in the foreground (closed on
@@ -72,7 +72,8 @@ Rules: socket open only while the app is in the foreground (closed on
 - `q` is the per-channel sequence assigned by the server; clients order by `q`, never by clock.
 - Average live frame on the wire ≈ **200 B** = ~120 B frame + ~50 B text (45 characters, mixed
   scripts) + WebSocket header 2–4 B + TLS record overhead ~29 B. The cost tool uses 200 / 250 /
-  300 B for base / high / stress.
+  300 B for base / high / stress, plus ≈ 6 KB per connect (TLS handshake with the certificate chain,
+  the upgrade, hello and welcome).
 
 ## 4. Storage (Postgres; cloud-forge may choose the engine if the costs hold)
 
@@ -100,8 +101,9 @@ CREATE TABLE chat_block   (player bigint, target bigint, ts timestamptz, PRIMARY
 Row size ≈ **400–450 B** with index entries and page overhead (tuple header 23 B + columns
 ~150–250 B + two index entries ~80 B + ~20% free space). Jobs (nightly, UTC): create tomorrow's
 partitions; drop partitions past retention (3 / 7 / 30 d); trim channels over their count guard
-([channels.md](channels.md) §1); expire evidence and held items; run GDPR erasure batches
-([safety.md](safety.md) §11).
+([channels.md](channels.md) §1); erase the text of author-deleted rows older than 24 h; expire
+evidence and held items; run GDPR erasure batches ([safety.md](safety.md) §11). Catch-up queries add
+`ts > now() − retention` so Postgres prunes to the partitions that can hold the rows.
 
 ## 5. Sync, offline catch-up and unread counts
 
@@ -160,6 +162,7 @@ f              = f_realm × affinity             (share of an alliance/Circle on
 fan-out r_c    = Hall a·f · Market Cross R·f_realm·s · Whisper 1 · Circle 8·f · Council 5·f · Herald a·f
 deliveries/day = Σ sent_c × r_c
 egress/day     = deliveries × b  +  DAU × sessions × catch-up × b  +  DAU × T × 2 pings × 80 B
+                 +  DAU × sessions × 6 KB per connect
 writes/day     = Σ sent_c  +  DAU × sessions × 2 cursor writes
 rows stored    = Σ sent_c × retention_c ;  storage = rows × bytes_per_row
 backups        = storage × 0.4 (compressed, no indexes) × 7 dumps
@@ -175,7 +178,8 @@ backups        = storage × 0.4 (compressed, no indexes) × 7 dumps
   28.1) = 1,687,500 · Whisper 36,000 × 1 = 36,000 · Circle 15,000 × 0.75 = 11,250 · Council 9,000 ×
   0.47 = 4,219 · Herald 15,000 × 5.63 = 84,375 → **2.75 M deliveries/day** (95 per s at peak).
 - Egress: 2.75 M × 200 B = 0.55 GB + catch-up 20,000 × 6 × 30 × 200 B = 0.72 GB + pings 900,000 ×
-  2 × 80 B = 0.14 GB = **1.41 GB/day → 42 GB/month** (0.2% of a 20 TB allowance).
+  2 × 80 B = 0.14 GB + connects 120,000 × 6 KB = 0.72 GB = **2.13 GB/day → 64 GB/month** (0.3% of
+  a 20 TB allowance).
 - Writes: 300,000 + 20,000 × 6 × 2 = **540,000/day** (6 per s).
 - Rows: 165k × 30 + 60k × 3 + 36k × 30 + 15k × 30 + 9k × 30 + 15k × 7 = **7.04 M** × 400 B =
   **2.8 GB**; backups 2.8 × 0.4 × 7 = 7.9 GB.
@@ -190,12 +194,12 @@ backups        = storage × 0.4 (compressed, no indexes) × 7 dumps
 |---|---|---|---|
 | Sent / day | 300 k | 900 k | 3.0 M (312 k rejected by the realm cap) |
 | Deliveries / day (peak per s) | 2.75 M (95) | 35.3 M (1,230) | 325 M (11,280) |
-| Egress / month | 42 GB | 352 GB | 3,197 GB |
+| Egress / month | 64 GB | 390 GB | 3,269 GB |
 | Writes / day | 540 k | 1.32 M | 3.49 M |
 | Stored rows / storage | 7.0 M / 2.8 GB | 21.1 M / 8.9 GB | 69.4 M / 31.2 GB |
 | **A1 flat-traffic VPS, one box + WAL backups** | **€4–€30** | **€4–€31** | **€10–€49** |
 | A1-HA (+ hot standby box) | €8–€45 | €8–€46 | €18–€79 |
-| A2 hyperscaler VM, metered egress | €15–€50 | €28–€79 | €187–€429 |
+| A2 hyperscaler VM, metered egress | €15–€50 | €30–€83 | €190–€437 |
 | B per-delivery realtime + managed DB | €89–€283 | €968–€2,627 | €8,786–€23,475 |
 | C document DB, listeners billed as reads | €65–€156 | €404–€866 | €2,945–€6,099 |
 
@@ -223,7 +227,7 @@ until the 1st ([ui.md](ui.md) §6).
 
 Costs grow with **online players × channel rate**, not with total players: doubling to 100k
 players at base doubles deliveries (5.5 M/day) and storage (5.6 GB) and still runs on one small
-box. A new realm adds a realm channel, not a new server. Re-run the tool with `"players": 100000`
+box. A new realm adds a realm channel, not a new server. Re-run the tool with `{"common": {"players": 100000}}`
 in `--model` before any growth decision.
 
 ### 7.7 Prices to verify (provider-specific; remembered 2025 list prices, 1 USD ≈ €0.85–€0.95)
@@ -257,9 +261,9 @@ in `--model` before any growth decision.
 
 | # | Lever | Saves (tool) |
 |---|---|---|
-| L1 | Realm cap 20 accepted msg/min per realm (slow mode) | stress: realm deliveries 563 M → 270 M per day |
+| L1 | Realm cap 20 accepted msg/min per realm (slow mode) — one line every 3 s, about the most a reader can follow | stress: realm deliveries 563 M → 270 M per day |
 | L2 | Hall, not Market Cross, as the ticker default | base: realm deliveries 6.75 M → 1.69 M per day (s 1.0 → 0.25) |
-| L3 | Ticker sampling ≤ 1 realm msg per 10 s (`{"stress":{"ticker_only_share":0.8}}`) | stress: 325 M → 174 M deliveries per day, egress 3.2 → 1.8 TB |
+| L3 | Ticker sampling ≤ 1 realm msg per 10 s (`{"stress":{"ticker_only_share":0.8}}`) | stress: 325 M → 174 M deliveries per day, egress 3.3 → 1.9 TB per month |
 | L4 | On-device translation, capped cloud fallback | €729–€1,863 per month at base vs tap-to-translate cloud |
 | L5 | Ring buffer for catch-up | most catch-up reads leave the database |
 | L6 | Count guards on retention | bounds storage when a channel is very busy |

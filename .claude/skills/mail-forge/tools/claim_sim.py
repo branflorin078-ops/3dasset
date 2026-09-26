@@ -58,14 +58,15 @@ class World:
     # ---- server: callable function (Class P) as a generator, one yield per network hop -----
     def fn_claim(self, u, m, client_now, out):
         clock = client_now if self.brk == "clientclock" else self.now
+        t0 = self.now                                   # server time captured at the check
         it = self.items[(u, m)]
         yield
         if it["c"] is None:
             if not clock < it["x"] or it["rv"]:
                 out.append(("REFUSED", None)); return
             yield                                       # the transaction commits atomically here
-            if it["c"] is None:
-                it["c"] = {"t": self.now}; self.claims += 1
+            if it["c"] is None:                         # re-evaluated at commit (transaction)
+                it["c"] = {"t": t0}; self.claims += 1
         yield                                           # crash window between gate and wallet
         if self.rng.random() < P_FN_CRASH:
             return                                      # instance died: no response
@@ -184,9 +185,16 @@ def run(seed, brk=None, policy="rev"):
     for j in w.jobs:                                    # drain function instances
         for _ in j:
             pass
+    for (u, m), it in w.items.items():                  # client start-up rule: re-call the function
+        if it["cls"] == "P" and it["c"] is not None:    # for claimed premium mails until it answers
+            for _ in range(30):
+                out = []
+                for _ in w.fn_claim(u, m, w.now, out):
+                    pass
+                if out:
+                    break
     for _ in range(2):                                  # every device syncs at the end
         for d in rng.sample(devs, len(devs)):
-            d.fetch_ok = True
             d.cache = {m: dict(w.items[(d.u, m)]) for m in range(N_MAILS)}
             d.apply()
             while not w.push(d.u, d):

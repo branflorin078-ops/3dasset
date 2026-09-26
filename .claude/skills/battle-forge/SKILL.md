@@ -25,8 +25,9 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
    always play — identical ones may merge into one beat marked "×N", still counted.
 3. **Counters are shown every time they land**, in both directions: flash + badge (attacker
    line → chevron → target line) + sting, the same medallions as the march form and the
-   report ([presentation.md](references/presentation.md) §5). The genre's ~5% counter,
-   buried under stat stacks, is the failure we exist to fix.
+   report ([presentation.md](references/presentation.md) §5). combat.md makes the counter a
+   constant worth one tier; the genre's ~5% counter, buried under stat stacks and never shown,
+   is the failure we exist to fix.
 4. **Time budgets at 1×**: camp in a hunt order 4 s marker (no battle view); single camp
    10–16 s; field 20–30 s; castle 28–45 s; rally 30–45 s. Skip at 3 s (PvE 2 s); 2× speed with
    readable floors; outcome ceremony ≤ 1,800 ms, skippable after 300 ms; a repeat action never
@@ -70,9 +71,9 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
 | Counter badge | 72 px, pop 140→100% in 180 ms, hold 700 ms (450 at 2×) | presentation.md §5 |
 | Full lord moments | ≥ 6 s apart; world dim to 75%; portrait 280 px | presentation.md §6 |
 | Camera | pitch of the realm rig; ≤ 1 move per 3 s; shake ≤ 10 px via `h_offset`/`v_offset` | presentation.md §1 |
-| Late beat log | act I hides 1.6 s; hold ≤ 3 s; fallback plate at 4.6 s | beats.md §6 |
+| Late beat log | act I hides 1.6 s; clash loop ≤ 3.4 s; retry + "Awaiting word" at 5.0 s (combat.md §8) | beats.md §6 |
 | Warning bands | Detected (any ETA) · Near ≤ 60 s · Contact | defence.md §2 |
-| Rally windows | 1 / 3 / 5 / 10 min, default 3; scheduled rallies in war windows | rally.md §4 |
+| Rally windows | combat.md §9: 5 / 10 / 30 min vs players, ≤ 60 on PvE strongholds, ≤ 15 joiners; each chip shows who is in reach | rally.md §4 |
 | Frame budget | p95 ≤ 16.7 ms, draw calls ≤ 150, 0 sync loads | presentation.md §10 |
 
 ## Workflow
@@ -151,10 +152,14 @@ Every battle-forge task ends with:
    core-loop audit ran at 1080×1900 — this skill sizes everything at a 1080 px short side.
 2. `T_fight` per context (field 24 s, castle 36 s, rally 40 s): a server constant for when the
    surviving march departs and how long spectators see the clash (beats.md §6).
-3. No ward once a hostile march targets the castle (defence.md §7).
-4. Rally windows capped at 10 min plus scheduled rallies (rally.md §1).
-5. Auto-watch defaults: PvE battle view only for the first 10 battles (beats.md §4).
-6. Age rating (PEGI 7 per the studio notes) → no blood, fallen figures fade (presentation.md §2).
-7. A protective rule after repeated lost defences, if any (outcome.md §6; combat.md decides).
-8. No offers for 10 minutes after a lost battle anywhere in the game (shop-forge rule; this
+3. Scheduled rallies inside war windows (rally.md §1; alliance.md owns scheduling) and an
+   early "Launch now" for rally leaders (combat.md sends rallies at window end today).
+4. Auto-watch defaults: PvE battle view only for the first 10 battles (beats.md §4).
+5. Age rating (PEGI 7 per the studio notes) → no blood, fallen figures fade (presentation.md §2).
+6. A protective rule after repeated lost defences beyond combat.md's breach truce, if any
+   (outcome.md §6).
+7. No offers for 10 minutes after a lost battle anywhere in the game (shop-forge rule; this
    skill only guarantees its own surfaces).
+8. Where replays come from: stored beats (storage cost) or a client re-run of the pinned
+   resolver version (client ships old resolver versions) — report-forge and gameplay-forge
+   decide together (beats.md §1).

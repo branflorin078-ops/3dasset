@@ -11,19 +11,20 @@ The castle and the realm are ONE continuous 3D space. The player never "goes to"
 the camera pulls back, and the HUD changes in place. transition-forge owns the zoom model
 and its thresholds with hysteresis. ui-forge maps every HUD element onto its levels.
 
-| Zoom level (transition-forge names) | Mode | HUD elements shown (hud.md §3 ids) | Hidden |
+| Zoom level (transition-forge zoom-model.md §3–4) | Mode | HUD elements shown (hud.md §3 ids) | Hidden |
 |---|---|---|---|
-| Castle close | castle | H1–H10, status bubbles (all priorities), building quick labels | realm tools |
-| Castle overview | castle | H1–H10, status bubbles (priority 1–3 only, ≤ 5) | building labels |
-| Region | realm | H1–H4, realm tools (left rail), tracker with banners chip, H7–H10 | bubbles, next-goal card |
-| Realm | realm | same as region + search and bookmarks open by default | bubbles |
+| C1 castle close (building 150–320 px) | castle | H1–H10, status bubbles (all priorities), a building's name on focus only | realm tools |
+| C2 castle overview (building 54–150 px, rest 90) | castle | H1–H10, status bubbles (priority 1–3, ≤ 5) | building labels |
+| R region (town 48–897 px) | realm | H1–H10 with realm tools in the left rail | bubbles |
+| M realm (town < 48 px, an icon) | realm | same as R; Search open by default on first entry per session | bubbles |
 
-1. **The mode flips at one threshold**: the castle-overview ⇄ region boundary from
-   transition-forge, with its hysteresis band. The HUD never flickers between modes while
-   a pinch sits inside that band.
-2. **Elements cross-fade during the middle 40% of the zoom move** (motion.md §2). A
-   700 ms zoom means fading from 210 ms to 490 ms. Nothing slides in from off-screen during
-   a zoom: the eye is busy with the camera.
+1. **The mode flips at B2 only** (C2 ⇄ R), on transition-forge's `level_changed(old, new)`
+   signal, never on raw camera distance. The hysteresis band (±10–11%) and the 250 ms dwell
+   are transition-forge's, so the HUD cannot flicker while a pinch sits on the band edge.
+2. **The flip is a 150 ms crossfade** on the same frame as the town swap (zoom-model.md §6),
+   and only for the elements that differ between modes (hud.md §4). Bubbles fade in over
+   150 ms and out over 120 ms at their level. Nothing slides in from off-screen during a
+   zoom: the eye is busy with the camera.
 3. **The world toggle** (the centre seal in the bottom bar, H10) shows the DESTINATION:
    realm art while in the castle, the player's keep while in the realm. One tap starts the
    transition-forge zoom. A second tap during the move reverses it from the current point.
@@ -38,7 +39,7 @@ and its thresholds with hysteresis. ui-forge maps every HUD element onto its lev
 | HUD | zones in hud.md §3 | live, interactive | — | — | always-on status and entries |
 | Status bubble | 104 px visual, 144 hit | live | resolves itself | world | one action on one building (hud.md §7) |
 | Drawer | 720 × ≤ 1100, from the hand-side edge, bottom at y 1416 | live, dimmed 30% | tap outside, swipe to the edge, back | HUD | the tracker's plate lists (hud.md §6) |
-| Sheet | snap heights 40% / 70% / 92% (768 / 1344 / 1766 px) | live, dimmed 40%; camera frames the subject above | drag down ≥ 25% of its height or fling ≥ 1200 px/s; tap on the dimmed world; back | HUD, drawer | a building card, a tile, a resource, a lord preview |
+| Sheet | snap heights 40% / 70% / 92% (768 / 1344 / 1766 px) | live, dimmed 40%; camera frames the subject above | drag down ≥ 25% of its height or fling ≥ 1800 px/s; tap on the dimmed world; back | HUD, drawer | a building card, a tile, a resource, a lord preview |
 | Full screen | whole safe area | paused (`disable_3d`), motion.md §5 | back control (footer, hand side), system back | HUD | deep management: lords, alliance, research tree, shop, settings, rankings |
 | Picker | sheet at 40% | the surface below, dimmed 40% | choose, or back | sheet, full screen | hourglasses, quantity, lord preset |
 | Modal | ≤ 960 wide, height fits content | scrim INK 60% | explicit buttons only | any | irreversible or paid confirms, ≤ 1 at a time |

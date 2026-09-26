@@ -177,7 +177,7 @@ From the Near banner every response is ≤ 3 taps, and the whole set fits the 60
 |---|---|---|
 | Call allies | 1 | any time before contact (arrival honesty shows who can make it) |
 | Recall one march / all | 2 / 2 | shows each march's home ETA vs contact, ✓ or ✗ |
-| Swap the garrison lord | 3 | until contact − 5 s (PROPOSAL; combat.md) |
+| Swap the garrison lord | 3 | until contact: the resolver reads the castle as of arrival (combat.md §8 rule 4); the button locks 2 s before to absorb network delay (PROPOSAL) |
 | Repair Walls & Gate (+10%, 30-min cooldown) | 1 | before contact |
 | Heal all (beds for the defence) | 2 | before contact |
 | Watch the attacker | 1 | — |

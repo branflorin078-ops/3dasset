@@ -72,7 +72,7 @@ One screen, opened pre-filled by the last preset used against this target type.
 | Lines | 5 rows: medallion, tier stack chips, slider, count | drag = 0 taps |
 | Siege row | only when the target has structures: engine chips from siege-forge with load and speed | 1 per engine |
 | Presets | 5 named slots; tap applies, hold saves | 1 |
-| Auto by counter | fills lines against the scouted garrison using combat.md's counter graph (a helper in gameplay-forge; deterministic); greyed with "Scout first" when there is no report | 1 |
+| Auto by counter | fills lines against the scouted garrison using combat.md §2's counter ring and §2 rule 6's matchup index (a helper in gameplay-forge; deterministic); greyed with "Scout first" when there is no report | 1 |
 | Matchup strip | each own line → the enemy line it meets, with the favoured / even / unfavoured medallion from presentation.md §5, and the matchup index as "+0.4 tier" with the scout's age (combat.md §2 rule 7) | 0 |
 | Summary | capacity bar, ETA "2:14 · arrives 14:32", speed (the slowest line governs, named), load, Resolve cost (camps), infirmary line (below) | 0 |
 | Send | bottom-right, thumb zone, 64 dp tall | 1 |

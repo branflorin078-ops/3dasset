@@ -48,6 +48,7 @@ Nothing in chat is "done" without the pasted verdict lines (game-director hard r
 | Clean | 1,500 lines | ordinary chat, war talk ("kill the camp", "burn the gate"), every lord, troop line, building and place name, common town names that contain rude substrings |
 | Obfuscation | 300 lines | spaced letters, leet, confusables, fullwidth, zero-width inserts, "dot com" spellings, phone numbers split by words |
 | Seller | 200 lines | currency-selling lines in each language, with and without contacts |
+| Care | 100 lines | self-harm statements (must trigger the help card and never a sanction) |
 | Injection | 400 cases (language-free) | BBCode tags, nested tags, 10,000-character strings, bidi overrides, zalgo, control characters, broken UTF-8, 4-byte emoji sequences with ZWJ |
 
 War vocabulary is **clean** in this game: "kill", "burn", "raid", "siege", "slaughter the camp" must
@@ -85,7 +86,7 @@ pass. A filter that blocks the game's own verbs fails the clean corpus.
 | Market Cross share of sent | 20% | | |
 | Deliveries per day at 50k-equivalent | 2.75 M | | |
 | Realm share of deliveries | 61% | | |
-| Egress per month | 42 GB | | |
+| Egress per month | 64 GB | | |
 | Storage | 2.8 GB | | |
 | Reports per 1,000 messages | 1–3 | | |
 | Human moderation minutes per day | 6–68 | | |

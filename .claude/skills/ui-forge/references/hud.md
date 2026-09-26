@@ -56,7 +56,7 @@ Tall phones: easy zone = the bottom 40% of the viewport height; hard zone = the 
 | H6h | Tracker head, contextual: "Finish all free (n)" while it applies; the line "All busy — first free 14:20" for 4 s after the last plate starts | x 664, y 1272, 400 × 132 | same | easy | 1 |
 | H7 | Help all + count (only while ≥ 1 request) | x 920, y 1420, 144 × 144 | same | easy | 1–3 |
 | H8 | Next-goal card: icon 96 + one line + progress | x 16, y 1432, 540 × 120 | 540 × 132 | easy | 1–2 |
-| H9 | Chat ticker, one line 36 px (chat-forge) | x 16, y 1576, 1048 × 72 | 1048 × 132 | easy | read; tap 1–5 |
+| H9 | Chat ticker, one line 36 px (chat-forge ui.md §1 proposes the strip) | x 24, y 1576, 1032 × 84 | 1032 × 132 (y 1570–1702) | easy | read; tap 1–5 |
 | H10 | Bottom bar, 5 slots: Lords · Alliance · WORLD SEAL · Chronicle · More | y 1744, 5 × 216 × 176; seal Ø 176 raised to y 1712 | 216 × 176 | easy | many |
 
 - **Clear world window**: x 152–916, y 316–1416 = 764 × 1100 = **40.5% of the screen**, with
@@ -83,8 +83,9 @@ Tall phones: easy zone = the bottom 40% of the viewport height; hard zone = the 
 | Status bubbles (§7) | castle close and overview | hidden |
 | Tile sheet | — | 40% sheet on a tile tap (screens.md S14) |
 
-The switch happens inside the transition-forge zoom (architecture.md §1). Elements that
-exist in both modes never move. Only the ones that differ cross-fade.
+The switch happens at B2 on `level_changed`, as a 150 ms crossfade on the frame of the town
+swap (architecture.md §1). Elements that exist in both modes never move. Only the ones that
+differ cross-fade.
 
 ## 5. Red dots and marks — the budget
 
@@ -171,7 +172,8 @@ two-step, components.md §5).
   sits 24 px above the anchor point.
 - **Caps**: ≤ 5 visible at castle overview (P1–P3 only), ≤ 8 at castle close. Two bubbles
   whose centres are < 120 px apart merge: the higher priority shows, with a "+1" pip (32 px).
-- **Zoom**: hidden at region and realm; 120 ms fade at the threshold.
+- **Zoom**: shown at C1 and C2, hidden at R and M; fade in 150 ms, out 120 ms on
+  `level_changed` (transition-forge zoom-model.md §6).
 - **Motion**: appear = scale 0.6 → 1 + fade in 180 ms. Resolve = shrink in 120 ms, then
   feel-forge's result float. **No idle bobbing**: a loop on 8 bubbles is constant motion in
   the corner of the eye, and a draw cost every frame.

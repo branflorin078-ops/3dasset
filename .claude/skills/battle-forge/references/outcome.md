@@ -54,6 +54,7 @@ Placeholder wording (story-forge owns the voice, l10n-forge the keys
 | Field, interception | either | The field is yours | Your march fell back |
 | Castle | attacker | Castle raided | Repelled at the walls |
 | Castle | defender | The walls held | Your castle was raided |
+| Castle, Walls & Gate reach 0 | defender | — | Your walls fell — 8 h breach truce (combat.md §10) |
 | Castle | stationed ally | You helped hold <name>'s walls | <name>'s castle was raided |
 | Rally | every participant | The rally won | The rally fell back |
 | Stronghold | every participant | <stronghold> taken | <stronghold> held |
@@ -66,11 +67,11 @@ the whole card in ≤ 10 s.
 | # | Line | Attacker example | Defender example |
 |---|---|---|---|
 | 1 | Headline | Your march fell back | Your castle was raided |
-| 2 | Safe | 1,180 returning · 412 in the infirmary (heals in 1 h 40 m) | 82% of your stores were safe · 412 wounded in the infirmary |
-| 3 | Lost | 96 lost | 60 lost · 12,400 food and 3,100 stone taken |
-| 3b | Overflow (only if it happened) | Infirmary full: 60 could not be saved | same |
-| 4 | Why | [cavalry medallion] » [archers medallion] "Their cavalry ran down your archers — 3 times" | "Your towers and drop-stones cost them 2,100 before the walls" |
-| 5 | Changed | lord XP +1,240 | wall 40% — full in 1 h 10 m |
+| 2 | Safe | 1,180 returning · 412 in the infirmary (heals in 1 h 40 m) | 82% of your stores were safe · 412 wounded in the infirmary · no one died (home never kills) |
+| 3 | Lost | 96 lost | 12,400 food and 3,100 stone taken |
+| 3b | Overflow (only if it happened) | Infirmary full: 60 could not be saved | Infirmary full: 60 routed — back free at 14:30 tomorrow (combat.md §6 rule 1) |
+| 4 | Why | [cavalry medallion] » [crossbows medallion] "Their cavalry rode down your crossbows: −0.6 tier" | "Your walls and towers: +0.4 tier to the garrison" |
+| 5 | Changed | lord XP +1,240 · honour +0 | Walls & Gate 40% — full in 1 h 10 m |
 | 6 | Next | ≤ 3 buttons (§6) | ≤ 3 buttons |
 
 Expanding "Why" shows up to 2 more causes; "Report" opens the full report (report-forge).
@@ -83,10 +84,13 @@ combat.md sizes the beds. The outcome makes the promise visible:
 1. Wounded move to the infirmary at resolution; line 2 shows the count AND the heal time.
 2. **Heal all** from the card starts healing with resources (2 taps: Heal all → confirm).
    The infirmary plate's own finish options follow core-loop §5 (hourglass art only).
-3. **Overflow** is shown on its own line with its reason, never merged into "lost".
-4. **Forecast before the fight**: the march form's infirmary line ([flows.md](flows.md) §3)
-   warned when the worst case exceeded the free beds; the outcome's overflow line links back to
-   that warning ("You were warned: 3,200 beds for 4,100 at risk") only when overflow happened.
+3. **Overflow** is shown on its own line with its reason, never merged into "lost", and in the
+   words of its context (combat.md §6): war contexts "could not be saved"; home defence
+   "routed — back free in 24 h" (not speedable, not healable); PvE "walked home".
+4. **Forecast before the fight**: the march form's infirmary line ([flows.md](flows.md) §3;
+   combat.md §6 rule 4) warned when expected severe exceeded the free beds; the outcome's
+   overflow line links back to that warning ("You were warned: may overflow by ~900") only when
+   overflow happened.
 5. Lightly wounded who heal by themselves (combat.md bucket) count as "returning".
 
 | Fails when | Caught by |
@@ -96,13 +100,21 @@ combat.md sizes the beds. The outcome makes the promise visible:
 
 ## 6. Next actions
 
-| Case (from the report's top cause) | 1 | 2 | 3 |
+Button 1 after a loss is the top cause's ONE next step (combat.md §12 rule 4); buttons 2–3
+fill from the table.
+
+| Case (report's top cause) | 1 (combat.md §12) | 2 | 3 |
 |---|---|---|---|
 | Attacker won | Heal all (if any wounded) or Attack next camp | Share | Report |
-| Attacker lost to a counter | **Try <counter line>** (march form pre-filled by "Auto by counter") | Heal all | Ask for a rally |
-| Attacker lost to numbers or tier gap | Heal all | Ask for a rally | Find a closer match (Find panel, "even" band) |
-| Defender held | Heal all | Repair wall | Share |
+| Lost — counter | **Try <hunter line>** (march form pre-filled by "Auto by counter"); if not owned: **Muster <hunter line>** | Scout again | Heal all |
+| Lost — tier | the progression goal that unlocks the next tier | Heal all | Ask for a rally |
+| Lost — count | **Ask for a rally** (attacker) / **Call allies** to reinforce (defender) | Heal all | Report |
+| Lost — lords | the lord screen of the fielded lord | Heal all | Report |
+| Lost — walls (either side) | attacker: bring engines (siege-forge train); defender: **Repair** (+10%) | Heal all | Report |
+| Lost — overflow | the infirmary | Scout again | Report |
+| Defender held | Heal all | Repair Walls & Gate | Share |
 | Defender raided | Heal all | Ask allies to station troops | Defence setup |
+| Walls fell (breach truce) | **Stay** or **Relocate** (1 tap, once, free — combat.md §10) | Heal all | Ask allies to station troops |
 | Rally (any result) | Heal all | Rally again (leader only) | Share |
 
 **A hard day**: after 2 lost defences inside 12 h, button 2 ("Ask allies to station troops")
@@ -130,7 +142,8 @@ The contract between the two skills:
 
 | Direction | Content | Rule |
 |---|---|---|
-| report → battle-forge | the log and header of [beats.md](beats.md) §1 | enough to replay; nothing else needed |
+| report → battle-forge | the beats and header of [beats.md](beats.md) §1 — or, if report-forge stores only the ledger, the inputs + seed + `resolver_version` for a client re-run (beats.md §1 "Replay source") | enough to replay; nothing else needed |
+| cause ledger → card | combat.md §12 fields: outcome, margin and factors in tiers, casualties per bucket (incl. routed), overflow, counter pairs top 3, skill casts top 5, walls before/after, decisive round | the card's lines 2–5 read these; report-forge writes the sentences |
 | battle-forge → report | nothing stored | act marks, highlight ticks and durations are recomputed on view (0 bytes, 0 writes) |
 | shared code | the counter derivation (actor line vs target line → counter flag) | ONE function used by the badge, the matchup strip and the "why" line, so the three never disagree |
 | deep links | "Watch the breach", "Watch the counter" in the report | computed on view as highlight indexes |

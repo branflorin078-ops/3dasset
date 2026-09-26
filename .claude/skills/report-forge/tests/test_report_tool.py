@@ -39,17 +39,18 @@ for f in sorted(os.listdir(FX)):
 e = rt.explain(fx("win_field.json"), 0)
 ok([r["factor"] for r in e["rows"]] == ["counter", "lord"], f"win rows {[r['factor'] for r in e['rows']]}")
 ok(e["rows"][0].get("label") == "rpt.why.flip.win", "win: counter must carry the flip label")
-ok(e["margin"] == 207 and e["outcome"] == "win", f"win margin {e['margin']}")
-ok(e["counterpoint"]["factor"] == "tier" and e["counterpoint"]["n"] == -70, "win: counterpoint tier -70")
-ok(e["advice"]["link"] == ["train", 0], f"win advice {e['advice']}")
-ok(e["headline"]["stats"] == ["Enemy out of action 3,800", "Taken 84,000 wood"], f"{e['headline']}")
+ok(e["margin"] == 62 and e["outcome"] == "win", f"win margin {e['margin']}")
+ok(e["counterpoint"]["factor"] == "numbers" and e["counterpoint"]["n"] == -57, "win: counterpoint numbers -57")
+ok(e["advice"]["link"] == ["rally", None], f"win advice {e['advice']}")
+ok(e["headline"]["stats"] == ["Enemy out of action 2,780", "Taken 84,000 wood"], f"{e['headline']}")
 
 # 3. worked example 2 — the loss, both viewpoints (examples.md section 2)
 e = rt.explain(fx("loss_castle.json"), 0)
-ok([r["factor"] for r in e["rows"]] == ["counter", "defences", "numbers"], f"loss rows {e['rows']}")
+ok([r["factor"] for r in e["rows"]] == ["defences", "counter", "numbers"], f"loss rows {e['rows']}")
+ok(e["hidden_rows"] == ["stats"], "loss: the 4th cause (stats -8%) waits in Details")
 ok(all("label" not in r for r in e["rows"]), "loss at the wall: no flip (structure end) and no main (< 250)")
 ok(e["counterpoint"]["factor"] == "siege", "loss: what went well = siege")
-ok(e["advice"]["key"] == "rpt.next.counter" and e["advice"]["link"] == ["train", 0], f"{e['advice']}")
+ok(e["advice"]["key"] == "rpt.next.defences_more" and e["advice"]["link"] == ["siege", None], f"{e['advice']}")
 ok("Your infirmary was full: 340 severely wounded died." in [n["text"] for n in e["notes"]], "overflow note")
 ok(e["headline"]["stats"] == ["Wounded coming back 2,420", "Lost 2,180"], f"{e['headline']}")
 e1 = rt.explain(fx("loss_castle.json"), 1)
@@ -78,8 +79,8 @@ def with_nets(counter_a, lord_a=0, tier_a=0):
 
 ok([x["factor"] for x in rt.explain(with_nets(49), 0)["rows"]] == [], "49 per mille is hidden")
 ok([x["factor"] for x in rt.explain(with_nets(50), 0)["rows"]] == ["counter"], "50 per mille is shown")
-m = rt.explain(base, 0)["margin"]                     # 207
-flip_at = -(-125 * m // 100)                           # ceil(1.25 * m) = 259
+m = rt.explain(base, 0)["margin"]                     # 62
+flip_at = -(-125 * m // 100)                           # ceil(1.25 * m) = 78
 ok(rt.explain(with_nets(flip_at), 0)["rows"][0].get("label") == "rpt.why.flip.win", "flip at 1.25 x margin")
 ok(rt.explain(with_nets(flip_at - 1), 0)["rows"][0].get("label") is None, "no flip just below 1.25 x margin")
 r = with_nets(260)
@@ -118,7 +119,8 @@ for f in BATTLES:
         ex = rt.explain(fx(f), pov)
         ok(not [x for x in ex["flags"] if x.startswith("long_sentence")], f"{f} pov {pov}: {ex['flags']}")
         ok(ex["advice"] is None or ex["advice"]["link"][0] in rt.LINK_ALLOWED, "advice links only to play")
-        ok("shop" not in json.dumps(ex), f"{f}: no shop anywhere in a report (money-law)")
+        ok(not re.search(r"\b(shop|gems?|offer|buy)\b", json.dumps(ex).lower()),
+           f"{f}: no shop, gem, offer or buy word anywhere in a report (money-law)")
 
 # 8. byte budgets (schema.md section 4) and the cost ceiling (storage.md section 4)
 for f in BATTLES:

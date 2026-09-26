@@ -380,6 +380,8 @@ def render(rep, pov=0):
         L.append(f"  {mark} {bar(r['n']):>5}  {r['text']}")
         if r.get("label_text"):
             L.append(f"           {r['label_text']}")
+    if e["hidden_rows"]:
+        L.append("  (+{} more in Details: {})".format(len(e["hidden_rows"]), ", ".join(e["hidden_rows"])))
     if e["counterpoint"]:
         c = e["counterpoint"]
         L.append(f"  {STR[c['label']]}")

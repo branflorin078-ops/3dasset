@@ -44,7 +44,7 @@ independent of army size (genre pattern: small squad + banner + troop-type icon 
 | Cavalry | 3 riders | wedge | horse length > 2× figure height, lance or blade forward |
 | Siege engines | 1 model per engine type, ≤ 3 per side | behind the lines | siege-forge models and clips |
 
-1. **One squad per line per side** — a rally's 20 joiners still make ≤ 5 squads a side; joiners
+1. **One squad per line per side** — a rally's 15 joiners (combat.md §9 cap) still make ≤ 5 squads a side; joiners
    show as pennons on the squad banners (≤ 6, then a "+N" chip).
 2. **Tier reads from the kit** (units.md: "equipment matches the tier economy") and from a tier
    plate on the banner (I–X, XI for cavalry) — UI text, not painted into the art.

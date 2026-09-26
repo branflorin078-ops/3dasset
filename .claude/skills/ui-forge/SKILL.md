@@ -23,7 +23,7 @@ shipped value wins until the owner decides, and this skill records the differenc
 | Design canvas | **1080 × 1920 px portrait** (1 design px = 1 px on a 1080-wide phone) | the brief's frame; `session_audit` runs at 1080×1900, so a layout must pass both |
 | Stretch | `display/window/stretch/mode = canvas_items`, `aspect = expand` (verify in `project.godot`) | tall phones add height, tablets add width, nothing is letterboxed |
 | Design px per dp | 2.5–3.0 on phones 360–430 dp wide | 48 dp ≈ 126–144 px |
-| Touch target (hit rect) | **≥ 132 px and ≥ 7.6 mm on the device**; primary/frequent **144 px** | 48 dp on a 360 dp phone = 144 px; 7.6 mm = 48 dp |
+| Touch target (hit rect) | **≥ 132 px** (≥ 44 dp, ≥ 7.0 mm on the narrowest 360 dp phone); primary and frequent **≥ 144 px** (≥ 48 dp, 7.6 mm) | 1080 px = 360 dp is the worst case; on a 411 dp phone 132 px = 50 dp |
 | Visual control height | L 144 · M 120 · S 96 (S only inside a ≥ 132 hit rect) | components.md §5 |
 | Text | 32 px digits/badges only · 36 px any sentence · **42 px body** · 50 labels · 60 titles · 72 screen · 96 display | components.md §1 |
 | Spacing scale | **4 / 8 / 12 / 16 / 24 / 32 / 48 / 64** px, nothing else | components.md §1 |
@@ -52,8 +52,8 @@ shipped value wins until the owner decides, and this skill records the differenc
 4. **≤ 3 taps** from HUD rest to commit any core action
    ([architecture.md](references/architecture.md) §3). Every screen is ≤ 3 taps
    deep. Count taps from the route table and `ux_flow_probe`; never estimate them.
-5. **Touch.** Hit rects ≥ 132 px and ≥ 7.6 mm; 144 px for primary and frequent
-   actions. Hit rects never overlap. Visual targets are ≥ 16 px apart. A buy
+5. **Touch.** Hit rects ≥ 132 px (≥ 7.0 mm on the device); ≥ 144 px (7.6 mm) for
+   primary and frequent actions and anything a design spec calls "48 dp". Hit rects never overlap. Visual targets are ≥ 16 px apart. A buy
    button is ≥ 48 px (16 dp) from any frequently tapped control, and never sits
    where Claim or Help all sit on other screens (monetization.md §9). No
    horizontal gesture starts within 72 px of the left or right edge (the system

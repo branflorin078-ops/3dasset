@@ -3,7 +3,8 @@
     python chat_cost.py                      # base / high / stress, every architecture, price ranges
     python chat_cost.py --scenario stress    # one scenario, full working shown step by step
     python chat_cost.py --model my.json      # override inputs, e.g. measured values:
-                                             #   {"base": {"msgs_per_dau": 11}, "prices": {"vps_small": [5, 9]}}
+                                             #   {"base": {"msgs_per_dau": 11}, "prices": {"vps_small": [5, 9]},
+                                             #    "common": {"players": 100000}}
     python chat_cost.py --json               # machine-readable totals (compare with sd_cost_probe)
     python chat_cost.py --selftest           # prints 'CHAT COST SELFTEST OK - n checks'
 
@@ -99,7 +100,6 @@ def traffic(c, s):
     t = {}
     t["dau"] = c["players"] * s["dau_share"]
     t["sent_wanted"] = t["dau"] * s["msgs_per_dau"]
-    # online share of a channel's members at the moment a message is sent
     # f_realm: share of a realm online at peak (every message is priced as if sent at peak)
     # f: share of an alliance/group online when one of them writes (co-play affinity on top)
     t["f_realm"] = min(1.0, s["dau_share"] * s["online_min"] / 1440 * s["peak"])
@@ -114,7 +114,7 @@ def traffic(c, s):
     f = t["f"]
     t["recipients"] = {
         "alliance": s["alliance_size"] * f,
-        # ticker sampling (lever L1): ticker-only viewers receive ticker_ratio of the realm stream
+        # ticker sampling (lever L3): ticker-only viewers receive ticker_ratio of the realm stream
         "realm": s["realm_size"] * t["f_realm"] * s["realm_live"]
                  * (1 - s["ticker_only_share"] + s["ticker_only_share"] * c["ticker_ratio"]),
         "private": 1.0,
@@ -140,10 +140,6 @@ def traffic(c, s):
     t["storage_gb"] = t["rows_stored"] * s["bytes_row"] / 1e9
     t["backup_gb"] = t["storage_gb"] * c["backup_ratio"] * c["backup_copies"]
     return t
-
-
-def rng(a, b):
-    return [a, b]
 
 
 def add(*ranges):

@@ -9,7 +9,7 @@ the capture and frame-review protocol, the scoring rubric, and the lessons log.
 
 | Harness | Owner | What it guards for battle-forge |
 |---|---|---|
-| `attack_audit`, `balance_test` | gameplay-forge | the resolver and the balance corridor are untouched: battle-forge changes must leave both outputs byte-identical |
+| `attack_audit`, `balance_test`, the combat probe (design-forge `combat.md` §14: `COMBAT PROBE OK - …`) | gameplay-forge / qa-forge | the resolver, the counter ring and the balance corridor are untouched: battle-forge changes must leave all three outputs identical |
 | `march_probe`, `realm_probe`, `map_trap_probe` | world-forge | marches, the map, camera traps on the realm |
 | `ux_flow_probe`, `ux_touch_probe`, `layout_audit`, `menu_test` | ui-forge / qa-forge | tap counts, touch targets ≥ 48 dp, layout |
 | `w1f_aspect_sweep` | ui-forge | `ASPECT SWEEP OK - 6 shapes, 0 faults` with the battle HUD, form and cards open |
@@ -32,14 +32,14 @@ Run pattern (PowerShell 5.1, no `&&`; `$g` as in game-director SKILL.md):
 | `beat_coverage_test` | headless | every beat kind the resolver can emit (read from the frozen shape, not hand-listed) | each kind has a beats.md row: clip, VFX id, SFX id, camera, 1× ms, min 2×, priority; every id resolves to a real resource | `BEAT COVERAGE OK - 18 kinds, 0 unmapped, 0 missing resources` |
 | `battle_timeline_probe` | headless | fixtures §3 | 1× length inside the context budget; skip time; 2× floors; A beats in the log = Σ ×N of A beats shown; `i` order kept; 0 hits inside holds; full lord moments ≥ 6,000 ms apart; ≤ 1 camera move per 3 s outside A beats; live-watch timelines end within 100 ms of `T_fight` (or regroup after the outcome) | `TIMELINE OK - 10 fixtures, field 20.6s, siege 32.5s, rally 41.0s, 0 dropped A beats` |
 | `battle_determinism_probe` | headless | each fixture × 3 runs × {1×, 2×} | identical cue lists (hash of `t_ms, kind, actor, variant`) | `DETERMINISM OK - 60 runs, 1 hash per fixture-speed` |
-| `beat_latency_probe` | headless | log delivery delayed 0 / 1.2 / 4 / 8 s | act I covers ≤ 1.6 s; hold ≤ 3 s; fallback plate at 4.6 s; no outcome before the log | `LATENCY OK - hold max 3.0s, fallback at 4.6s, 0 early outcomes` |
-| `counter_readability_probe` | windowed | a fixture with every counter pair in both directions | Σ badge ×N = counter-flagged beats; badge ≥ 72 px at peak; contrast ≥ 4.5:1 against the field; three state icons with alpha-mask IoU < 0.6; ≤ 2 badges at once | `COUNTERS OK - 10 pairs x 2 directions, min contrast 5.1, max IoU 0.42` |
+| `beat_latency_probe` | headless | log delivery delayed 0 / 1 / 4 / 8 s | act I covers ≤ 1.6 s; clash loop ≤ 3.4 s; retry + "Awaiting word" at 5.0 s (combat.md §8 rule 7); no outcome before the log | `LATENCY OK - hold max 3.4s, awaiting word at 5.0s, 0 early outcomes` |
+| `counter_readability_probe` | windowed | a fixture with all 5 counter pairs of the ring (combat.md §2), each seen from both sides | Σ badge ×N = counter-flagged beats; badge ≥ 72 px at peak; contrast ≥ 4.5:1 against the field; three state icons with alpha-mask IoU < 0.6; ≤ 2 badges at once | `COUNTERS OK - 5 pairs x 2 sides, min contrast 5.1, max IoU 0.42` |
 | `vfx_budget_probe` | windowed, Movie Maker | every fixture | per beat: cover %, emitters, particles, dynamic lights vs presentation.md §7; flashes ≤ 3 per any 60 frames | `VFX BUDGET OK - peak cover 38% (breach), max particles 470, flashes <= 2/s` |
-| `battle_frame_probe` | windowed, reference phone | heaviest fixture (castle + rally 20 joiners + 3 engines) | p95 frame ≤ 16.7 ms, no frame > 33.3 ms at beat boundaries, draw calls ≤ 150, skinned figures ≤ 70, 0 sync loads | `BATTLE FRAME OK - p95 14.2ms, worst 29.8ms, draws 131, figures 64` |
+| `battle_frame_probe` | windowed, reference phone | heaviest fixture (castle + rally of 15 joiners + 3 engines) | p95 frame ≤ 16.7 ms, no frame > 33.3 ms at beat boundaries, draw calls ≤ 150, skinned figures ≤ 70, 0 sync loads | `BATTLE FRAME OK - p95 14.2ms, worst 29.8ms, draws 131, figures 64` |
 | `march_eta_probe` | headless (extends `march_probe`) | 200 random marches, intercepts, recalls | shown ETA, contact and recall times within ±1 s of the server functions | `MARCH ETA OK - 200 marches, max error 0.4s` |
 | `warning_probe` | headless | hostile marches at ETA 30 s / 90 s / 10 min; 5 attackers; quiet hours; an offline return after 3 attacks | bands at the right times ±1 s; pushes grouped ≤ 1 per 60 s, ≤ 6 war pushes a day; ward blocked while targeted; offline return = 1 digest line, 0 modals | `WARNING OK - 4 bands, pushes 1 per 60s, ward blocked 5/5` |
 | `defence_flow_probe` | windowed | new castle; each failing readiness check | setup ≤ 12 taps / 60 s; each banner response ≤ 3 taps; bubble shows only below 4/4 or under threat | `DEFENCE FLOW OK - setup 12 taps 54s, responses <= 3 taps, bubble 4/4 hidden` |
-| `rally_flow_probe` | windowed + headless | launch, join from 4 entry points, 50 random joiner positions | launch ≤ 4 taps, join ≤ 3 taps, 0 late arrivals, expected vs actual share gap ≤ 2 points | `RALLY FLOW OK - launch 4 taps, join 3 taps, 0 late, share gap max 1.1` |
+| `rally_flow_probe` | windowed + headless | launch, join from 4 entry points, 50 random joiner positions, a joiner under the 5% floor | launch ≤ 4 taps (≤ 5 with a posted mix), join ≤ 3 taps, 0 late arrivals sent, late marches turn home with 0 taps, the floor line shown, expected vs actual share gap ≤ 2 points | `RALLY FLOW OK - launch 4 taps, join 3 taps, 0 late, share gap max 1.1` |
 | `outcome_probe` | windowed | win / loss for every context; overflow; reduced motion | ceremony ≤ 108 frames, skip at 18; plate parity (0 px diff); safe line first; lost never animates; ≥ 2 next actions; heal time = infirmary; 0 purchase nodes | `OUTCOME OK - 14 cards, 108 frames, skip at 18, 0 buy nodes` |
 | `battle_flows_probe` (a `ux_flow_probe` suite) | windowed | flows A–G of flows.md §9 | taps per flow ≤ budget | `BATTLE FLOWS OK - 7 flows, max taps 6 (B)` |
 | money-law check | headless grep | battle scenes and scripts (battle view, form, cards, banners, report entry) | 0 references to shop / offer / gem-price entry points (names to confirm with shop-forge) | `BATTLE MONEY-LAW OK - 0 buy entry points` |
@@ -57,10 +57,10 @@ fixtures follow the frozen shape. Re-capture when gameplay-forge versions the sh
 | `field_even_counters` | 5 v 5 lines, 2 counters each way: the counter badge both directions |
 | `field_onesided` | a crushing win: holds must not show fake hits; the loser's card |
 | `intercept` | a march caught on the road |
-| `castle_breach` | engines, ram, breach, garrison lord, reinforcements: the longest castle case |
+| `castle_breach` | engines, ram, breach (Walls & Gate 20% → 0), garrison lord, reinforcements: the longest castle case and the breach-truce card |
 | `castle_held` | towers and tools win before the walls: defender-win framing |
-| `castle_overflow` | defender loses with a full infirmary: overflow line |
-| `rally_20` | 20 joiners, 3 engine types: ≤ 5 squads a side, pennons, gilt corners |
+| `castle_overflow` | defender loses with a full infirmary: the routed line (home never kills), 0 dead |
+| `rally_15` | 15 joiners (combat.md's cap), 3 engine types: ≤ 5 squads a side, pennons, gilt corners |
 | `max_length` | the longest log the resolver can emit: the compositor's drop pass |
 
 ## 4. Captures and the frame-by-frame review
