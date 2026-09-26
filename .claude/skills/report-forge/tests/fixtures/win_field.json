@@ -1,5 +1,5 @@
 {
- "_comment": "Worked example 1 (examples.md section 1): Brannoc intercepts Garrick's gathering march at a lumber camp and wins a close fight by the archer-over-infantry counter. Example assumptions (NOT shipped values): power per unit t4 5, t5 8, t6 11, t7 15; counter +50%; tier step x1.18; mass exponent 0.5.",
+ "_comment": "Worked example 1 (examples.md section 1): Brannoc intercepts Garrick's gathering march at a lumber camp and wins a close fight by the archer-over-infantry counter. Power per unit t4 5, t5 8, t6 11, t7 15 (example, NOT shipped). The why block is generated from tests/hits/win_field.hits.json by report_tool.py ledger.",
  "_names": {
   "40711": "Brannoc",
   "51208": "Garrick"
@@ -133,7 +133,7 @@
       [
        0,
        6,
-       6500,
+       7000,
        570,
        1330,
        0,
@@ -167,21 +167,21 @@
   "g": 0,
   "f": [
    [
-    108,
-    -7,
-    -31,
-    94,
-    21,
+    118,
+    -4,
+    -35,
+    72,
+    19,
     0,
     0,
     0
    ],
    [
-    16,
-    8,
-    26,
     34,
-    -19,
+    12,
+    36,
+    2,
+    -20,
     0,
     0,
     0
@@ -196,27 +196,27 @@
     97
    ],
    [
-    1,
-    5,
+    2,
     4,
+    0,
     5,
-    16
+    18
    ]
   ],
   "t": [
    [
-    4,
-    5,
     2,
-    4,
-    7
+    6,
+    1,
+    5,
+    5
    ],
    [
     0,
     6,
     0,
     5,
-    28
+    27
    ]
   ],
   "s": [

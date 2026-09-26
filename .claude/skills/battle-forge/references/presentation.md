@@ -155,19 +155,21 @@ of the same lord inside one act may merge into one short moment marked "×N" on 
 ([beats.md](beats.md) §3 priority rule) — every Order is counted, none is hidden. Status effects
 on a lord are light, never particle storms (game-art-director `effects.md`).
 
-Staging per lord — PROPOSAL until commander-forge's per-lord briefs land (roles from
-design-forge `lords.md`, looks from game-art-director `portraits.md`):
+Staging per lord — shows what each Order in design-forge `lords.md` §5 actually does (working
+names; commander-forge's per-lord briefs and story-forge's names win when they land):
 
-| Lord | Moment (magic lives in objects; light, not particle storms) |
-|---|---|
-| Edwin | the infantry banner lifts; a rising gilt chevron above the shield line; crimson mantle on the card |
-| Elena | one long volley whose arrow streaks carry warm light; green hood on the card |
-| Rowan | the cavalry wedge's dust wake lengthens; plume and kite shield on the card |
-| Godric | every engine releases on the same frame; a bronze instrument glints on the card |
-| Maud | a pale-gold ward dome over the garrison, brightest at the ground ring |
-| Alric | the first contact lands with a doubled impact ring (still ≤ 35% cover); wolf pelt on the card |
-| Faber | armour on one squad gains a bright edge sheen (roughness drop) for the rest of the act |
-| Fable | a chronicle page turns on the card; one hidden enemy tool is outlined for 1 s |
+| Lord | Order (lords.md) | Moment (magic lives in objects; light, not particle storms) |
+|---|---|---|
+| Edwin | Close the Ranks: damage taken −15% for 2 rounds | the infantry shields close edge to edge; a gilt line runs along the shield rims and holds for the 2 rounds; crimson mantle on the card |
+| Alric | Wolf's Rush: a strike, ×1.6 before round 6 | the first contact lands with a doubled impact ring (still ≤ 35% cover); "×1.6" on the chip when early; wolf pelt on the card |
+| Elena | Loose!: a volley, +30% with ≥ 50% archers | one long volley whose streaks carry warm light; green hood on the card |
+| Rowan | Break Them: a charge; the target's drum −100 | the cavalry wedge charges with a lengthened dust wake; the target lord's HUD chip ring drains a step (a drum is never shown as a number — lords.md) |
+| Godric | Measured Shot: a strike, ×2 vs walls, gates, towers | every engine releases on the same frame; wall dust on impact; a bronze instrument glints on the card |
+| Maud | Tower Shield: damage taken −12% for 2 rounds | a pale-gold dome over the garrison, brightest at the ground ring, fading over the 2 rounds |
+| Faber | Field Forge: 1.5% of the march returns from lightly wounded | kneeling figures on one squad stand back up (one attrition step restored) and the strength bar ticks up; armour edges catch a bright sheen |
+| Fable | Set It Down: the enemy primary's drum −250 + a small strike | a chronicle page turns on the card; the enemy primary's HUD chip ring drains a quarter |
+
+Orders that fire before round 1 (Elena's and Fable's Oaths) play inside act I.
 
 | Fails when | Caught by |
 |---|---|

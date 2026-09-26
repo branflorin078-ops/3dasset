@@ -1,12 +1,12 @@
 {
- "_comment": "Hit groups behind worked example 1 (examples.md section 1). Assumptions (NOT shipped): counter +50%, tier step x1.18, mass exponent 0.6 on army totals, lord bonus A +6% B +3%, research A +12% B +7%. Run: report_tool.py ledger win_field.hits.json",
+ "_comment": "Hit groups behind worked example 1 (examples.md section 1). Example assumptions, NOT shipped values: counter +50%; tier step x1.18; mass exponent 0.6 on army totals 10,000 vs 11,500; lord bonus A +6% B +3%; research and boosts A +12% B +7%. Run: python tools/report_tool.py ledger tests/hits/win_field.hits.json",
  "hits": [
   [
    0,
    14500,
    {
     "counter": 1.5,
-    "numbers": 0.944418,
+    "numbers": 0.919563,
     "lord": 1.029126,
     "stats": 1.046729
    },
@@ -22,7 +22,7 @@
    1500,
    {
     "tier": 1.18,
-    "numbers": 0.944418,
+    "numbers": 0.919563,
     "lord": 1.029126,
     "stats": 1.046729
    },
@@ -38,7 +38,7 @@
    3700,
    {
     "tier": 0.847458,
-    "numbers": 0.944418,
+    "numbers": 0.919563,
     "lord": 1.029126,
     "stats": 1.046729
    },
@@ -54,7 +54,7 @@
    1500,
    {
     "counter": 1.5,
-    "numbers": 0.944418,
+    "numbers": 0.919563,
     "lord": 1.029126,
     "stats": 1.046729
    },
@@ -71,7 +71,7 @@
    {
     "counter": 1.5,
     "tier": 1.18,
-    "numbers": 0.944418,
+    "numbers": 0.919563,
     "lord": 1.029126,
     "stats": 1.046729
    },
@@ -86,7 +86,7 @@
    0,
    600,
    {
-    "numbers": 0.944418,
+    "numbers": 0.919563,
     "lord": 1.029126,
     "stats": 1.046729
    },
@@ -102,7 +102,7 @@
    9000,
    {
     "tier": 1.18,
-    "numbers": 1.058853,
+    "numbers": 1.087474,
     "lord": 0.971698,
     "stats": 0.955357
    },
@@ -117,7 +117,7 @@
    1,
    6500,
    {
-    "numbers": 1.058853,
+    "numbers": 1.087474,
     "lord": 0.971698,
     "stats": 0.955357
    },
@@ -133,7 +133,7 @@
    2400,
    {
     "counter": 1.5,
-    "numbers": 1.058853,
+    "numbers": 1.087474,
     "lord": 0.971698,
     "stats": 0.955357
    },
@@ -149,7 +149,7 @@
    2300,
    {
     "tier": 0.847458,
-    "numbers": 1.058853,
+    "numbers": 1.087474,
     "lord": 0.971698,
     "stats": 0.955357
    },
@@ -166,7 +166,7 @@
    {
     "counter": 1.5,
     "tier": 0.847458,
-    "numbers": 1.058853,
+    "numbers": 1.087474,
     "lord": 0.971698,
     "stats": 0.955357
    },

@@ -70,7 +70,7 @@ numbers: milliseconds per beat, taps per flow, percent of screen per effect.
 
 | Thing | Number | Where |
 |---|---|---|
-| Beat durations | volley 900 ms · charge 1,400 · brace 1,100 · clash 1,100 · full lord moment 2,000 · breach 2,200 | beats.md §3 |
+| Beat durations | volley 900 ms · charge 1,400 · brace 1,100 · clash 1,100 · full Order moment 2,000 · breach 2,200 | beats.md §3 |
 | Counter badge | 72 px, pop 140→100% in 180 ms, hold 700 ms (450 at 2×) | presentation.md §4 |
 | Full Order moments | ≤ 2 per battle, ≥ 6 s apart; world dim to 75%; portrait 280 px | presentation.md §5 |
 | Camera | via transition-forge's `CameraDirector`; FOV 30° fixed; ≤ 1 move per 3 s; shake ≤ 10 px via `h_offset`/`v_offset` | presentation.md §1 |
@@ -151,8 +151,9 @@ Every battle-forge task ends with:
 
 ## Owner decisions pending (from this skill's first draft)
 
-1. Screen orientation for battle HUD layouts: the studio notes say landscape-only, the
-   core-loop audit ran at 1080×1900 — this skill sizes everything at a 1080 px short side.
+1. Screen orientation: design-forge `core-loop.md` (1080×1900) and transition-forge
+   `zoom-model.md` (portrait, width fixed at 1080) assume portrait; the older studio mapping
+   notes say landscape-only. This skill sizes everything at a 1080 px short side so both work.
 2. `T_fight` per context (field 24 s, castle 36 s, rally 40 s): a server constant for when the
    surviving march departs and how long spectators see the clash (beats.md §6).
 3. An early "Launch now" for rally leaders (rally.md §2; combat.md sends rallies at window

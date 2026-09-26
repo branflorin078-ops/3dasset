@@ -129,8 +129,8 @@ world-forge owns paths, speeds and map rendering; battle-forge owns what a march
 | Element | Rule |
 |---|---|
 | Line | relationship colour; 6 px at the 1080 px short side; dashes flow toward the target at 40 px/s. A hostile march aimed at the player: 8 px with a pulse ≤ 1 Hz |
-| Token (mid zoom) | 3 figures of the march's largest line + lord banner + line medallion 44 px + ETA label 24 px |
-| Token (far zoom) | banner icon 32 px only |
+| Token (R region level — transition-forge `zoom-model.md` §4) | 3 figures of the march's largest line + lord banner + line medallion 44 px + ETA label 24 px |
+| Token (M realm level) | a chevron on the line (zoom-model.md §6); at M only own, allied and incoming lines are drawn |
 | ETA label | "2:14" under 10 min, "1 h 12 m" above; rounded up; refreshed at 1 Hz only while visible (core-loop §4) |
 | March card (tap the token) | composition, ETA + arrival clock, **Recall** (2 taps), **Follow** (1), **Scout target** (2), speed-up items (war-window caps: core-loop §5.6) |
 | Recall | the march turns back at once; time home = time already walked (a function of time); impossible after contact |

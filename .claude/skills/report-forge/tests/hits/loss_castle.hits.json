@@ -1,5 +1,5 @@
 {
- "_comment": "Hit groups behind worked example 2 (examples.md section 2). Assumptions (NOT shipped): as example 1, mass exponent 0.6 on 9,000 vs 11,000, lord bonus A +5% B +8%, research A +8% B +18%, wall mitigation 30% at full durability, average durability 80% during the attacker's hits (siege credit (1-0.24)/0.7). Run: report_tool.py ledger loss_castle.hits.json",
+ "_comment": "Hit groups behind worked example 2 (examples.md section 2). Example assumptions, NOT shipped values: as example 1; armies 9,500 vs 11,000; lord bonus A +5% B +8%; research and boosts A +12% B +15%; wall mitigation 30% at full durability, average durability 55% during the attacker's hits (siege credit (1-0.165)/0.7); Maud's heal of 600 cp booked on side A. Run: python tools/report_tool.py ledger tests/hits/loss_castle.hits.json",
  "hits": [
   [
    0,
@@ -7,11 +7,11 @@
    {
     "counter": 1.5,
     "tier": 1.18,
-    "numbers": 0.886564,
+    "numbers": 0.915796,
     "lord": 0.972222,
-    "stats": 0.915254,
+    "stats": 0.973913,
     "defences": 0.7,
-    "siege": 1.085714
+    "siege": 1.192857
    },
    [
     4,
@@ -24,11 +24,11 @@
    0,
    11900,
    {
-    "numbers": 0.886564,
+    "numbers": 0.915796,
     "lord": 0.972222,
-    "stats": 0.915254,
+    "stats": 0.973913,
     "defences": 0.7,
-    "siege": 1.085714
+    "siege": 1.192857
    },
    [
     4,
@@ -43,11 +43,11 @@
    {
     "counter": 1.5,
     "tier": 1.3924,
-    "numbers": 0.886564,
+    "numbers": 0.915796,
     "lord": 0.972222,
-    "stats": 0.915254,
+    "stats": 0.973913,
     "defences": 0.7,
-    "siege": 1.085714
+    "siege": 1.192857
    },
    [
     4,
@@ -61,11 +61,11 @@
    4500,
    {
     "tier": 0.847458,
-    "numbers": 0.886564,
+    "numbers": 0.915796,
     "lord": 0.972222,
-    "stats": 0.915254,
+    "stats": 0.973913,
     "defences": 0.7,
-    "siege": 1.085714
+    "siege": 1.192857
    },
    [
     1,
@@ -79,9 +79,9 @@
    36000,
    {
     "counter": 1.5,
-    "numbers": 1.127951,
+    "numbers": 1.091947,
     "lord": 1.028571,
-    "stats": 1.092593
+    "stats": 1.026786
    },
    [
     1,
@@ -95,9 +95,9 @@
    6000,
    {
     "tier": 1.18,
-    "numbers": 1.127951,
+    "numbers": 1.091947,
     "lord": 1.028571,
-    "stats": 1.092593
+    "stats": 1.026786
    },
    [
     1,
@@ -111,9 +111,9 @@
    12000,
    {
     "tier": 0.847458,
-    "numbers": 1.127951,
+    "numbers": 1.091947,
     "lord": 1.028571,
-    "stats": 1.092593
+    "stats": 1.026786
    },
    [
     3,
@@ -127,9 +127,9 @@
    5600,
    {
     "tier": 0.718184,
-    "numbers": 1.127951,
+    "numbers": 1.091947,
     "lord": 1.028571,
-    "stats": 1.092593
+    "stats": 1.026786
    },
    [
     2,

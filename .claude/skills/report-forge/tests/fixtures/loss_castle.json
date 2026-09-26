@@ -1,5 +1,5 @@
 {
- "_comment": "Worked example 2 (examples.md section 2): Brannoc attacks Isolde's castle; the wall and a spearmen garrison stop the cavalry. Same example assumptions as win_field.json plus wall mitigation 30% at full durability (NOT shipped values).",
+ "_comment": "Worked example 2 (examples.md section 2): Brannoc attacks Isolde's castle; the wall and a spearmen garrison stop the cavalry. Power per unit as win_field.json (example, NOT shipped). The why block is generated from tests/hits/loss_castle.hits.json by report_tool.py ledger.",
  "_names": {
   "40711": "Brannoc",
   "20388": "Isolde"
@@ -72,7 +72,7 @@
       [
        1,
        6,
-       2000,
+       2500,
        140,
        0,
        560,
@@ -84,7 +84,7 @@
        1,
        2,
        1,
-       360,
+       550,
        0
       ]
      ],
@@ -163,7 +163,7 @@
    ],
    "st": [
     1000,
-    640,
+    450,
     4,
     4200,
     0,
@@ -175,21 +175,21 @@
   "g": 0,
   "f": [
    [
-    28,
-    6,
-    -29,
-    38,
+    37,
+    8,
     -26,
-    -100,
-    55,
+    17,
+    -8,
+    -107,
+    53,
     0
    ],
    [
-    126,
-    -35,
-    60,
-    57,
-    53,
+    118,
+    -34,
+    47,
+    40,
+    14,
     44,
     0,
     0
@@ -201,35 +201,35 @@
     7,
     3,
     6,
-    28
+    30
    ],
    [
     1,
     7,
     4,
     7,
-    126
+    118
    ]
   ],
   "t": [
    [
     4,
     7,
-    2,
-    5,
-    5
+    3,
+    6,
+    12
    ],
    [
     1,
     7,
     1,
     6,
-    10
+    9
    ]
   ],
   "s": [
-   80,
-   180
+   120,
+   150
   ]
  },
  "mo": [
@@ -244,7 +244,7 @@
    9,
    4,
    1,
-   640,
+   450,
    0
   ],
   [

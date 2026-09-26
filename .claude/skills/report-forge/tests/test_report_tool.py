@@ -35,19 +35,26 @@ BATTLES = ["win_field.json", "loss_castle.json", "rally_stronghold.json", "even_
 for f in sorted(os.listdir(FX)):
     ok(rt.check(fx(f)) == [], f"{f}: {rt.check(fx(f))}")
 
+# 1b. the worked examples' ledgers are computed, not typed: book(hits) == fixture why block
+for name in ("win_field", "loss_castle"):
+    got = rt.book(rt.load(os.path.join(HERE, "hits", name + ".hits.json")))
+    why = fx(name + ".json")["why"]
+    ok([got["f"], got["c"], got["t"]] == [why["f"], why["c"], why["t"]], f"{name}: why block != ledger of its hits")
+    ok(got["cp"] == [fx(name + ".json")["s"][1]["lp"], fx(name + ".json")["s"][0]["lp"]], f"{name}: hit cp != power lost")
+
 # 2. worked example 1 — the win (examples.md section 1)
 e = rt.explain(fx("win_field.json"), 0)
 ok([r["factor"] for r in e["rows"]] == ["counter", "lord"], f"win rows {[r['factor'] for r in e['rows']]}")
 ok(e["rows"][0].get("label") == "rpt.why.flip.win", "win: counter must carry the flip label")
 ok(e["margin"] == 62 and e["outcome"] == "win", f"win margin {e['margin']}")
-ok(e["counterpoint"]["factor"] == "numbers" and e["counterpoint"]["n"] == -57, "win: counterpoint numbers -57")
+ok(e["counterpoint"]["factor"] == "numbers" and e["counterpoint"]["n"] == -71, "win: counterpoint numbers -71")
 ok(e["advice"]["link"] == ["rally", None], f"win advice {e['advice']}")
 ok(e["headline"]["stats"] == ["Enemy out of action 2,780", "Taken 84,000 wood"], f"{e['headline']}")
 
 # 3. worked example 2 — the loss, both viewpoints (examples.md section 2)
 e = rt.explain(fx("loss_castle.json"), 0)
 ok([r["factor"] for r in e["rows"]] == ["defences", "counter", "numbers"], f"loss rows {e['rows']}")
-ok(e["hidden_rows"] == ["stats"], "loss: the 4th cause (stats -8%) waits in Details")
+ok(e["hidden_rows"] == [], "loss: no 4th cause reaches 5%")
 ok(all("label" not in r for r in e["rows"]), "loss at the wall: no flip (structure end) and no main (< 250)")
 ok(e["counterpoint"]["factor"] == "siege", "loss: what went well = siege")
 ok(e["advice"]["key"] == "rpt.next.defences_more" and e["advice"]["link"] == ["siege", None], f"{e['advice']}")

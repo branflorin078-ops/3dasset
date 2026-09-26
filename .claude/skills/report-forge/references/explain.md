@@ -109,8 +109,11 @@ Grade-0 reconstruction table (PROPOSAL — map every row to the shipped resolver
 | rows, lords, `st`, `mo` | counts, lord casts, wall state, gate moment | numbers, lord, defences, siege sentences |
 
 A counter bonus only adds damage, so `f[s][counter] ≥ 0` and `why.c[s][4] ≤ f[s][counter]`;
-skill hits are 100% lord, so `f[s][lord] ≥ (skill cp − enemy heals)/T`; towers and traps are
-100% defences. `report_tool.py check` enforces all three.
+towers and traps are 100% defences, so the castle side's `f[defences] ≥ (tower + trap cp)/T`.
+`report_tool.py check` enforces these. There is **no** such bound for lord: its entry mixes
+skill hits (always ≥ 0) with the lord stat ratio `(1 + L_hitter)/(1 + L_target)`, which is
+below 1 when the enemy's lords are stronger (worked example 1: Garrick's side books
+Edwin's 700-cp skill yet ends at +2‰).
 
 ### 2.4 First-order honesty
 

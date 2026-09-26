@@ -13,9 +13,9 @@ curves of [easing.md](easing.md). Distances and levels: [zoom-model.md](zoom-mod
 ## 1. CASTLE_LEAVE — castle → region (the toggle button)
 
 Path: van Wijk zoom-pan ([easing.md](easing.md) §6), `SINE_IO` on the path
-parameter, `T = clamp(0.40 × S, 700 ms, 1,000 ms)`; target R_near centred on
+parameter, `T = clamp(0.41 × S, 700 ms, 1,000 ms)`; target R_near centred on
 the own town. From C2 rest that is 3.28 doublings → **700 ms (42 f60)**, peak
-7.4 doublings/s; from `d_min` 4.98 doublings → 976 ms (59 f60).
+7.4 doublings/s; from `d_min` 4.98 doublings → 1,000 ms (60 f60), peak 7.8.
 
 | f60 | ms | Camera | World | UI (ui-forge) | Audio (audio-forge) |
 |---|---|---|---|---|---|
@@ -26,21 +26,21 @@ the own town. From C2 rest that is 3.28 doublings → **700 ms (42 f60)**, peak
 Commit frame for any start distance: `f = N × acos(1 − 2q) / π`,
 `q = log2(B2↑ / d0) / log2(R_near / d0)`, N = shot length in frames.
 Input is live from f0: a touch-down stops the move on that frame and hands the
-camera to the finger at the current distance. Reduced motion: the 240 ms
+camera to the finger at the current distance. Reduced motion: the 250 ms
 parchment dip cut ([easing.md](easing.md) §7).
 
 ## 2. CASTLE_ENTER — region or realm → castle
 
 Trigger: the toggle, or a tap on the own castle cluster/icon. Target: C2 rest,
 focus = the last castle focus if the player left the castle < 10 min ago,
-else the keep. Path: van Wijk, `SINE_IO`, `T = clamp(0.40 × S, 700, 1,450 ms)`;
-S > 3.62 (T would pass 1,450 ms) → dip cut instead of a fly.
+else the keep. Path: van Wijk, `SINE_IO`, `T = clamp(0.41 × S, 700, 1,500 ms)`;
+S > 3.66 (T would pass 1,500 ms) → dip cut instead of a fly.
 
 | Start | Doublings | Duration | B2↓ commit |
 |---|---|---|---|
 | R_near (1,400 m) | 3.28 | 700 ms (42 f60) | f31 (517 ms) |
-| B3 (4,199 m) | 4.87 | 955 ms (57 f60) | ≈ 80% of the shot |
-| M rest (22.4 km) | 7.28 | 1,430 ms (86 f60) | ≈ 85% |
+| B3 (4,199 m) | 4.87 | 978 ms (59 f60) | f47 (79%) |
+| M rest (22.4 km) | 7.28 | 1,463 ms (88 f60) | f73 (83%) |
 
 The own town's LOD1 never unloads ([streaming.md](streaming.md) §6), so the
 commit never waits; LOD0 streams in during C2 → C1. Same input, veil, HUD and
@@ -328,7 +328,7 @@ token fades at the town cluster or icon edge in 200 ms.
 ## 10. Checklist
 
 - [ ] CASTLE_LEAVE 700 ms from C2 rest; commit frame inside the veil peak (±2 f60).
-- [ ] CASTLE_ENTER durations match §2; S > 3.62 → dip cut.
+- [ ] CASTLE_ENTER durations match §2; S > 3.66 → dip cut.
 - [ ] COLD_OPEN: input live at f0; ≥ 3 warm frames under the painting.
 - [ ] Gate built to §4.2 with origins on hinge, tip line, drum axis.
 - [ ] All clip keys as §4.4; `Door_R` +2 f30; hold key at the last frame on every part.
