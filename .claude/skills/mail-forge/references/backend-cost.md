@@ -180,13 +180,16 @@ lesson 7 records the same shape: one read-path bug cost more than everything els
 | # | Lever | Saves | Cost to the player |
 |---|---|---|---|
 | M2 | **Mail rows on chat-forge's Postgres box** (if that box ships): storage €0.04–0.12/GB, egress inside the box's included TB; claim gate = a unique `(uid, id)` row inserted with `ON CONFLICT DO NOTHING`, same applier | the tool prints €0.13–0.45 marginal at stress, vs €26–29 | mail shares the box's uptime (the cache hides short outages); cloud-forge builds a second server path |
-| L1 | Letter read-retention 7 → 3 d | $1.4 | read letters vanish sooner (Keep exists) |
-| L2 | Letter cap 500 → 400 characters | $1.0 | shorter letters |
-| L3 | Report rows cap 100 → 60 | $1.4 | older reports only via report-forge's archive |
-| L4 | Kept cap 40 → 25 | $0.5–1.0 | Guild Patronage perk shrinks with it (monetization.md) |
-| L5 | Function 0.4 → 0.2 s billed (warm instance, fewer reads) | $1.1 | none |
+| L5 | Function billed time 0.4 → 0.2 s (warm instance, fewer reads) | $1.25 | none |
+| L1 | Letter read-retention 7 → 3 d | $1.19 | read letters vanish sooner (Keep exists) |
+| L2 | Letter cap 500 → 400 characters | $1.18 | shorter letters |
+| L3 | Report rows cap 100 → 60 | $1.18 | older reports only via report-forge's archive |
+| L4 | Kept cap 40 → 25 (average kept 10 → 6) | $0.97 | the Guild Patronage perk shrinks with it (monetization.md) |
+| L1–L5 together | | $5.44 → €21.5–24.1 at stress | all of the above |
 
-(Levers L1–L5 come from `mail_cost.py` sweeps; re-run with `--model` to apply one.)
+Savings are `mail_cost.py` sweeps against stress on 2026-09-26; apply one with `--model`.
+Without M2, the €200 plan can hold mail below about €22 only by making mail worse for players.
+M2 is the structural lever.
 
 ## 11. Measuring
 

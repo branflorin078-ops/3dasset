@@ -63,6 +63,7 @@ measured on the fixtures (2026-09-26, Python gzip level 6).
 | `ld` | int ‰ | share of side A's load used | — | 9 |
 | `rp` | [5 ints] | resources the castle protected (warehouse) | castle owner only | 41 (loss example) |
 | `bx` | [day, bytes] | beat log kept until this day number (unix day); its gzip size | — | 18 |
+| `da` | [[kind, value, s, p?]] | defender actions before contact ([kinds.md](kinds.md) §2): 1 recall (troops home), 2 ally arrived (troops, participant index), 3 healed, 4 garrison lord set (lord id); `s` = seconds before contact | castle side only | ~15 per action |
 
 **Side** `{"lc": int, "lp": int, "u": [participant…], "st": [6 ints] (castle side only)}`
 

@@ -2,26 +2,35 @@
 
 Every number in this file is a **PROPOSAL** unless it quotes a canonical fact. The game's
 shipped chat code and data are not visible here (repo on the owner's machine; paths to
-confirm). Alliance ranks, size cap and permissions belong to design-forge
-[alliance.md](../../design-forge/references/alliance.md); realm size belongs to design-forge
-world.md; this file only says what chat does with them. Implementation: **cloud-forge**
+confirm). Alliance ranks, offices, size cap and permissions belong to design-forge
+[alliance.md](../../design-forge/references/alliance.md) (ranks: Liege · Officer — Marshal,
+Treasurer, Crier, Gatekeeper · Companion · Yeoman · Recruit; seats 40–100); realm size and
+capacity belong to design-forge [world.md](../../design-forge/references/world.md) §1; the push
+budget to [core-loop.md](../../design-forge/references/core-loop.md) §9 A8. This file only says
+what chat does with them. Implementation: **cloud-forge**
 (gateway, storage), **ui-forge** (screens, via [ui.md](ui.md)), **story-forge** (names),
 **l10n-forge** (quick-call strings, wordlists), **qa-forge** (probes in [qa.md](qa.md)).
 
 ## 1. The channel catalogue
 
 Diegetic names are proposals to story-forge (canon owner). The code id is what the wire
-format and the data use ([backend-cost.md](backend-cost.md) §3).
+format and the data use ([backend-cost.md](backend-cost.md) §3). **Naming note** (2026-09-26
+verify pass): the alliance channel was "Hall" and the system feed "Herald". Both clashed —
+"Hall" with the alliance's seat building (now the Chapterhouse, alliance.md §7) and "Herald"
+with liveops' Herald's Board, the former Herald office and onboarding's herald helper. They are
+now **Fireside** and **Tidings**; "Hearth" was rejected because world.md §12 names the self
+colour "Hearth white". Files outside chat-forge that still say "Hall channel" or "Herald feed"
+mean these two.
 
 | Code id | Diegetic name (PROPOSAL) | Members | Who can post | Retention (days / count guard) | Live fan-out |
 |---|---|---|---|---|---|
 | `r:<realm>` | Market Cross | every player of the realm | trust T1+ ([safety.md](safety.md) §5) | 3 d / last 1,000 kept for scroll-back | only to players with the realm tab open, or the realm ticker opted in (sampled, §7) |
 | `a:<alliance>` | Fireside | alliance members | every member | 30 d / last 5,000 | every online member (default ticker channel) |
-| `o:<alliance>` | War Council | the top two ranks + ranks granted "council" (alliance.md) | members of the channel | 30 d / last 2,000 | every online member of the channel |
+| `o:<alliance>` | War Council | the Liege + the four officers + Companions the Liege grants, per member (alliance.md §2 rows 18–19) | members of the channel | 30 d / last 2,000 | every online member of the channel |
 | `w:<lo>:<hi>` | Whisper (1:1) | two players (`lo` < `hi` player ids, so one thread per pair) | both, unless one blocked the other | 30 d / last 500 per thread | the other player; push if offline (§8) |
 | `g:<id>` | Circle (group) | 3–20 invited players | members | 30 d / last 1,000 | online members |
-| `t:<alliance>` | Tidings (system feed) | alliance members | server only | 7 d / last 500 | online members; merged into the Fireside view as system lines |
-| `tr:<realm>` | Realm Tidings | realm | server only (realm events, owner news) | 7 d / last 200 | shown as system lines in Market Cross |
+| `t:<alliance>` | Tidings (system feed) | alliance members | server only (§5) | 7 d / last 500 | online members; merged into the Fireside view as system lines |
+| `tr:<realm>` | Realm Tidings | realm | server only: pacts (alliance.md §12), realm events and chronicle entries (liveops.md §9), owner news; ≤ 24 lines per realm per day | 7 d / last 200 | shown as system lines in Market Cross, to the same readers as Market Cross |
 
 Rules:
 
@@ -53,10 +62,10 @@ Rules:
 | Reply | `x` + `re` | text + id of the quoted message | as text; quote shows ≤ 60 graphemes of the original | all player channels | quote strip above the text |
 | Sticker | `s` | sticker id (u16) | 2 bytes of data | all player channels, all ages | 240 px painted sticker ([ui.md](ui.md) §7) |
 | Quick call | `q` | phrase key + validated args | ≤ 64 bytes | all player channels, all ages | text in the READER's language (§7) |
-| Share card | `k` | card envelope | ≤ 256 bytes | per card type ([share-cards.md](share-cards.md) §2) | 800 × 248 px card |
-| Announcement | `n` | text | ≤ 400 graphemes / 1,600 bytes | Fireside; one pinned at a time | pinned strip at the top of the Fireside |
+| Share card | `k` | card envelope | ≤ 256 bytes (report and scout cards ≤ 320, [share-cards.md](share-cards.md) §1) | per card type ([share-cards.md](share-cards.md) §2) | 880 × 320 px card (ui-forge components.md §8) |
+| Announcement | `n` | text | ≤ 400 graphemes / 1,600 bytes (scheduled ones ≤ 300 characters, alliance.md §9) | Fireside; one pinned at a time | pinned strip at the top of the Fireside |
 | System line | `y` | l10n key + args | ≤ 128 bytes | Tidings channels | centred grey line, no avatar |
-| Tombstone | `d` | id of the removed message | 12 bytes | all | "Message removed" in 28 px italic, no content |
+| Tombstone | `d` | id of the removed message | 12 bytes | all | "Message removed" in 36 px italic IRON, no content |
 
 Rules:
 

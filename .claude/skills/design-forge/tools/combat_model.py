@@ -58,7 +58,7 @@ LOSS_ROWS = [
     ("Camp hunt (PvE)", 90, 10, 0, "Light"),
     ("Rally on a stronghold or AI-lord hold (PvE)", 60, 40, 0, "Light"),
     ("Defending your own castle", 30, 70, 0, "Routed"),
-    ("Reinforcing an ally; defending an alliance structure", 25, 60, 15, "Dead"),
+    ("Reinforcing an ally; defending an alliance structure", 30, 60, 10, "Dead"),
     ("Field battle", 35, 55, 10, "Dead"),
     ("Attacking an alliance structure or landmark (war window)", 25, 50, 25, "Dead"),
     ("Attacking a castle in a war window", 20, 50, 30, "Dead"),

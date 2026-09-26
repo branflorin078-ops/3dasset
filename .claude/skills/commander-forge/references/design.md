@@ -34,7 +34,7 @@ id: edwin                      # lower-case key used in every file name
 display: Lord Edwin            # from data; l10n key, never baked into art
 temper: "the inherited veteran; steady, has never lost a rearguard"
 role: ASK lords.md             # §3 lists the proposals
-lead_line: infantry            # accent #B4432E; token line icon
+lead_line: infantry            # PROPOSAL (§3); accent #B4432E; token line icon
 rarity: ASK lords.md
 set: household                 # kit-sets.md §1
 signature_object: EQ-banner    # the one object the figure always carries
@@ -77,13 +77,18 @@ and a lead line; until then they appear in the hall, screens and reports only.
 
 | Channel | Means | Values | Never |
 |---|---|---|---|
-| Rim light on the lord (portrait, figure) | SWORN | gilt `#E0BC6A` at 2.2× key (figure_kit `RIM_GAIN`); unsworn: neutral `#D9DDE3` at 0.6× key | never a rarity colour, never a coloured aura |
+| Rim light on the figure; the inner gilt edge of a portrait card or chip | SWORN | figure: gilt `#E0BC6A` at 2.2× key (figure_kit `RIM_GAIN`), unsworn neutral `#D9DDE3` at 0.6× key; card: 2–3 px `#E0BC6A` edge (screens.md §5) | never a rarity colour, never a coloured aura |
 | Plinth rune ring (hall) | SWORN | dark unsworn, warm gold sworn (CST-hall-plinth brief) | never animated as particles |
 | Emission in kit inlay | that PIECE's tier | cards: forge `TIERS` strength 0 / 2.6 / 4.0 / 7.5; in game: the rune dial 0 / 0.7 / 1.5 / 2.6 (equipment.md) | never on the silhouette edge; never brighter than the face (kit emissive pixels ≤ 3% of the figure) |
 | Card frame material | lord rarity (if lords.md uses it) | ui-forge chrome register | never on the painting itself |
 | House colour | who the lord is | cloth, banner field, sigil ground | never saturated like a relationship colour on the map (token-lane.md §4) |
 | Line accent | the lead troop line | one element: sash, pennon or token icon (infantry `#B4432E`, spearmen `#8B8F95`, archers `#4F7A4A`, crossbows `#6D8AA8`, cavalry `#C9A76A`) | never a uniform repaint |
 | Relationship colour (self / ally / enemy / neutral) | whose march it is | reserved channel, game-art-director readability.md | never on a lord's body, kit or portrait |
+
+A painting's warm upper-left edge light is the house KEY light (the master
+style block's torchlight), present on every lord in every state; it is not
+the sworn signal, which is why a painting has no sworn variant
+(portrait-lane.md §2).
 
 Collision to watch: the Masterwork glow body (`#E8A33C`) and the sworn gilt
 rim are one hue family. They stay apart by GEOMETRY: the glow lives inside
@@ -103,7 +108,7 @@ investment is invisible (design-forge red-team check 5, "others see it").
 | Equip a piece | the figure wears it at once (GLBs of the lord's set preloaded when the screen opens) | hall figure, kit tab | swap ≤ 150 ms, no spinner |
 | Piece tier up | `retier` step: glow and rim of the ITEM card; inlay emission on the figure | kit tab, figure | 600 ms ramp |
 | Set complete (4/4) | the set motif lights across the four pieces in order, once | figure | 4 × 120 ms, then steady; no aura |
-| Sworn | gilt rim ramps 0 → full; plinth ring warms | hall, portrait chip rim | 600 ms, one sound (audio-forge) |
+| Sworn | gilt rim ramps 0 → full; plinth ring warms; card edge and chip ring turn gilt | hall, cards, chips | 600 ms, one sound (audio-forge) |
 | Duplicate converted | currency count rolls; pity counter "N of M" updates | lord detail | ≤ 800 ms |
 | Max level / max rank | a laurel mark on the chip (PROPOSAL) | chip | once, ≤ 1.2 s |
 

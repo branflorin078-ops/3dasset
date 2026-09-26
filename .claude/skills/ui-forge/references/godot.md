@@ -1,10 +1,8 @@
 # Godot 4 patterns — how the kit is built
 
-Patterns for the shipped Godot (4.7.2 on the owner's machine, per game-director). Node, autoload
-and file names are PROPOSALS: map them to the shipped `ui/` tree before you write code (paths to
-confirm). Every API named here is a Godot 4 API. Two of them should be tested on the 4.7 build
-before anything relies on them: the screen-reader properties (§11) and hinge reporting
-(hud.md §10.4).
+Patterns for the shipped Godot (4.7.2, per game-director). Node, autoload and file names are
+PROPOSALS: map them to the shipped `ui/` tree first (paths to confirm). Test two APIs on 4.7
+before relying on them: the screen-reader properties (§11) and hinge reporting (hud.md §10.4).
 
 ## 1. Project settings
 
@@ -15,8 +13,6 @@ before anything relies on them: the screen-reader properties (§11) and hinge re
 | `display/window/handheld/orientation` | portrait | the game is portrait |
 | `input_devices/pointing/emulate_touch_from_mouse` | true | desktop test runs behave like touch |
 | `gui/theme/custom` | the project Theme (components.md §15) | one Theme for every Control |
-| `internationalization/pseudolocalization/*` | §12 | the +40% pass |
-| `SceneTree.quit_on_go_back` (in code) | false | the router handles Android back (§4) |
 
 ## 2. Scene tree and CanvasLayer order
 
@@ -33,9 +29,8 @@ UIRoot (Node)                      autoloads: UIRouter · UIPool · Toasts · Ba
 └─ L90_Debug    (CanvasLayer 90)   probes' overlays (never in release builds)
 ```
 
-Rules: each layer has one full-rect root Control with the Theme and a SafeArea child. Toasts
-sit above modals, so a result can report on top of a closing modal. The guide sits above
-everything the player can tap. Nothing gameplay-related ever uses a layer above 50.
+Each layer has one full-rect root Control with the Theme and a SafeArea child. Toasts sit above
+modals; the guide sits above everything tappable; nothing gameplay-related uses a layer above 50.
 
 ## 3. Safe area, anchors and the Hand mirror
 
@@ -65,27 +60,22 @@ func _apply() -> void:
 The aspect sweep sets `debug_insets` to real device insets (e.g. top 132, bottom 63), so a
 desktop run shows notch problems too.
 
-**Anchoring**: top zones use top-left or top-right anchors; bottom zones use bottom anchors;
-nothing in the HUD is anchored to the centre except the bottom bar's slot row, which is
-horizontally centred and kept at 216 px slots (hud.md §10.3). Use
-`set_anchors_and_offsets_preset()` in tools, and edit the anchors in the editor.
+**Anchoring**: top zones to the top corners, bottom zones to the bottom; nothing is anchored to
+the centre except the bottom bar's slot row (216 px slots, hud.md §10.3).
 
 ```gdscript
 ## Mirror one HUD zone around the vertical centre line (Hand = Left). Never use RTL for this.
 static func mirror_x(c: Control) -> void:
-	var l := c.anchor_left
-	var r := c.anchor_right
-	var ol := c.offset_left
-	var o_r := c.offset_right
+	var l := c.anchor_left; var r := c.anchor_right
+	var ol := c.offset_left; var o_r := c.offset_right
 	c.anchor_left = 1.0 - r
 	c.anchor_right = 1.0 - l
 	c.offset_left = -o_r
 	c.offset_right = -ol
 ```
 
-A zone at x 16–136 anchored left becomes x W−136 … W−16 anchored right. A full-width zone
-stays full width. Apply it to every zone root and every footer. Content inside a zone keeps
-its order. Text direction never changes.
+A zone at x 16–136 anchored left becomes x W−136 … W−16 anchored right; a full-width zone stays
+full width. Apply it to every zone root and footer; text direction never changes.
 
 ## 4. The router and the Android back button
 
@@ -135,16 +125,14 @@ func back() -> void:
 	top.close_panel()
 ```
 
-Deep links build their history first (`hud → alliance → alliance/gifts`, architecture.md §5.2)
-by calling `open()` for each parent with `instant = true` (no tween). The modal count assertion
-(`≤ 1`) lives in `open()`.
+Deep links open each parent first, without its tween, to build the back history
+(architecture.md §5.2). The modal-count assertion (≤ 1) lives in `open()`.
 
 ## 5. The panel base — interruptible, distance-proportional, never blocking
 
 ```gdscript
-## UIPanel.gd - base of every sheet, drawer and full screen. This node is full-rect;
-## `sheet` is the painted body inside a plain Control (not a Container: containers re-sort
-## children and would undo the tween).
+## UIPanel.gd - base of every sheet, drawer and full screen. This node is full-rect; `sheet` is the
+## painted body in a plain Control (a Container would re-sort it and undo the tween).
 class_name UIPanel extends Control
 
 const SHEET_IN := 0.24
@@ -203,11 +191,9 @@ no jump and no hide in between (the `hide` callback dies with the killed tween).
 
 ## 6. Collapsing portrait header (lord detail, screens.md S5)
 
-The portrait sits BEHIND the ScrollContainer, not inside it. The scroll content starts with a
-transparent 580 px spacer. On `get_v_scroll_bar().value_changed(v)`: set the portrait's
-`position.y = -v * 0.5` (parallax), the name band's `modulate.a = 1 - clamp(v / 300, 0, 1)`,
-and at `v ≥ 580` fade in a compact 320 px header. Nothing is resized, so there is no
-container re-layout per frame (motion.md §5.5).
+The portrait sits BEHIND the ScrollContainer; the content starts with a 580 px transparent
+spacer. On scroll value `v`: portrait `position.y = -v * 0.5`, name band `modulate.a = 1 -
+clamp(v / 300, 0, 1)`, and a compact 320 px header fades in at `v ≥ 580`. Nothing is resized.
 
 ## 7. One timer for every countdown
 
@@ -240,8 +226,7 @@ func _render(l: Label) -> void:
 	l.text = UIFormat.duration(left) if left > 0 else tr("TIMER_CONFIRMING")   # never "0 s" while running
 ```
 
-`UIFormat.duration()` makes "1 h 12 m" and "4 m 05 s" (under 10 min), rounded up
-(core-loop §4.5). No UI node runs `_process` for a timer.
+`UIFormat.duration()` gives "1 h 12 m" / "4 m 05 s", rounded up (core-loop §4.5).
 
 ## 8. Status bubbles over buildings
 
@@ -267,10 +252,8 @@ func _process(_dt: float) -> void:
 			b.position = (p - Vector2(b.size.x * 0.5, b.size.y + 24.0)).round()   # whole px: no shimmer
 ```
 
-Caps, merging (< 120 px apart) and priority run in a separate pass after placement, once per
-camera change. Check once on the device that `unproject_position` lands in design px under
-`canvas_items` stretch: a bubble on a known building must line up at 1080×1920 AND in a
-1440×3200 window.
+Caps, merging (< 120 px) and priority run after placement, once per camera change. Verify once
+that a bubble on a known building lines up at 1080×1920 AND in a 1440×3200 window.
 
 ## 9. Text that fits: fit-down, wrap, ellipsis
 
@@ -290,10 +273,8 @@ static func fit_label(label: Label, max_px: int, min_px: int, max_lines := 1) ->
 		label.tooltip_text = label.text               # the long-press tooltip shows it; layout_audit counts it
 ```
 
-Minimums: buttons 50 → 42, body 42 → 36, digits never below 32 (components.md §1). On the
-shipped build, check that the ellipsis lands on the last wrapped line. If it does not, trim the
-string by measuring it. Buttons also need `clip_text` off and a minimum width from the Theme,
-never a fixed size.
+Minimums: buttons 50 → 42, body 42 → 36, digits never below 32 (components.md §1). Check on 4.7
+that the ellipsis lands on the last wrapped line; if not, trim the string by measuring it.
 
 ## 10. Virtual lists (> 60 rows)
 
@@ -335,22 +316,18 @@ func _layout() -> void:
 			r.call("bind", data[idx])                 # each row scene implements bind(item)
 ```
 
-Rows rebind only when their index changes in the shipped version (keep `_bound` per row). The
-server pages 50. The rankings' own row is a separate pinned Control outside the list.
-chat-forge's variable-height message list follows its own ui.md §11.
+Ship it with a rebind only when a row's index changes. Rankings pin the own row outside the list;
+chat-forge's variable-height list follows its ui.md §11.
 
 ## 11. Focus, screen readers, text scale
 
-- **Focus**: `focus_mode = FOCUS_ALL` on every interactive control and `FOCUS_NONE` on
-  decoration. Each panel sets `first_focus`. Grids set `focus_neighbor_*`. The focus ring is
-  the Theme's `focus` StyleBox (4 px GILT_LIT). Focus returns to the opener on close (§5).
-- **Screen readers**: Godot 4.5 added AccessKit-based screen-reader support with accessibility
-  properties on Control. Confirm the property names on the shipped 4.7 build, then give every
-  icon-only button a name from an l10n key ("Mail, 3 unread"). `a11y_audit` should list every
-  unnamed interactive control.
-- **Text scale** (100 / 115 / 130%): capture the Theme's font sizes once at boot, then write
-  scaled copies. Never use `content_scale_factor` for this, because it grows the chrome too
-  and breaks the HUD plan.
+- **Focus**: `FOCUS_ALL` on interactive controls, `FOCUS_NONE` on decoration; `first_focus` per
+  panel; `focus_neighbor_*` on grids; the ring is the Theme's `focus` StyleBox (4 px GILT_LIT).
+- **Screen readers**: Godot 4.5 added AccessKit screen-reader support with accessibility
+  properties on Control. Confirm the names on 4.7, then name every icon-only button from an l10n
+  key ("Mail, 3 unread"); `a11y_audit` lists unnamed controls.
+- **Text scale** (100 / 115 / 130%): scale the Theme's font sizes, never `content_scale_factor`
+  (it grows the chrome too and breaks the HUD plan).
 
 ```gdscript
 ## base = {"Label": {"font_size": 42}, "ButtonPrimary": {"font_size": 50}, ...} captured at boot
@@ -374,33 +351,25 @@ internationalization/pseudolocalization/fake_bidi = false           # true only 
 ```
 
 At runtime: `TranslationServer.pseudolocalization_enabled = true`, then
-`TranslationServer.reload_pseudolocalization()`. Strings that do NOT change under
-pseudolocalization were never passed through `tr()`: that is the untranslated-string list, a
-free result of the pass. Expansion targets for English source length (IBM's globalisation
-guidance): ≤ 10 characters +100–200%, 11–20 +80–100%, 21–30 +60–80%, 31–50 +40–60%, 51–70
-+31–40%, > 70 +30%. The 0.4 pass must show 0 overflows. The 1.0 pass may use fit-down and
-ellipsis, and those are counted and reported. RTL (if l10n-forge ships an RTL language):
-`layout_direction` follows the locale on text containers only; the HUD zones keep their
-anchors, and arrows and progress direction flip.
+`TranslationServer.reload_pseudolocalization()`. A string that does not change was never passed
+through `tr()`: the pass lists untranslated strings for free. Expansion by English length (IBM
+globalisation guidance): ≤ 10 characters +100–200%, 11–20 +80–100%, 21–30 +60–80%, 31–50
++40–60%, 51–70 +31–40%, > 70 +30%. The 0.4 pass: 0 overflows. The 1.0 pass: fit-down and
+ellipsis allowed, counted. RTL (if shipped): locale direction on text containers only.
 
 ## 13. Draw calls, atlases, fonts
 
 - **Measure**: `Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)` with the
-  HUD shown, minus the same with the HUD hidden = the HUD's cost. Budgets (PROPOSAL): HUD at
-  rest ≤ 40, a full screen ≤ 80, a scrolling list ≤ 100. `RENDER_TEXTURE_MEM_USED` for the UI
-  texture budget (icons.md §7).
-- **Batching**: neighbours in draw order that share a texture and material batch together.
-  Each of these breaks a batch: a texture switch (atlas the chrome and the icons), a different
-  material or shader, `clip_contents` (a scissor per clip; use it only on scroll areas), a
-  `BackBufferCopy`, a Label with another font or outline between icons of one atlas. Keep the
-  icons of one atlas next to each other in the tree.
-- **No real-time blur** behind panels on mobile: the INK scrim does the job at no cost.
-- **Fonts**: import the display face with `multichannel_signed_distance_field = true` (one
-  atlas that scales cleanly from 60 to 96 px and in ceremonies). Keep the text face as a
-  normal rasterized dynamic font (sharper at 32–42 px). Set l10n-forge's fallback fonts on
-  the FontFile (`fallbacks`), so a missing glyph never shows as a box.
-- **No `_process` in UI nodes** except the bubble layer (§8, gated by camera change) and
-  active tweens. Timers go through the TimerHub (§7).
+  HUD shown minus hidden = the HUD's cost. Budgets (PROPOSAL): HUD at rest ≤ 40, full screen
+  ≤ 80, scrolling list ≤ 100. `RENDER_TEXTURE_MEM_USED` for the texture budget (icons.md §7).
+- **Batching**: draw-order neighbours sharing texture and material batch. Breakers: a texture
+  switch (atlas everything), another material or shader, `clip_contents` (scroll areas only),
+  `BackBufferCopy`, a Label with another font or outline between icons of one atlas.
+- **No real-time blur** behind panels on mobile: the INK scrim costs nothing.
+- **Fonts**: the display face with `multichannel_signed_distance_field = true` (scales 60–96 px
+  and in ceremonies); the text face as a normal dynamic font (sharper at 32–42 px); l10n-forge's
+  `fallbacks` on the FontFile, so a missing glyph never shows as a box.
+- **No `_process` in UI nodes** except the bubble layer (§8) and active tweens.
 
 ## 14. Godot traps (each one cost somebody a day)
 
@@ -409,18 +378,13 @@ anchors, and arrows and progress direction flip.
 | A decorative `TextureRect` or `Panel` left at `MOUSE_FILTER_STOP` | taps "do nothing" in one area | `MOUSE_FILTER_IGNORE` on all decoration; the probe lists visible STOP controls with no input handler |
 | A 96 px visual button used as its own hit rect | mis-taps; `ux_touch_probe` fails | a 132/144 px parent Control is the hit rect, and the visual sits centred with IGNORE. Prefer this to a `_has_point()` override, which layout tools cannot see |
 | Tweening `position` of a child inside a Container | it snaps back on the next sort | put the moving child in a plain Control wrapper (§5) |
-| `theme_override_*` in scenes | the next Theme change misses the screen | Theme variations only (components.md §15) |
 | Mirroring with `layout_direction = RTL` | English punctuation at the wrong end | swap anchors (§3) |
 | `get_display_safe_area()` on desktop | insets 0, notch bugs unseen | `debug_insets` in the sweep (§3) |
 | `quit_on_go_back` left true | the back button quits from any screen | router `_ready()` (§4) |
 | Fonts without fallbacks | boxes instead of CJK or Cyrillic | FontFile `fallbacks` (l10n-forge) |
-| `ScrollContainer` default deadzone | taps fire at the end of scrolls | `scroll_deadzone = 24` |
-| A Timer per countdown label | 16 timers, CPU at rest | the TimerHub |
+| A Timer or `_process` per countdown label | 16 ticking nodes, CPU at rest | the TimerHub (§7) |
 
 Checklist for any UI code change:
-- [ ] Opens through `UIRouter.open(route)`; back handled; focus returns.
-- [ ] Tweens through the panel base; no `await` before input.
-- [ ] Safe area via SafeArea; tested with `debug_insets`.
-- [ ] No `theme_override_*` except computed values; decoration at `MOUSE_FILTER_IGNORE`.
-- [ ] Draw calls measured; icons from atlases; no `_process` timers.
-- [ ] Pseudo-loc 0.4 and text scale 130% screenshots attached.
+- [ ] Opens through `UIRouter.open(route)`; back handled; focus returns; tweens via the panel base, no `await` before input.
+- [ ] SafeArea tested with `debug_insets`; no `theme_override_*` except computed values; decoration at `MOUSE_FILTER_IGNORE`.
+- [ ] Draw calls measured; icons from atlases; no timer `_process`; pseudo-0.4 and 130% screenshots attached.

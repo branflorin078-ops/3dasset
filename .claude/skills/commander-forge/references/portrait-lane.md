@@ -50,7 +50,7 @@ regenerated without the owner's nod (checkpoint first, game-director rule 2).
 
 | Use | Display px (1080-wide screen) | Crop from | Head (crown → chin) in the crop | Must read |
 |---|---|---|---|---|
-| Lord detail, no figure yet | ≥ 864 tall | CMF | 12–14% of height | pose, set, signature object, face at arm's length |
+| Lord detail, no figure yet | ≥ 864 tall | CMF | 11–13% of height (7.5–8 heads, figure ≈ 90% of the frame) | pose, set, signature object, face at arm's length |
 | Roster card (4 across) | 256 × 320 | CMD | 40–50% of height | face, expression, set collar |
 | List chip | 128 × 128 | CMD | 70–80%, eyes 40–45% from the top | face; identity |
 | Avatar (march tracker, reports, chat) | 64 × 64 and 44 × 44 | CMD | 80–90% | head silhouette (helm, hood, hair), hair value, house-colour ring |
@@ -58,7 +58,7 @@ regenerated without the owner's nod (checkpoint first, game-director rule 2).
 
 - At 44 px nobody reads eyes (3 px). Identity there is the head silhouette
   + hair value + the ring colour; that is why the silhouettes of the eight
-  must already differ at the head (kit-sets.md §3 "head shape" column).
+  must already differ at the head (kit-sets.md §3, column "Head at 44 px").
 - Crops are computed, never hand-cut per size: store per lord a
   `crop.json` (eye centre x, y; crown y; chin y in image fractions) next to
   the installed PNG (PROPOSAL path) and derive every size from it.
@@ -135,8 +135,9 @@ exists — if not, a standalone prompt recorded in `art/gen/MANIFEST.md`):
 > behind the right ear; an oiled riveted mail hauberk to mid-thigh, rings
 > catching single glints, one patch of brighter replacement rings at the
 > shoulder; a wide-brimmed iron kettle helm, honestly dented above the left
-> eye; a faceted steel warhammer with iron langets hanging from the belt; the
-> brass folding rule half-open in his right hand, thumb on a graduation; soot
+> eye; a faceted steel warhammer with iron langets and an oak haft hanging
+> from the belt; the brass folding rule on its leather thong, half-open in his
+> right hand, thumb on a graduation; soot
 > on the knuckles; weight on the left leg, measuring, not posing.
 
 Rejected on sight: a face paragraph that changes between images; a costume
@@ -149,7 +150,10 @@ group suffix.
 Measured on the installed PNG with `tools/figure_check.py --kind bust
 --face x0,y0,x1,y1` (the face box by hand, image fractions). PROPOSAL
 targets until the anchor is measured (qa.md §6 records Edwin's numbers —
-new portraits then match Edwin ±8 L*).
+new portraits then match Edwin ±8 L*). A painting has no render mask: give
+`--mask` from the cut-out alpha when the group installs a magenta-keyed
+cut-out; otherwise figure_check falls back to a border key, printed as
+"approximate" — the value bands still hold, the edge numbers need a look.
 
 | Element | L* target |
 |---|---|
@@ -191,7 +195,7 @@ is a DELTA prompt — fixes only, never a rewrite.
 | Face drift | CMF Elena is a different woman from CMD Elena | face described differently or loosely | §4 paragraph verbatim; condition on the lord's approved CMD if the tool allows a per-item reference (verify in gen_assets.py) |
 | Mannequin | empty hands, straight arms | no action in the prompt | §5 step 4: a hand on the signature object |
 | Tiny face on the card | the head is 25% of a 256 card | CMF used where CMD belongs | §3 table: crop from the right source |
-| Mud at 44 px | a brown disc | head silhouette like the others | kit-sets.md §3 head-shape column |
+| Mud at 44 px | a brown disc | head silhouette like the others | kit-sets.md §3 "Head at 44 px" |
 | Paint vs render clash | a Blender stand-in beside paintings | mixed lanes in one list | SKILL rule 10; tag `stand_in`, replace |
 | Glamour | youthful, smooth Faber | model default beauty bias | age and marks in §4; reject code beauty-filter |
 
