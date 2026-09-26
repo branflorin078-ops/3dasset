@@ -188,8 +188,9 @@ Label padding ≥ 40 px per side. Button icon 72 / 56 / 48 px, then s3 before th
 
 - 2–5 tabs, equal widths ≥ 180 px, 112 px high, 42 px labels. Selected = raised parchment +
   6 px GILT underline + bold. More than 5 means two screens.
-- **Sheets**: the strip at the top of the sheet (y ≈ 650–760 on a 66% sheet: the stretch zone).
-- **Full screens**: the strip sits at the bottom above the footer (y 1576–1688, the easy zone).
+- **Placement**: the strip always sits directly above the footer, on sheets and full screens
+  alike (full screen: y 1576–1688, the easy zone). A strip at the top of a sheet would land at
+  y ≈ 600, in the hard zone.
 - No swiping between tabs: it fights the edge back gesture and every slider.
 - The last tab is remembered per screen for the session; deep links open at their tab; a tab
   with a claim carries a dot.

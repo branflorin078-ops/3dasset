@@ -652,6 +652,15 @@ def check(rep):
                 E(f"why.{key}[{i}] names a line/tier not in the rows: {ev}")
             if fac == "counter" and COUNTERED_BY.get(ev[2]) != ev[0]:
                 E(f"why.c[{i}] {ev[:4]} is not a counter pair in the PROPOSAL graph")
+            if fac == "counter" and ev[4] > F[i][0] + 1:
+                E(f"why.c[{i}] top matchup {ev[4]} exceeds the side's counter total {F[i][0]}")
+    for i in (0, 1):
+        if F[i][0] < 0:
+            E(f"side {i}: a counter bonus only adds damage, counter extras cannot be negative")
+        skill = sum(l[3] for u in S[i]["u"] for l in u.get("l", []))
+        heal_against = healed(S[1 - i])
+        if T and round(1000 * (skill - heal_against) / T) > F[i][3] + 1:
+            E(f"side {i}: skill hits are 100% LORD, F[lord] {F[i][3]} is too small")
     mo = rep.get("mo", [])
     if len(mo) > 8:
         E("more than 8 moments")

@@ -16,19 +16,27 @@ schema (its `schema.md`). The minimum the presentation needs:
 
 | Field | Meaning | If the shipped log lacks it |
 |---|---|---|
-| header `seed` | 32-bit seed of this battle | derive from the battle id (hash) — never from the clock |
-| header `ctx` | context: camp, outpost, field, intercept, castle, rally, stronghold | from the march target type |
+| header `seed`, `resolver_version` | combat.md §8 rule 6: seed = hash(march id, arrive); both stored in the cause ledger (combat.md §12) | never from the clock |
+| header `ctx` | context: camp, outpost, field, intercept, castle, rally, stronghold — plus the combat.md §6 loss row (1–9) | from the march kind and target |
 | header `start` | per side: lord pair, line × tier counts, structures (wall, gate, towers, tools) | from the report's start block |
 | beat `i` | order index | array order |
 | beat `ph` | resolver phase (the resolver has six phases per the mapping notes — names to verify) | map by kind (§2 column "Act") |
 | beat `k` | kind | map shipped names to §2 kinds; an unmapped kind fails `beat_coverage_test` |
 | beat `a`, `t` | actor and target: side + line, a structure, or a lord | — |
 | beat `v` | value: troops removed (split by bucket if given), durability removed | — |
-| beat `f` | flags: counter, skill id, tool id | **counter flag**: derive client-side from combat.md's counter graph (actor line vs target line). Never ask for a resolver change to get it. |
+| beat `f` | flags: counter, skill id, tool id | **counter flag**: derive client-side from combat.md §2's counter ring (the actor's line hunts the target's line). Never ask for a resolver change to get it. |
 
 Rule: the presentation is a pure function `timeline = compose(log, speed)`; the seeded
 `RandomNumberGenerator` (`rng.seed = seed`) picks every variant (sound take, debris count,
 figure that falls). Same log → same timeline, frame for frame, on every device.
+
+**Replay source.** A replay needs the beats. If report-forge stores them, use them. If it stores
+only the ledger and the start block (storage is report-forge's choice), the client re-runs the
+frozen resolver of the stored `resolver_version` on the stored inputs and seed — the resolver
+is a pure function (combat.md §8 rule 6) — for presentation only. The re-run's outcome must
+equal the stored outcome, or the replay is refused and the report stands alone; a client
+without that resolver version shows "Replay not available for battles before this update".
+The live first view always uses the server's beats (rule below), never a client re-run.
 
 Runtime safety: a kind with no row (a resolver version the client does not know yet) plays as a
 neutral `hit` on its target with its losses applied, and logs `BATTLE_UNMAPPED <kind>` once per
@@ -79,7 +87,7 @@ clips come from the `hero3d` rig, engine clips from `siege-forge`.
 | `breach` | gate or wall section swaps to its breached state (castle-forge mesh) | dust volume ≤ 40% for ≤ 1,500 ms; haze ≤ 15% opacity for 3 s | `bt_breach_boom`, `bt_timber_groan` | hit-stop 3 frames; push 8% over 600 ms; shake 10 px, 250 ms | 2,200 (132) | 1,200 | A |
 | `garrison_lord` | defending lord chip; garrison squad gets the sworn gilt rim | rim light only | lord motif, short | none | 1,200 (72) | 700 | B |
 | `reinforce` | ally squad enters from the keep side with the ally's pennons (≤ 6, then "+N") | none | `bt_horn_ally` | none | 1,200 (72) | 600 | B |
-| `wall_state` | durability crosses 67 / 34 / 0% → mesh or decal state step | dust puff ≤ 6% | `bt_stone_creak` | none | 400 (24), inside its causing beat | — | B |
+| `wall_state` | the Walls & Gate bar (combat.md §10) crosses 67 / 34 / 0% → mesh or decal state step | dust puff ≤ 6% | `bt_stone_creak` | none | 400 (24), inside its causing beat | — | B |
 | `outcome` | winner `cheer`, loser `fall_back`; winner's banner rises | no confetti, no full-screen flash | `bt_outcome_win` / `bt_outcome_loss` (same loudness) | ease out 6% over 800 ms | 800 (48), then the ceremony (outcome.md) | 500 | A |
 
 Flags on any damage beat:
@@ -131,7 +139,7 @@ Worked timeline — castle attack with a breach (1×, after pass 2):
 |---|---|---|
 | I | approach | 1,600 |
 | II | tower_fire ×2 (salvo) 1,400 · trap (first) 900 · volley ×2 1,800 | 4,100 |
-| III | engine_shot first 2,200 + 3 repeats 3,600 · ram_hit 1,500 · breach 2,200 | 9,500 |
+| III | engine_shot first 2,200 + 3 repeats 3,600 · ram_hit 1,500 · breach 2,200 (the fourth won assault of a war window takes Walls & Gate from 20% to 0 — combat.md §10) | 9,500 |
 | IV | garrison_lord 1,200 · reinforce 1,200 · charge 1,400 · brace+counter 1,350 · skill full ×2 4,000 · skill short 900 · clash ×4 4,400 | 14,450 |
 | V | rout ×2 | 2,000 |
 | VI | outcome | 800 |
@@ -167,12 +175,14 @@ salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 · counter volley 1
 2. **Hide the fetch inside act I.** Assets for the battle load at contact − 10 s with
    `ResourceLoader.load_threaded_request` (squad scenes, the target castle state, engine GLBs).
    Beats are requested at contact; act I (1,600 ms) plays on the start block alone.
-3. **Late beats**: if the log has not arrived when act I ends, squads play `idle_ready` for up
-   to 3,000 ms more. At 4,600 ms after contact: the plate "The battle is being decided" replaces
-   the field, the camera returns to the map, and the result arrives as the normal report toast.
-   No spinner longer than that. Target: p95 beat fetch ≤ 1,200 ms (cloud-forge measures).
+3. **Late beats** (combat.md §8 rule 7: result written ≤ 1 s p95 after arrival; after 5 s the
+   client retries and shows "Awaiting word"): if the log has not arrived when act I ends, squads
+   play the clash loop `idle_ready` for up to 3,400 ms more. At 5,000 ms after contact the client
+   retries once, the plate "Awaiting word" replaces the field, the camera returns to the map, and
+   the result arrives as the normal report toast. No spinner longer than that.
 4. **`T_fight` (PROPOSAL for combat.md / world-forge)**: a fixed per-context fight length on the
-   server. The surviving march departs at `contact + T_fight`; spectators on the map see the
+   server, written into the march record's `return_arrive` (combat.md §8: `return_arrive =
+   arrive + T_fight + time home`). The surviving march departs at `contact + T_fight`; spectators on the map see the
    clash marker for exactly `T_fight`. When watching live, the compositor fits the timeline to
    `T_fight` (it lies inside every budget band): longer → passes 2–5; shorter by ≤ 4.5 s →
    holds (pass 6: 3 × 1.5 s); shorter by more → after the outcome the winner regroups in
@@ -187,7 +197,7 @@ salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 · counter volley 1
 | Fails when | Caught by |
 |---|---|
 | The outcome shows on the client before the server decided it | [ ] code review: `compose()` only runs on a received log; `beat_latency_probe` |
-| A player waits > 4.6 s on a frozen field | [ ] `beat_latency_probe` with 0 / 1.2 / 4 / 8 s injected delay |
+| A player waits > 5.0 s on a frozen field | [ ] `beat_latency_probe` with 0 / 1 / 4 / 8 s injected delay |
 | The map token leaves while the watcher still sees fighting | [ ] live-watch fixture: last shown beat ≤ `T_fight` |
 
 ## 7. Implementation pattern (Godot 4)

@@ -112,15 +112,16 @@ Numbers are losses in troops ("−1,240"), never "damage points" the player cann
 ## 5. Readable counters — the main genre fix
 
 The genre's counter bonus of about 5% (design-forge `benchmark.md`) is buried under stat
-stacks; players conclude that only raw power matters. Our counters are bigger (combat.md
-proposes +20–50%) and they are **shown every time they land**.
+stacks; players conclude that only raw power matters. Our counter is a constant worth one tier
+(combat.md §2: the ring Spearmen → Cavalry → Crossbows → Archers → Infantry → Spearmen, c ≈ 26%,
+never changed by any bonus) and it is **shown every time it lands**.
 
 | Moment | What the player sees | Timing |
 |---|---|---|
 | Impact frame | target squad flashes white-gold (`flash` 0 → 1 in 1 frame, back to 0 over 120 ms); hit-stop 2 frames | frame 0 |
 | Badge | above the target: attacker line medallion → gilt chevron → target line medallion, 72 px tall; pops from 140% to 100% | 180 ms ease-out-back |
 | Hold | badge holds; the loss number shows 25% larger with a gilt edge | 700 ms (Min 2×: 450 ms) |
-| First time this pair lands in this battle | a one-line label under the badge: "Spears brace against horse ×1.3" (multiplier only if combat.md publishes it; l10n key) | same hold |
+| First time this pair lands in this battle | a one-line label under the badge in combat.md's own words — "The pike stops the horse — worth one tier" — beside the ring icon with the pair lit (Blender-made, five accents; l10n key) | same hold |
 | Exit | badge fades | 200 ms |
 | Sound | `bt_counter_sting` (2 notes, metallic); other SFX ducked −3 dB for 300 ms | at impact |
 

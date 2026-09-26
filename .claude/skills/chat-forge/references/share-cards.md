@@ -35,10 +35,10 @@ stored and sent   {"type":"lord","v":1,"ref":{"p":55123,"lord":3},
 | Type | Who may share | Channels | Snapshot fields (bytes) | Tap opens | Expires |
 |---|---|---|---|---|---|
 | `coord` Coordinates | anyone | all; Market Cross T1+ | tile kind, camp level or landmark key, owner id + tag (≈ 60 B) | camera focus on the tile (transition-forge realm focus), then the tile's own menu | never; live data on tap |
-| `report` Battle / defence / rally / camp report | a participant | all; Market Cross T2+ | report-forge contract §4 (≤ 160 B) | report-forge's report view (read-only for others), replay if battle-forge has it | when report-forge's retention drops the report |
+| `report` Battle / defence / rally / camp report | a participant | all; Market Cross T2+ | report-forge contract §4 (≤ 160 B; a realistic example measures 148 B, whole envelope 232 B) | report-forge's report view (read-only for others), replay if battle-forge has it | when report-forge's retention drops the report |
 | `scout` Scout report | the scout's owner | all except Market Cross for T0–T1 | report-forge contract §4 | report-forge scout view, sections by its share policy | report retention; values "as of" |
 | `lord` Lord | the lord's owner | all; Market Cross T2+ | lord id (1 of 8), level, rarity tier (Issued / Sound / Fine / Masterwork), sworn flag, set pieces 0–4 (≈ 40 B) | read-only lord sheet (commander-forge screens via ui-forge) | never; "as of" date |
-| `invite` Alliance invitation | ranks with the recruit permission (alliance.md) | Whisper, Circle, Market Cross | alliance id, tag, members/cap, language, minimum spine tier, sigil id, token (16 B), expiry (≈ 90 B) | alliance profile with Join / Ask to join (alliance.md rules) | 7 d, or alliance full or disbanded |
+| `invite` Alliance invitation | ranks with the recruit permission (alliance.md) | Whisper, Circle, Market Cross | alliance id, tag, members/cap, language, minimum spine tier, sigil id, token (16 B as 32 hex), expiry (≈ 120 B) | alliance profile with Join / Ask to join (alliance.md rules) | 7 d, or alliance full or disbanded |
 | `rally` Rally call | the rally leader (battle-forge) | **Hall and Council only** (never where enemies read) | rally id, target coord + kind, leader id, launch time, slots filled/total (≈ 70 B) | battle-forge rally join screen | at launch → "Marched" state |
 
 ## 3. Card rules
@@ -59,7 +59,7 @@ chat-forge needs these fields in `snap`; report-forge decides their values and w
 
 | Field | Type | Bytes | Meaning (report-forge defines) |
 |---|---|---|---|
-| `rid` | u64 as string | ≤ 20 | report id |
+| `rid` | u64 as string (in `ref`, not repeated in `snap`) | ≤ 20 | report id |
 | `rt` | enum | 1 | battle · defence · scout · rally · camp/gather |
 | `hk` | l10n key | ≤ 48 | the headline sentence (report-forge's "why you won / lost" engine picks it) |
 | `ha` | array of ids/numbers | ≤ 48 | arguments for `hk`, resolved on the reader's client |

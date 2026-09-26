@@ -38,7 +38,7 @@ and its thresholds with hysteresis. ui-forge maps every HUD element onto its lev
 | HUD | zones in hud.md §3 | live, interactive | — | — | always-on status and entries |
 | Status bubble | 104 px visual, 144 hit | live | resolves itself | world | one action on one building (hud.md §7) |
 | Drawer | 720 × ≤ 1100, from the hand-side edge, bottom at y 1416 | live, dimmed 30% | tap outside, swipe to the edge, back | HUD | the tracker's plate lists (hud.md §6) |
-| Sheet | snap heights 40% / 66% / 92% (768 / 1268 / 1766 px) | live, dimmed 40%; camera frames the subject above | drag down ≥ 25% of its height or fling ≥ 1200 px/s; tap on the dimmed world; back | HUD, drawer | a building card, a tile, a resource, a lord preview |
+| Sheet | snap heights 40% / 70% / 92% (768 / 1344 / 1766 px) | live, dimmed 40%; camera frames the subject above | drag down ≥ 25% of its height or fling ≥ 1200 px/s; tap on the dimmed world; back | HUD, drawer | a building card, a tile, a resource, a lord preview |
 | Full screen | whole safe area | paused (`disable_3d`), motion.md §5 | back control (footer, hand side), system back | HUD | deep management: lords, alliance, research tree, shop, settings, rankings |
 | Picker | sheet at 40% | the surface below, dimmed 40% | choose, or back | sheet, full screen | hourglasses, quantity, lord preset |
 | Modal | ≤ 960 wide, height fits content | scrim INK 60% | explicit buttons only | any | irreversible or paid confirms, ≤ 1 at a time |
@@ -134,11 +134,12 @@ open surfaces ONLY through routes, never by instancing scenes themselves.
 | Route (pattern) | Surface | Depth | Parent for back |
 |---|---|---|---|
 | `hud` | HUD rest | 0 | — |
-| `building/{id}` · `building/{id}/{tab}` | building card sheet 66% | 1 | hud |
+| `building/{id}` · `building/{id}/tiers` | building card sheet 70% | 1 | hud |
+| `resource/{id}` | resource sheet 70% | 1 | hud |
 | `plates/{group}` | tracker drawer (build, research, muster, infirmary, banners) | 1 | hud |
 | `research/{desk}` · `research/{desk}/{node}` | research full screen | 1–2 | hud |
 | `muster/{line}` | muster yard sheet 92% | 1–2 | hud |
-| `infirmary` | infirmary sheet 66% | 1–2 | hud |
+| `infirmary` | infirmary sheet 70% | 1–2 | hud |
 | `lords` · `lords/{id}` · `lords/{id}/{tab}` | lords full screen | 1–3 | hud |
 | `alliance` · `alliance/{section}` | alliance full screen | 1–2 | hud |
 | `events/board` · `events/{id}` | Herald's Board / event | 1–2 | hud |

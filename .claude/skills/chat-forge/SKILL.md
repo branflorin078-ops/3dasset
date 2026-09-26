@@ -58,7 +58,7 @@ changes as "PROPOSAL (verify against <file>)".
 | Ticker / panel | strip 84 px, hit area 120 px · half sheet 960 px · full 1690 px · targets ≥ 120 px (48 dp) · body text 36 px |
 | Latency | send → other client p95 ≤ 1 s; optimistic own row ≤ 1 frame |
 | Cost (A1, one box) | base €4–€30 · high €4–€31 · stress €10–€49 per month; chat envelope PROPOSAL €50 |
-| Moderation load (base) | 10–45 human cases per day ≈ 8–68 minutes |
+| Moderation load (base) | 8–45 human cases per day ≈ 6–68 minutes |
 
 ## Workflow
 
@@ -125,7 +125,7 @@ separately.
 
 1. **Chat's share of the €200**: PROPOSAL envelope €50 (game ≈ €20 measured; mail and report lines from their skills).
 2. **Hot standby for chat** (A1-HA): fits base and high; at stress €18–€79, over the envelope at high prices.
-3. **Who moderates**: 8–68 minutes per day at base, S3 cases reviewed ≤ 24 h — the owner, volunteers or a paid service (outside the server budget).
+3. **Who moderates**: 6–68 minutes per day at base, S3 cases reviewed ≤ 24 h — the owner, volunteers or a paid service (outside the server budget).
 4. **Push**: may a player's "every whisper" setting exceed the A8 budget of 4 per day?
 5. **Audience and rating**: target age, Families-policy scope, and whether a parental-consent path for free text is ever built.
 6. **Plain URL text** for T3 adults in Hall and Council (never clickable): allow or not.

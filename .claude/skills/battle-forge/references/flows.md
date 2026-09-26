@@ -30,9 +30,9 @@ in range", "Enemy castles ≤ 3 min march", "Bookmarks". A row tap pans the came
 | Line | Content | Honesty rule |
 |---|---|---|
 | Header | name, alliance tag, relationship colour + shape marker | — |
-| Strength | power band vs the player: even (within ±20%), weaker / stronger (20–60% apart), much weaker / much stronger (> 60% apart), each with a shape icon; exact power on tap (design-forge `numbers.md` §3 power) | never hidden, never a guess dressed as fact |
-| Intel | "Scouted 4 m ago" + the three facts that matter (garrison lines %, lord, wall %) or "Not scouted" | unknown fields show "?", never an estimate |
-| Protection | ward state and time left; "Much weaker — <combat.md's rule, e.g. reduced loot>" when it applies | the rule text comes from combat.md |
+| Strength | power band vs the player, cut where combat.md's weak-target factor changes (§6 rule 5): much weaker (< 30% of the player's power) · weaker (30–60%) · even (60–167%) · stronger (167–333%) · much stronger (> 333%), each with a shape icon; exact power on tap | never hidden, never a guess dressed as fact |
+| Intel | "Level 3 report, 12 min old" + the three facts that matter (lines ±10%, garrison lord, Walls & Gate %) or "Not scouted" | only what the scout level revealed (combat.md §11); unknown fields show "?", never an estimate |
+| Protection | ward, breach truce or burning state and time left; "Much weaker — this fight earns no honour" below 30% (combat.md §6 rule 5) | the rule text comes from combat.md |
 | Travel | ETA per ready preset ("Preset 1: 2:14 · arrives 14:32") | server time (core-loop §4.6) |
 | Actions | ≤ 3 buttons, the most likely first (Attack for camps, Scout for unscouted castles) | disabled buttons say why in one line |
 
@@ -43,8 +43,12 @@ in range", "Enemy castles ≤ 3 min march", "Bookmarks". A row tap pans the came
 
 ## 2. Scouting — the decide loop
 
-1. Card → **Scout** (1) → **Send scout** (1). A scout uses no banner (PROPOSAL; world.md).
-2. Scout speed PROPOSAL 3× the fastest army line: a 2-minute war march is a 40 s scout trip.
+1. Card → **Scout** (1) → **Send scout** (1). A scout is a march (combat.md §11); whether it
+   takes a banner is world.md's. A warded player sees a confirm first: "Scouting a player ends
+   your ward (3 h 12 m left)" (combat.md §11 rule 2).
+2. Scout level `L = clamp(3 + E_s − E_t, 1, 5)` (combat.md §11) is shown BEFORE sending:
+   "Your scouts will see level 3: lines ±10%". Scout speed PROPOSAL 3× the fastest army line
+   (world.md decides): a 2-minute war march is a 40 s scout trip.
 3. The report arrives as a toast "Scout report: <target>" (6 s, 1 tap) and in the tracker.
    Report content and information tiers are report-forge's (`scout.md`) and combat.md's.
 4. battle-forge owns the step after reading: the report's action row is **Attack with counter
@@ -69,14 +73,17 @@ One screen, opened pre-filled by the last preset used against this target type.
 | Siege row | only when the target has structures: engine chips from siege-forge with load and speed | 1 per engine |
 | Presets | 5 named slots; tap applies, hold saves | 1 |
 | Auto by counter | fills lines against the scouted garrison using combat.md's counter graph (a helper in gameplay-forge; deterministic); greyed with "Scout first" when there is no report | 1 |
-| Matchup strip | each own line → the enemy line it meets, with the favoured / even / unfavoured medallion from presentation.md §5 | 0 |
+| Matchup strip | each own line → the enemy line it meets, with the favoured / even / unfavoured medallion from presentation.md §5, and the matchup index as "+0.4 tier" with the scout's age (combat.md §2 rule 7) | 0 |
 | Summary | capacity bar, ETA "2:14 · arrives 14:32", speed (the slowest line governs, named), load, Resolve cost (camps), infirmary line (below) | 0 |
 | Send | bottom-right, thumb zone, 64 dp tall | 1 |
 
 **Infirmary line** — the genre's death spiral is a full hospital: players lose troops they
-thought were safe. The form shows free beds and the worst case: "Beds free 3,200 · at risk if
-this march loses: 4,100". It turns WAX-rimmed (never flashing) when the worst case exceeds the
-free beds; it never blocks Send. The worst-case share per context is combat.md's loss table.
+thought were safe. combat.md §6 rule 4 sets the rule (expected severe = troops × the context's
+severe share); the form shows it as free beds plus the warning in combat.md's words: "Beds free
+3,200 · May overflow your beds by ~900 — they would die". Above free beds the line gains a
+WAX rim and a warning icon (icon + words, never colour alone, never flashing); 0 extra taps; it
+never blocks Send. In contexts where overflow cannot kill (PvE, home defence) the line says what
+happens instead ("…would walk home" / "…would be routed for 24 h").
 
 Blocked sends — one line, the reason and the next useful action:
 
@@ -93,7 +100,7 @@ Blocked sends — one line, the reason and the next useful action:
 | Fails when | Caught by |
 |---|---|
 | A preset send takes > 3 taps from the target card | [ ] `ux_flow_probe` flow C (§9) |
-| The form lets a march leave with more than the free beds at risk and no warning shown | [ ] form unit test: worst case > beds → WAX rim present |
+| The form lets a march leave with more than the free beds at risk and no warning shown | [ ] form unit test: expected severe > free beds → warning icon + words present |
 | A retried send creates two marches | [ ] cloud-forge idempotency test with a duplicated request id |
 
 ## 4. March out through the gate

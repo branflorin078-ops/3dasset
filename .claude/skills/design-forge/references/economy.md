@@ -1,13 +1,12 @@
 # Economy — five stock resources, two bound currencies, one measuring hour
 
-Where resources come from, where they go, what can be taken, and what stops the economy from
-inflating or being farmed. Implementation: **gameplay-forge** (rules, data, save), **cloud-forge**
-(server state, caravans, account links, cost), **world-forge** (nodes, seams, veins, territory),
-**shop-forge** (goods, gem rate `k`), **ui-forge** (resource bar, warehouse card), **qa-forge**
-(harness). Genre patterns: [benchmark.md](benchmark.md) §3. **Every number here is a PROPOSAL**
-unless it quotes a canonical fact; check shipped data first (`data/buildings.gd`, `data/troops.gd`,
-`data/items.gd` — paths to confirm). A dial that is a sacred balance constant keeps its shipped
-value and this file's value goes to the owner (§16). `S1–S6` = keep stage ([progression.md](progression.md)).
+Where resources come from, where they go, what can be taken, what stops inflation and farming.
+Owners: **gameplay-forge** (rules, data, save), **cloud-forge** (server state, caravans, account links,
+cost), **world-forge** (nodes, seams, veins, territory), **shop-forge** (goods, gem rate `k`), **ui-forge**
+(resource bar, warehouse card), **qa-forge** (harness). Genre: [benchmark.md](benchmark.md) §3. **Every
+number is a PROPOSAL** unless canonical; check `data/buildings.gd`, `data/troops.gd`, `data/items.gd`
+(paths to confirm) first — a sacred constant keeps its shipped value and the gap goes to the owner
+(§16). `S1–S6` = keep stage ([progression.md](progression.md)).
 
 ## 0. The four questions
 
@@ -28,9 +27,8 @@ value and this file's value goes to the owner (§16). `S1–S6` = keep stage ([p
 | gems | premium, bound to the account | — | — | never | never | — |
 | rp | research ink, bound to the account | S1 | — | never | never | never |
 
-Weight = value: 1 vu = 1 food; a cart carries the same value whatever it holds, so gathering and
-plunder balance on one number. Market ratios are in value (2 vu in → 1 vu out). Gold is **not
-gathered** on the map (its home is people: taxes, trade, plunder) — each resource has one home channel.
+Weight = value (1 vu = 1 food): a cart carries the same value whatever it holds; market ratios are in
+value. Gold is **not gathered** on the map — its home is people (taxes, trade, plunder).
 
 **Two hours** (one definition each, used everywhere):
 - `P(r)` = the player's own city output of `r` per hour, before upkeep. Sizes **goods** (paid,
@@ -41,10 +39,9 @@ gathered** on the map (its home is people: taxes, trade, plunder) — each resou
   `I_med` of the stage their level serves ([world.md](world.md) ladder), never the attacker's H —
   a strong castle farming low camps earns low loot.
 
-Why two: iron and gold come mostly from outside the city, so `P(iron)` is ~20% of iron income late.
-Earned iron is measured generously (`H`), bought iron strictly (`P`) — so the shop can never buy
-past the throttle (§4). Every H-reward is converted to units **at delivery**, never later: holding
-an unopened reward must never grow its value.
+Why two: `P(iron)` is ~20% of iron income late. Earned iron is measured generously (`H`), bought iron
+strictly (`P`), so the shop cannot buy past the throttle (§4). H-rewards convert to units **at
+delivery**, never later: holding an unopened reward must never grow its value.
 
 ## 2. Sources and sinks (free player, model §12, days 61–90)
 
@@ -68,8 +65,7 @@ days 61–90. Archetype roles are PROPOSALS (verify which archetype yields what 
 | 1 Growth | construction, research | 46% | levels (`C(L) = C1·r^(L−1)`, [numbers.md](numbers.md) §2) | the spine of progress | cost ratio `r` |
 | 2 Army | training, healing, upkeep, arms and gear | 49% | army size × tier, fights | ties war to the economy | upkeep `D(t)`, heal share |
 | 3 Lords | lord levels and skills (gold) | 3% | lords ([lords.md](lords.md)) | investment in people | lord costs |
-| 4 Social | alliance donations, rally provisions | 3% with layer 5 (one model line) | alliance | collective goods from small acts | donation Merit |
-| 5 Friction | market spread, caravan tax, plunder spoil, moving the seat | (in layer 4's 3%) | trade and raid volume | anti-inflation, anti-farm | tax % |
+| 4–5 Social, friction | donations, rally provisions · market spread, caravan tax, plunder spoil, moving the seat | 3% (one model line) | alliance; trade and raid volume | collective goods; anti-inflation, anti-farm | Merit; tax % |
 | 6 Prestige | works on the monument, wonder, palace: stat-free tiers, realm titles, feasts | 0% free; open-ended | surplus | absorbs the top without power | — |
 
 1. From its opening stage, every resource has ≥ 2 sink layers (stone: construction + wall repair and siege shot, [combat.md](combat.md) §10, siege-forge).
@@ -103,13 +99,12 @@ An iron-poor player leans on spearmen and archers: the throttle is a choice, not
 draws on the same iron ([lords.md](lords.md) rule 3): **craft Issued 0.25 d · temper Sound 0.5 d ·
 Fine 1.25 d · Masterwork 3 d** of `I_med(S, iron)` → a four-piece Masterwork set ≈ 20 days of iron.
 
-Supply rules: mine ≤ 30% of a free t6+ player's iron demand (model 20%); seams (rings with node
-level ≥ 3) ≥ 50% (54%); camps ≥ level 5 drop iron (20%); market buy ≤ 2 H/day; goods in `P`;
-caravans only from S4 senders; donations in iron = 15 min of own mine output.
-
-Model result (§12, window 61–90): daily iron demand passes supply on **day 48**; free 1.13, light
-1.31, heavy 1.55, no-map 2.45. Heavy wants 1.8× the free pace and reaches 1.8 / 1.55 = 1.16 against
-the free 1 / 1.13 = 0.88 → **money buys ≤ 1.31× the free t6+ pace**, not 1.8×.
+Supply rules: mine ≤ 30% of a free t6+ player's iron demand (model 20%); seams (node level ≥ 3)
+≥ 50% (54%); camps from level 5 ([world.md](world.md) ladder) 20%; market buy ≤ 2 H/day; goods in `P`;
+caravans only from S4 senders; iron donations = 15 min of own mine output. Model (§12, window
+61–90): daily demand passes supply on **day 48**; free 1.13, light 1.31, heavy 1.55, no-map 2.45.
+Heavy wants 1.8× the free pace and reaches 1.8 / 1.55 = 1.16 against the free 1 / 1.13 = 0.88 →
+**money buys ≤ 1.31× the free t6+ pace**, not 1.8×.
 
 Verify before proposing: [ ] `data/troops.gd` iron share per tier by the §1 weights (t1–t3 = 0,
 t6+ ≥ 30%) · [ ] which archetype makes iron (mine?) and its share of t6+ demand · [ ] heal iron ≤ 10% ·
@@ -142,8 +137,7 @@ an "until I'm back" batch early.
 | Gathering inside own alliance territory | +20% rate | genre +25% [benchmark.md §3]; our map already carries 36% of late income |
 | Ring richness | outer N 1–3, middle 3–5, inner 5–6 | seams and veins only at N ≥ 3 ([world.md](world.md) draws the rings) |
 | Held landmarks ([world.md](world.md) ladder) | +3% to +8% city output of ONE resource to members, by landmark tier | Treasury rates: [alliance.md](alliance.md) §4 |
-| Cap | territory ≤ +25% of a member's total income; ≤ +35% with inner-ring nodes | worth a fight, never decisive |
-| Design test | a median territorial alliance member earns +10–20% over an unaligned player | 36% map × 20% + landmarks ≈ +12% |
+| Cap and test | territory ≤ +25% of a member's total income (≤ +35% with inner-ring nodes); a median territorial member earns +10–20% over an unaligned player | 36% map × 20% + landmarks ≈ +12%: worth a fight, never decisive |
 
 ## 7. Protection — allowance, sheds, pledge, plunder
 
@@ -156,17 +150,16 @@ an "until I'm back" batch early.
 1. **Sheds** hold 15 h of `P` per building ([core-loop.md](core-loop.md) 15-hour promise) and are never plundered; collect-on-open moves them to the yard. The promise covers waste (caps, expiry), not war: plunder takes only what the player chose to keep above the allowance.
 2. **Yard** has no cap (nothing is lost to a full store; exposure is the price of holding). Stock `Y(r)` above the allowance is plunderable: `L(r) = max(0, Y(r) − max(0, Wp(r) − I(r)))`.
 3. **Items — the genre loophole closed.** New content creates **no holdable resource item**: chests, events, camps and goods ([monetization.md](monetization.md) §2) land in the yard at delivery (core-loop §7's "protected storage" = the allowance). If shipped resource items exist (`data/items.gd`), their unopened value `I(r)` uses the allowance first, and any value above `Wp` opens into the yard after a 7-day notice. Total untouchable per resource = `Wp` + one pledge — never more.
-4. **Pledge — an honest way to save** (the item loophole was the genre's only one). On a building card, "Save for this" (2 taps) moves stock into a pledge: one pledge at a time; ≤ the remaining cost of one startable upgrade; only once ≥ 50% of that cost is held; ≤ 72 h; consumed when the upgrade starts; after cancel or expiry, 24 h before the next. Pledged stock is not plunderable and not spendable elsewhere.
+4. **Pledge — an honest way to save** (in the genre, items were the only safe way to save). On a building card, "Save for this" (2 taps) moves stock into a pledge: one pledge at a time; ≤ the remaining cost of one startable upgrade; only once ≥ 50% of that cost is held; ≤ 72 h; consumed when the upgrade starts; after cancel or expiry, 24 h before the next. Pledged stock is not plunderable and not spendable elsewhere.
 5. **Plunder** on a won castle assault: takes `50% · L(r)` per resource, up to the survivors' load; the attacker receives **75%**, **25% is destroyed** (spoiled in the sack — a sink and a tax on raid-feeding).
 6. **Sacked**: only the first 2 won assaults on one castle in 12 h plunder; then 8 h with plunder 0. A breach adds no plunder ([combat.md](combat.md) §10 rule 5). Worst 12 h: −75% of `L`, 0% of the allowance.
 7. **Attacker cap**: plunder received ≤ 24 H(r) of the attacker per resource per day; above it the carts come home empty and the defender loses nothing.
-8. **Plunder 0** from: peace ward and newcomer ward ([onboarding.md](onboarding.md)), accounts linked to the attacker (§9 F8), same alliance or left it < 7 d, 14-day caravan partners. A defeated gathering march loses 50% of its cart by the same split. Gems and rp: never. Wounded in beds: never.
+8. **Plunder 0** from: peace ward and newcomer ward ([onboarding.md](onboarding.md)), accounts linked to the attacker (§9 F8), same alliance or left it < 7 d, caravan partners of the last 14 d. A defeated gathering march loses 50% of its cart by the same split. Gems and rp: never. Wounded in beds: never.
 9. **Honesty**: the scout report shows `L` ±20% (combat.md scout tier 2); the warehouse card shows "Safe: 210,000 · At risk: 290,000"; a goods offer shows how much of it will sit above the allowance.
 
-Worked (S5, `H(food)` = 10,000/h, warehouse tier 5 → `Wp` = 210,000; yard 500,000, no items):
-`L` = 290,000 → plunder 1 takes 145,000 (attacker +108,750, 36,250 destroyed) → plunder 2 takes
-72,500 → sacked 8 h. Loss 217,500 (43% of the yard). With a 250,000 pledge for the keep upgrade:
-`L` = 40,000 → loss 20,000 + 10,000 = 30,000 (6%).
+Worked (S5, `H(food)` = 10,000/h, warehouse tier 5 → `Wp` = 210,000; yard 500,000, no items): `L` =
+290,000 → plunder 1 takes 145,000 (attacker +108,750, 36,250 destroyed) → plunder 2 takes 72,500 →
+sacked. Loss 217,500 (43%). With a 250,000 pledge for the keep: `L` = 40,000 → loss 30,000 (6%).
 
 **Checks** (plunder and pledge unit tests, gameplay-forge + cloud-forge): [ ] items case — fails
 when: opening items lifts untouchable stock above `Wp` + pledge ([benchmark.md](benchmark.md) check) ·
@@ -179,9 +172,8 @@ when: opening items lifts untouchable stock above `Wp` + pledge ([benchmark.md](
 |---|---|---|---|
 | None (genre: apparently none [unverified]) | simplest | food HOARDs late; idle troop stacks cost nothing → power inflation | 0.77 / 0.80 HOARD |
 | Heavy (older browser 4X: starving troops die) | strong sink | deaths while away break the 15-hour promise | — |
-| **Light rations, no deaths (recommended)** | the only sink that scales with army SIZE; lost troops stop eating; food keeps a job to the end | one more line on the resource bar | 0.93 / 0.96 |
+| **Light rations, no deaths (recommended)** | the only sink that scales with army SIZE; lost troops stop eating; food keeps a job to the end. Cutting farm output 17% instead would tax every castle alike | one more line on the resource bar | 0.93 / 0.96 |
 
-Why not just cut farm output 17%: that taxes every castle alike; rations tax standing armies.
 1. A unit eats its own food training cost in `D(t) = 150 + 15·(t − 1)` days (t1 150 d, t10 285 d, cavalry t11 300 d). With food cost ∝ power, upkeep per power at t10 = 150/285 = 53% of t1: quality over mass.
 2. Target: median free army's upkeep = 10–20% of food income (model 15–16%); max army ≤ 35%. Outside the band, move `D`.
 3. Wounded in beds, routed troops and engines eat 0; reinforcements at an ally are fed by their owner.
@@ -198,14 +190,11 @@ Why not just cut farm output 17%: that taxes every castle alike; rations tax sta
 | F4 | Send cap by keep stage | S1–S2: none · S3: ≤ 12 H of own, no iron · S4+: ≤ 12 H incl. iron | fresh alts send nothing; an alt sends ≤ half a day of its own output |
 | F5 | Sender account age | ≥ 7 d | throwaway alts |
 | F6 | Travel | 30–90 min by distance; the server may hold and reverse | instant funnels |
-| F7 | Never transferable | gems, rp, hourglasses, Resolve, lord items | bound value |
-| F8 | Device link: same install id or device-fingerprint hash within 30 d | caravans blocked, plunder 0, help pays 0 ([alliance.md](alliance.md)), one vein cap per device | several accounts on one phone |
+| F7 | Never transferable; bound chest rewards ([core-loop.md](core-loop.md) §7); 0 Treasury from new or S1–S2 accounts ([alliance.md](alliance.md) §4) | gems, rp, hourglasses, Resolve, lord items | bound value |
+| F8 | Device link: same install id or device-fingerprint hash within 30 d (salted hashes only, kept 90 d; cloud-forge, privacy law) | caravans blocked, plunder 0, help pays 0 ([alliance.md](alliance.md)), one vein cap per device | several accounts on one phone |
 | F9 | Shared network: same public IP with overlapping sessions ≥ 3 days in 7 | flag + F3/F4 caps halved; never a ban on IP alone | families, schools, carrier NAT stay safe |
 | F10 | Flow audit, nightly over caravan + plunder ledgers | flag a pair when one sender's outflow to one receiver > 50% of its income for 14 d and the sender built nothing | caps 0 for 14 d + human review |
 | F11 | Moving realms ([onboarding.md](onboarding.md) passage, [liveops.md](liveops.md) migration) | passage: ≤ `Wp`; voluntary migration: ≤ 72 H per resource; realm merges: in full | the feeder guard |
-
-Device ids stored only as salted hashes, kept 90 days (cloud-forge; privacy law). Chest rewards are
-bound ([core-loop.md](core-loop.md) §7); new or S1–S2 accounts add 0 Treasury ([alliance.md](alliance.md) §4).
 
 **Checks**: [ ] caravan server test by stage (benchmark.md check) — fails when: a young account
 moves more than its stage allows · [ ] plunder unit test, linked case — fails when: linked accounts
@@ -216,16 +205,14 @@ actives in a week (too loose) or 0 (too tight).
 
 1. **Rewards in H, fixed at delivery**; goods in `P` under the weekly allowance `Ag` ([monetization.md](monetization.md) §4). No fixed-amount resource reward in new data ([ ] data check).
 2. **Friction sinks**: NPC market (the market archetype) 2 : 1 in value, ≤ 12 H received per day, iron buy 4 : 1 ≤ 2 H; caravan tax 20%; plunder spoil 25%.
-3. **Exposure**: surplus above `Wp` + pledge is plunderable — hoarding has a price.
-4. **Prestige works** (layer 6) take unlimited surplus for stat-free tiers and titles.
-5. **Event budget**: resources injected by events per realm-week ≤ 15% of the realm's production ([liveops.md](liveops.md) sets event rewards in H).
-6. **Watch**: median held stock ≤ 2 days of income at day 30 (free); alert at > 4 days → add a sink or cut a source (numbers.md §6).
+3. **Exposure**: surplus above `Wp` + pledge is plunderable; **prestige works** (layer 6) take unlimited surplus for stat-free tiers.
+4. **Event budget**: resources injected by events per realm-week ≤ 15% of the realm's production ([liveops.md](liveops.md) sets event rewards in H).
+5. **Watch**: median held stock ≤ 2 days of income at day 30 (free); alert at > 4 days → add a sink or cut a source (numbers.md §6).
 
 ## 11. Gems for free players — gem veins
 
-Pattern: free players reach premium currency through map play. Our move: a daily cap that makes
-bots and farms pointless, and gems that are never loot. Gem numbers at `k` = 1 (the gem price of a
-1-minute hourglass, core-loop §5); shop-forge sets `k`, scale every gem number by it.
+Pattern: premium currency reachable through map play. Our move: a daily cap that makes bots and farms
+pointless, gems never loot. Numbers at `k` = 1 (gems per 1-minute hourglass, core-loop §5; shop-forge sets `k`).
 
 | Source (free) | Gems | Rule |
 |---|---|---|
@@ -245,12 +232,11 @@ bots and farms pointless, and gems that are never loot. Gem numbers at `k` = 1 (
 ```
 python tools/econ_sim.py design/economy/econ.json --days 1,7,30,60,90 --csv design/economy/econ.csv
 ```
-Scale: day-1 free city output ≈ 100,000 vu/day (40,000 food, 34,000 wood, 9,000 stone, 600 iron,
-3,500 gold); set the bases from shipped data and keep the ratios. Player fields used by `scale`:
-`gather` (0 = never marches), `pace` (a spender builds faster), `upkeep` (0 = the variant without
-rations), `gemspend`, `pack_mult` (heavy 6 ≈ 160 h of own output per week ≤ `Ag` 168 h). econ_sim
-has no start day per line: a late resource starts small and grows fast (iron). Window ratio =
-`(sinks90 − sinks60) / (sources90 − sources60)` from the CSV.
+Scale: day-1 free city output ≈ 100,000 vu/day (40,000 food, 34,000 wood, 9,000 stone, 600 iron, 3,500
+gold); set bases from shipped data, keep the ratios. `scale` fields: `gather` (0 = never marches),
+`pace` (a spender builds faster), `upkeep` (0 = no rations), `gemspend`, `pack_mult` (heavy 6 ≈ 160 h
+of own output per week ≤ `Ag` 168 h). No start day per line: a late resource starts small and grows
+fast (iron). Window ratio = `(sinks90 − sinks60) / (sources90 − sources60)` from the CSV.
 
 ```json
 {
@@ -338,15 +324,14 @@ sits in band at day 30; iron's day-90 WALL is the named t6+ throttle (§4); the 
 
 ## 13. Server cost
 
-State per player: per resource `Y0`, `s0` + one shared `t0` (≈ 70 bytes), pledge 16 bytes; rates are
-derived from buildings, never stored. Production, rations, sheds, gathering, sacked timers and
-pledge expiry are functions of time: **0 server ticks**. Clients compute stock locally: 0 polling reads.
-
-Economy writes per engaged player per day: spends, collects and chest resources **0 extra** (they
-ride on the plate-start or claim write, core-loop §11) · gathering result 0 (settled inside the next
-march order) · plunder 0.6 (attacker + defender, ≈ 0.3 won assaults) · caravan 0.9 (sender +
-receiver + ledger append, ≈ 0.3 per day) · market and pledge 0.7 · gem vein 1.0 (occupy rides on the
-march order; leave = 1) · device link and flow flags ≈ 0.1 → **≈ 3.3**. At 50,000 players (upper
+State per player: `Y0`, `s0` per resource + one shared `t0` (≈ 70 bytes), pledge 16 bytes; rates derive
+from buildings. Production, rations, sheds, gathering, sacked and pledge timers are functions of time:
+**0 server ticks**; clients compute stock locally (0 polling reads). Economy writes per engaged
+player per day: spends, collects and chest resources **0 extra** (they ride on the plate-start or
+claim write, core-loop §11) · gathering result 0 (settled inside the next march order) · plunder 0.6
+(attacker + defender, ≈ 0.3 won assaults) · caravan 0.9 (sender + receiver + ledger append, ≈ 0.3
+per day) · market and pledge 0.7 · gem vein 1.0 (occupy rides on the march order; leave = 1) ·
+device link and flow flags ≈ 0.1 → **≈ 3.3**. At 50,000 players (upper
 bound: all engaged) ≈ 165,000 per day ≈ 5 M per month = 5.7% of core-loop's 87 M; at core-loop's
 break-even price (€2.30 per million uses the whole €200) ≤ €11.50. Rule: **one player-document write
 per player action** — an economy feature that adds its own write per action is redesigned. Measure
@@ -362,18 +347,20 @@ with `core/sd_cost_probe.gd` before tuning; ledgers kept 30 days.
 | caravan server tests | `CARAVAN OK - caps by stage 6/6, linked 0, tax 20%` |
 | `core/sd_cost_probe.gd` | economy writes ≤ 4 per engaged player per day |
 
-**After ship**: median held stock ≤ 2 days of income (free, day 30); ≥ 60% of free S5+ players
-gather iron weekly; F10 flags 0.2–2% of actives per week; plunder loss per defender ≤ 10% of daily
-income at the median; heal of full beds ≤ 24 h of own production ([combat.md](combat.md) H4).
+**After ship**: median held stock ≤ 2 days of income (free, day 30); ≥ 60% of free S5+ players gather iron weekly; F10 flags 0.2–2% of actives per week; median plunder loss ≤ 10% of daily income; full beds heal for ≤ 24 h of own output ([combat.md](combat.md) H4).
 
 **Save migration** (gameplay-forge): stock and buildings load unchanged; `t0` = load time; sheds
 start empty; shipped resource items keep their value under §7 rule 3 with a 7-day notice; no pledge.
+
+**Handoff checklist**: [ ] §1 roles checked against `data/buildings.gd` · [ ] §4 iron shares from
+`data/troops.gd` · [ ] econ_sim with shipped bases: RED-TEAM line + iron window pasted · [ ] plunder,
+pledge, caravan, vein tests named · [ ] sd_cost_probe line · [ ] §16 sent to the owner.
 
 ## 15. Genre weak spots → our fix
 
 | Genre weak spot ([benchmark.md](benchmark.md) §3) | Our fix | Number |
 |---|---|---|
-| Resources held as items cannot be plundered, so the storehouse is moot [observational] | no holdable resource items; shipped items use the allowance first; the pledge | untouchable ≤ `Wp` + 1 pledge |
+| Resources held as items cannot be plundered, so protection is moot [observational] | no holdable resource items; shipped items use the allowance first; the pledge | untouchable ≤ `Wp` + 1 pledge |
 | Farm accounts are standard practice | F1–F11; bound chests; linked accounts plunder 0 | alts add ≤ +33% of own city output |
 | Gathering is idle busywork | one-read node choice; Resend all; time-first batches | 1 tap for all banners |
 | Top-tier heal costs → fight avoidance | heal 30% of training, ≤ 10% iron; throttle on growth | full beds ≤ 24 h of own output |
@@ -388,6 +375,5 @@ start empty; shipped resource items keep their value under §7 rule 3 with a 7-d
 3. The pledge (§7 rule 4) and the plunder split 50% / 75% / 25%.
 4. Device-link blocks and salted hash storage (privacy; cloud-forge).
 5. Gem veins: cap 90/day, supply 0.35 per eligible player, and the free gem target; MON-001 (owner ledger) wins if it differs.
-6. Gold not gathered on the map; market spreads and the iron buy cap.
-7. Migration carry cap 72 H per resource (liveops.md / onboarding.md feeder guard).
-8. In-world names (story-forge): yard, sheds, pledge, rations, caravans, gem veins, iron seams, prestige works.
+6. Gold not gathered on the map; market spreads and the iron buy cap; migration carry cap 72 H (F11 — liveops.md says "in full").
+7. In-world names (story-forge): yard, sheds, pledge, rations, caravans, gem veins, iron seams, prestige works.

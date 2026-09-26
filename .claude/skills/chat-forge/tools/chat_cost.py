@@ -28,6 +28,7 @@ COMMON = {
     "realm_cap_per_min": 20,      # adaptive slow mode target per realm (safety.md section 4)
     "heartbeat_per_min": 2,       # app-level ping every 30 s while the socket is open
     "heartbeat_bytes": 80,        # ping + pong incl. TCP/TLS overhead
+    "connect_bytes": 6000,        # TLS handshake with certificate chain + upgrade + hello/welcome
     "cursor_writes_per_session": 2,
     "backup_copies": 7,           # 7 daily compressed dumps kept (+ WAL archive, same bucket)
     "backup_ratio": 0.4,          # dump size / table size (no indexes, compressed text)
@@ -131,7 +132,8 @@ def traffic(c, s):
     t["egress_live_gb"] = t["deliveries_total"] * s["bytes_wire"] / 1e9
     t["egress_catchup_gb"] = t["catchup_rows"] * s["bytes_wire"] / 1e9
     t["egress_hb_gb"] = t["opm"] * c["heartbeat_per_min"] * c["heartbeat_bytes"] / 1e9
-    t["egress_day_gb"] = t["egress_live_gb"] + t["egress_catchup_gb"] + t["egress_hb_gb"]
+    t["egress_connect_gb"] = t["dau"] * s["sessions"] * c["connect_bytes"] / 1e9
+    t["egress_day_gb"] = t["egress_live_gb"] + t["egress_catchup_gb"] + t["egress_hb_gb"] + t["egress_connect_gb"]
     t["egress_month_gb"] = t["egress_day_gb"] * DAYS
     t["writes_day"] = t["sent_total"] + t["dau"] * s["sessions"] * c["cursor_writes_per_session"]
     t["rows_stored"] = sum(sent[ch] * c["retention"][ch] for ch in sent)
@@ -199,7 +201,8 @@ def polling(c, s, t, p):
         rows["poll every %ds" % n] = (req_day, req_day * c["poll_bytes"] / 1e9,
                                       mul(p["serverless_per_million_req"], req_day * DAYS / 1e6))
     hb = t["opm"] * c["heartbeat_per_min"]
-    rows["websocket (connects + ping frames)"] = (t["dau"] * s["sessions"] + hb, t["egress_hb_gb"], [0.0, 0.0])
+    rows["websocket (connects + ping frames)"] = (t["dau"] * s["sessions"] + hb,
+                                                  t["egress_hb_gb"] + t["egress_connect_gb"], [0.0, 0.0])
     return rows
 
 
@@ -229,8 +232,9 @@ def show(name, c, s, p, detail):
             print("  %-9s %10s %10.2f %14s" % (ch, big(t["sent"][ch]), t["recipients"][ch], big(t["deliveries"][ch])))
     print("  deliveries/day = %s ; peak %s/s ; CCU avg %s peak %s" % (big(t["deliveries_total"]),
           big(t["peak_deliv_s"]), big(t["ccu_avg"]), big(t["ccu_peak"])))
-    print("  egress/day = live %.2f + catch-up %.2f + pings %.2f = %.2f GB ; month %.0f GB"
-          % (t["egress_live_gb"], t["egress_catchup_gb"], t["egress_hb_gb"], t["egress_day_gb"], t["egress_month_gb"]))
+    print("  egress/day = live %.2f + catch-up %.2f + pings %.2f + connects %.2f = %.2f GB ; month %.0f GB"
+          % (t["egress_live_gb"], t["egress_catchup_gb"], t["egress_hb_gb"], t["egress_connect_gb"],
+             t["egress_day_gb"], t["egress_month_gb"]))
     print("  writes/day %s ; rows stored %s ; storage %.1f GB ; backups %.0f GB (7 compressed dumps)"
           % (big(t["writes_day"]), big(t["rows_stored"]), t["storage_gb"], t["backup_gb"]))
     print("  monthly cost by architecture (chat envelope PROPOSAL EUR %d):" % CHAT_ENVELOPE_EUR)

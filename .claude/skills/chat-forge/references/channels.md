@@ -21,14 +21,14 @@ format and the data use ([backend-cost.md](backend-cost.md) §3).
 | `w:<lo>:<hi>` | Whisper (1:1) | two players (`lo` < `hi` player ids, so one thread per pair) | both, unless one blocked the other | 30 d / last 500 per thread | the other player; push if offline (§8) |
 | `g:<id>` | Circle (group) | 3–20 invited players | members | 30 d / last 1,000 | online members |
 | `h:<alliance>` | Herald (system feed) | alliance members | server only | 7 d / last 500 | online members; merged into the Hall view as system lines |
-| `h:r:<realm>` | Realm Herald | realm | server only (realm events, owner news) | 7 d / last 200 | shown as system lines in Market Cross |
+| `hr:<realm>` | Realm Herald | realm | server only (realm events, owner news) | 7 d / last 200 | shown as system lines in Market Cross |
 
 Rules:
 
 1. **One realm channel per realm.** Language rooms (§9) are an opt-in split, not a default.
 2. **The Hall is the default ticker channel** for every player in an alliance; a player with no
    alliance sees Market Cross in the ticker (sampled, §7). This single default is the biggest
-   cost lever in [backend-cost.md](backend-cost.md) §7 — realm fan-out is 60–83% of all
+   cost lever in [backend-cost.md](backend-cost.md) §7 — realm fan-out is 61–83% of all
    deliveries in every scenario.
 3. **Retention is whichever limit comes first**: days or the count guard. Nothing is kept
    longer "in case" (GDPR storage limitation, [safety.md](safety.md) §11). Reported messages
@@ -64,7 +64,9 @@ Rules:
    own language (l10n-forge). Arguments are ids (player, alliance, lord, tile), resolved to names
    on the client at render time — a renamed player shows the new name.
 2. **No editing.** A sender may delete their own message at any time inside its retention (a
-   tombstone replaces it for everyone). Editing invites bait-and-switch after replies.
+   tombstone replaces it for everyone at once). The server keeps the deleted text hidden for 24 h
+   so a report filed in that window still captures it, then erases it ([safety.md](safety.md) §11).
+   Editing invites bait-and-switch after replies.
 3. **No clickable links in any message type, for any account** ([safety.md](safety.md) §7).
    Share cards are the only tappable content, and the server builds them.
 4. **Unknown kinds render as nothing** and are logged once per session (old clients meet new
@@ -122,7 +124,7 @@ Blocked players cannot mention the blocker (silently dropped for that recipient)
 | Who may start a whisper | same realm or same alliance; the recipient's setting decides: everyone (adults only) / alliance and Circle mates (default) / nobody | strangers are the main harassment and seller channel |
 | First whisper from a non-alliance stranger | arrives as a **request**: the text is held and shown after the recipient taps Accept; Ignore and Block are one tap each | a seller's first line never lands unread |
 | New threads per day | T1: 3 · T2+: 10 · requests count | caps cold-contact spam |
-| Minors (under 18 band) | whispers only with alliance and Circle mates; never requestable by strangers | [safety.md](safety.md) §10 |
+| Minors | under the local age of digital consent: whispers off; above it (to 17): only with alliance and Circle mates, never requestable by strangers | [safety.md](safety.md) §10 |
 | Circle size | 3–20; creator invites; members accept; creator can remove; empty Circle deleted after 7 d | small and consent-based |
 | Circles created per day | ≤ 3 per player; ≤ 10 Circles per player total | caps group spam |
 

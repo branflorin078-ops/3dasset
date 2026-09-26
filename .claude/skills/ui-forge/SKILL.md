@@ -36,9 +36,11 @@ shipped value wins until the owner decides, and this skill records the differenc
 1. **The binding rulings are UI rules too.** Painted identity: chrome is oak,
    parchment, gilt, iron and wax as real crafted material, never flat vector panels.
    Live realm: the app resumes straight into the castle or realm; no title menu, no
-   "Play" button, and back at HUD rest never opens a menu. ART SHOWN BIG: each
-   screen's hero art covers ≥ 30% of the screen area, and the building card's
-   next-tier render is ≥ 40% of the screen height (core-loop §8.2).
+   "Play" button, and back at HUD rest never opens a menu. ART SHOWN BIG: a screen
+   about one thing (a building, lord, troop, item, goods, event) gives that thing's
+   art ≥ 30% of the screen area. The building card's next-tier render is ≥ 40% of the
+   screen height (core-loop §8.2). List and tree screens show art in every row
+   (≥ 96 px) instead.
 2. **Icons and chrome ornaments are Blender-made art.** The owner's order
    (2026-09-26): *"the icons need to be art ... not white and black ... hight
    quality art made with blender"*. They are built through blender-forge with

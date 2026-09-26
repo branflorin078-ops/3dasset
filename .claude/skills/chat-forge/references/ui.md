@@ -13,7 +13,7 @@ Unit note: 1080 px ≈ 400–430 dp on current phones, so **1 dp ≈ 2.5 px**. 4
 | Property | Value (PROPOSAL) |
 |---|---|
 | Position | directly above the bottom action bar; 24 px side margins (ux.md places the bar) |
-| Size | visual strip 1032 × 84 px; **hit area 1032 × 120 px** (transparent parent `Control`) |
+| Size | visual strip 1032 × 84 px; **hit area 1032 × 120 px** (transparent parent `Control`; the extra 36 px extends upward, never over the action bar) |
 | Content | one line: channel icon 48 px · sender name 32 px bold · text 34 px, ellipsis at the end |
 | Source | the Hall; the Market Cross only if the player opted it in (sampled ≤ 1 per 10 s, [channels.md](channels.md) §7); no alliance → Market Cross sampled |
 | Cadence | each line holds ≥ 3.0 s; lines arriving faster are dropped from the ticker (never from the channel), and the newest shows with "+N" |
@@ -37,19 +37,20 @@ Layout from the top of the sheet (half state; full adds list height only):
 
 | Part | Height | Notes |
 |---|---|---|
-| Grab handle | 24 px visual, 72 px hit | drag between Closed / Half / Full |
+| Grab handle | 24 px bar in a 48 px strip | drag between Closed / Half / Full; the tab row below is also a drag area (a move > 12 px is a drag, less is a tap), so the drag target is ≥ 168 px tall |
 | Channel tabs | 120 px | Hall · Council (members only) · Market Cross · Whispers · Circles; icon 56 px (Blender-made art, never a line glyph) + label 28 px + count; labels shrink to 26 px then go icon-only when a translation is 30–40% longer |
 | Pinned announcement | 0 or 96 px | one line, tap to expand; Hall only |
 | Message list | the rest | newest at the bottom |
 | "N new ↓" pill | 88 px (hit 120 px) | appears when the player is > 1 screen above the bottom and messages arrive; never auto-jumps |
-| Input bar | 132 px | sticker button 120 px · quick-call button 120 px · text field 108 px tall · send button 120 px |
+| Input bar | 132 px | sticker 120 px · quick call 120 px · text field 624 × 108 px (hit: full bar height) · send 120 px; 24 px margins, 12 px gaps (24 + 3 × 120 + 624 + 4 × 12 + 24 = 1080) |
 
 - **One-hand rule**: the input bar, send, sticker and quick-call buttons sit in the bottom 700 px
   (the comfortable thumb zone); the tabs of the half sheet sit at 960 px from the bottom, in the
   stretch zone. Swiping left/right on the list also switches tabs (so the top row is never needed).
-- **Keyboard**: when the soft keyboard opens, the input bar rises by
+- **Keyboard**: when the soft keyboard (typically 700–900 canvas px tall) or the sticker picker
+  opens, the sheet goes to Full first (a half sheet would leave no list); the input bar rises by
   `DisplayServer.virtual_keyboard_get_height()` (device px → canvas px by the stretch scale); the
-  list shrinks and keeps its bottom message visible.
+  list shrinks and keeps its bottom message visible (≥ 3 rows stay visible above the keyboard).
 - The Whispers and Circles tabs open a thread list first (row 120 px: avatar 80 px, name, last line,
   time, unread count); a thread opens in the same sheet with a back button (120 px) top-left.
 
@@ -116,6 +117,7 @@ Rendered by the rules in [share-cards.md](share-cards.md); the whole card is the
 - Devices without on-device support: long-press → Translate uses the capped cloud fallback
   (≤ 5 per player per day; a global monthly euro breaker, [backend-cost.md](backend-cost.md) §7.5).
   When the breaker trips, the menu item reads "Translation resting until the 1st".
+- The ticker shows the translated text when that channel's translation is On.
 - Quick calls, system lines and card titles never need translation: they are string keys.
 
 ## 7. Stickers and emoji
@@ -176,7 +178,8 @@ ChatClient        (autoload Node)  WebSocketPeer, sync, local cache, send queue
 ChatTicker        (Control, 120 px hit area) → strip 84 px (PanelContainer, Theme from ui-forge)
 ChatPanel         (Control in the HUD CanvasLayer; layer order from ui-forge)
  └ Sheet (PanelContainer, StyleBoxTexture) → Handle · Tabs (HBoxContainer) · Pinned
-   · List (ScrollContainer → VBoxContainer of pooled MessageRow) · NewPill · InputBar (HBoxContainer)
+   · List (ScrollContainer → Content: Control sized to the sum of row heights; pooled MessageRow
+     children placed by hand, not by a VBoxContainer) · NewPill · InputBar (HBoxContainer)
 MessageRow        HBoxContainer: Avatar (TextureRect 80 px) · VBoxContainer: Header (HBoxContainer of
                   Labels + TextureRects) · Body (RichTextLabel, fit_content = true,
                   autowrap_mode = TextServer.AUTOWRAP_WORD_SMART)
@@ -186,13 +189,16 @@ MessageRow        HBoxContainer: Avatar (TextureRect 80 px) · VBoxContainer: He
    highlight uses `push_color()` / `add_text()` / `pop()`. Never `append_text()` or the `text`
    property with `bbcode_enabled = true` on player content — `[url]`, `[img]` or `[font_size]`
    typed by a player must render as the literal characters. Names and tags use `Label` (no BBCode).
-2. **Pooled virtual list**: ≤ 40 `MessageRow` instances exist; only visible rows + 8 buffer are
-   bound; the client keeps ≤ 200 messages per channel in memory; older pages (30) load on scroll.
+2. **Pooled virtual list**: ≤ 40 `MessageRow` instances exist; `Content.custom_minimum_size.y` is
+   the sum of cached row heights (measured once per message and width, re-measured on text-scale
+   change); only visible rows + 8 buffer are bound and positioned; the client keeps ≤ 200 messages
+   per channel in memory; older pages (30) load on scroll and keep the scroll anchor on the row in view.
 3. **Socket life**: `ChatClient` polls `WebSocketPeer.poll()` in `_process` only while connected;
    on `NOTIFICATION_APPLICATION_PAUSED` it closes (code 1000) and on
    `NOTIFICATION_APPLICATION_RESUMED` it reconnects and syncs ([backend-cost.md](backend-cost.md) §5).
 4. **Local cache**: last 100 messages per channel in `user://chat/` via
-   `FileAccess.open_encrypted_with_pass()` (key from the session); wiped on logout, account switch,
+   `FileAccess.open_encrypted_with_pass()` (per-account key fetched from the game backend at login,
+   so a logged-out device cannot read it); wiped on logout, account switch,
    alliance leave (Hall/Council files) and when rows pass their retention.
 5. **Stickers load on demand** with `ResourceLoader.load_threaded_request()`; the picker shows a
    parchment placeholder until loaded (≤ 100 ms target on the reference phone).

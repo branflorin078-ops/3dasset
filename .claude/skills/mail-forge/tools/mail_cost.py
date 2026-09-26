@@ -22,7 +22,8 @@ import sys
 DAYS = 30
 PLAYERS = 50000
 FX = (0.85, 0.95)            # USD -> EUR
-MAIL_ENVELOPE_EUR = 20       # PROPOSAL: mail's line in the EUR 200 split (owner decision)
+MAIL_ENVELOPE_EUR = 30       # PROPOSAL: mail's line in the EUR 200 split at STRESS (owner decision)
+MAIL_BASE_EUR = 10           # PROPOSAL: mail at BASE must stay under this
 
 PRICES = {                   # USD - VERIFY ALL (backend-cost.md section 2)
     "rtdb_dl_gb": 1.00,      # RTDB download per GB (two snippets agree)
@@ -37,32 +38,32 @@ PRICES = {                   # USD - VERIFY ALL (backend-cost.md section 2)
 # are shared by the whole game, so mail is priced at the MARGINAL rate: no free tier credited.
 
 SCEN = {  # per DAU per day unless named; sizes in KB (1 KB = 1,000 bytes)
-    "base":   dict(dau_share=0.40, sessions=6, head_piggyback=1.0, head_kb=0.10, ov_kb=0.35,
+    "base":   dict(dau_share=0.40, sessions=6, head_piggyback=1.0, head_kb=0.05, ov_kb=0.35,
                    inbox_opens=1.5, p_personal_new=0.9, p_alliance_new=0.5, claim_calls=1.2,
                    delete_batches=1.0,
                    m_rewards=1.5, item_p=0.25, m_notice=0.5, item_n=0.30, m_alliance=0.5, item_a=0.25,
-                   a_text_share=0.5, body_a=0.60, letters=0.5, item_l=0.18, body_l=0.40,
-                   report_rows=8, row_kb=0.10, sends=0.3, fn_send_kb=0.50,
+                   a_text_share=0.5, body_a=0.60, letters=0.5, item_l=0.18, body_l=0.35,
+                   report_rows=8, row_kb=0.08, sends=0.3, fn_send_kb=0.50,
                    premium_claims=0.03, fn_wallet_kb=1.0, resync_share=0.005,
                    res_p=5, res_n=4, res_l=10, res_r=10, report_cap=100, kept_avg=3,
                    inactive=60000, inactive_kb=1.5, alliance_members=20,
                    fn_s=0.3, vcpu=0.167, gib=0.25, resp_kb=0.8),
-    "high":   dict(dau_share=0.60, sessions=7, head_piggyback=1.0, head_kb=0.10, ov_kb=0.40,
+    "high":   dict(dau_share=0.60, sessions=7, head_piggyback=1.0, head_kb=0.05, ov_kb=0.40,
                    inbox_opens=2.0, p_personal_new=0.9, p_alliance_new=0.6, claim_calls=1.5,
                    delete_batches=1.0,
                    m_rewards=2.0, item_p=0.28, m_notice=0.7, item_n=0.35, m_alliance=0.8, item_a=0.28,
-                   a_text_share=0.5, body_a=0.90, letters=0.8, item_l=0.20, body_l=0.60,
-                   report_rows=12, row_kb=0.11, sends=0.5, fn_send_kb=0.60,
+                   a_text_share=0.5, body_a=0.90, letters=0.8, item_l=0.20, body_l=0.50,
+                   report_rows=12, row_kb=0.09, sends=0.5, fn_send_kb=0.60,
                    premium_claims=0.05, fn_wallet_kb=1.0, resync_share=0.0075,
                    res_p=6, res_n=5, res_l=11, res_r=12, report_cap=100, kept_avg=6,
                    inactive=80000, inactive_kb=1.8, alliance_members=20,
                    fn_s=0.3, vcpu=0.167, gib=0.25, resp_kb=1.0),
-    "stress": dict(dau_share=1.00, sessions=8, head_piggyback=1.0, head_kb=0.12, ov_kb=0.50,
+    "stress": dict(dau_share=1.00, sessions=8, head_piggyback=1.0, head_kb=0.06, ov_kb=0.50,
                    inbox_opens=2.5, p_personal_new=0.95, p_alliance_new=0.7, claim_calls=2.0,
                    delete_batches=1.0,
                    m_rewards=2.5, item_p=0.30, m_notice=1.0, item_n=0.40, m_alliance=1.2, item_a=0.30,
-                   a_text_share=0.6, body_a=1.50, letters=1.2, item_l=0.22, body_l=0.90,
-                   report_rows=15, row_kb=0.12, sends=0.8, fn_send_kb=0.80,
+                   a_text_share=0.6, body_a=1.50, letters=1.2, item_l=0.22, body_l=0.75,
+                   report_rows=15, row_kb=0.10, sends=0.8, fn_send_kb=0.80,
                    premium_claims=0.10, fn_wallet_kb=1.2, resync_share=0.01,
                    res_p=6, res_n=6, res_l=12, res_r=14, report_cap=100, kept_avg=10,
                    inactive=100000, inactive_kb=2.0, alliance_members=20,
@@ -181,7 +182,18 @@ def show(name, s, trap=None):
     flag = "fits" if hi <= MAIL_ENVELOPE_EUR else ("OVER at high FX" if lo <= MAIL_ENVELOPE_EUR else "OVER")
     print("    %-48s %7.2f  = EUR %.1f-%.1f (%.1f%% of EUR 200; envelope EUR %d: %s)"
           % ("TOTAL", r["usd_total"], lo, hi, hi / 2.0, MAIL_ENVELOPE_EUR, flag))
+    m2 = m2_eur(r)
+    print("  lever M2 (mail rows on chat-forge's Postgres box, marginal): EUR %.2f-%.2f "
+          "(storage + backups; egress inside the box's included TB)" % m2)
     return r
+
+
+def m2_eur(r):
+    """Marginal EUR/month if mail rows move to chat-forge's A1 box (chat_cost.py price ranges):
+    volume EUR 0.04-0.12 per GB-month; 7 compressed backup copies at 0.4 ratio on object storage
+    EUR 0.005-0.025 per GB-month; egress inside the included 20 TB; CPU inside the box's headroom."""
+    gb = r["store_gb"]
+    return (gb * 0.04 + gb * 0.4 * 7 * 0.005, gb * 0.12 + gb * 0.4 * 7 * 0.025)
 
 
 def selftest():
@@ -190,7 +202,8 @@ def selftest():
     assert b["usd_total"] < h["usd_total"] < x["usd_total"]; n += 1
     for r in (b, h, x):
         assert r["eur_total"][1] <= MAIL_ENVELOPE_EUR, "every scenario fits the envelope at high FX"; n += 1
-    assert b["eur_total"][1] <= MAIL_ENVELOPE_EUR / 2; n += 1
+    assert b["eur_total"][1] <= MAIL_BASE_EUR, "base stays under the base cap"; n += 1
+    assert m2_eur(x)[1] < 2.0, "lever M2 must cost < EUR 2 marginal at stress"; n += 1
     assert x["requests_per_dau_day"] <= 10, "stress round-trip budget"; n += 1
     assert b["requests_per_dau_day"] <= 6, "base round-trip budget"; n += 1
     for t in TRAPS:

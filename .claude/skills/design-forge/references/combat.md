@@ -9,13 +9,13 @@ The RULES and NUMBERS of fighting. Owners: **gameplay-forge** (frozen resolver, 
 - **Want**: win the fight you chose, and know in one line WHY you won or lost.
 - **Obstacle**: the enemy's composition (counters), tier, numbers, lord pair and walls.
 - **Wait**: a war march 60–180 s; a battle 20–45 s at 1×; a lost war session heals in ≤ 8 h without speed-ups; a breached castle is out of the war for 8 h, not for good.
-- **Witness**: march lines, the burning castle on the realm map, the shared report (report-forge), war score in the alliance feed.
+- **Witness**: march lines, the burning castle on the realm map, the shared report (report-forge), honour in the alliance feed.
 
 ## 1. The unit of account — tier-steps (TS)
 
 Every advantage — a tier, a counter, a lord pair, walls, more troops — is measured in ONE unit, so it can be compared, capped and explained. **1 TS = the strength of one troop tier.**
 
-Reference model (for tuning; the frozen resolver's shape wins and the probe measures it): per round a side deals damage `∝ q · N^α` ([numbers.md](numbers.md) §4), so strength is `S = q · N^(1+α)` (N troops, q = attack × HP × multipliers per troop); a fight draws when `S_A = S_B`. The draw condition holds for fights to the end, to a shared rout threshold, and for fixed round counts judged by fraction lost.
+Reference model (for tuning; the frozen resolver's shape wins and the probe measures it): per round a side deals damage `∝ q · N^α` ([numbers.md](numbers.md) §4), so strength is `S = q · N^(1+α)` (N troops, q = attack × HP × multipliers per troop); a fight draws when `S_A = S_B`. The draw condition holds for fights to the end and to a shared rout threshold, and to first order for fixed round counts judged by fraction lost.
 
 | Symbol | Meaning | PROPOSAL | Measured by (§14) |
 |---|---|---|---|
@@ -49,7 +49,7 @@ Why this unit: any resolver can be measured in it (bisect the troop count until 
 
 1. **One hunt, one hunter** per line: 5 of the 10 pairings are counters, 5 are neutral. Five facts, one sentence, one ring icon (Blender-made, in the five accents — ui-forge; never a line glyph).
 2. **A counter is worth exactly 1.0 TS** in a pure-line fight: t(n) hunters draw t(n+1) prey at equal count (`t(n) + counter ≈ t(n+1)`, numbers.md §4); against t(n+2) prey they lose by 1 TS.
-3. **Two-sided, one dial**: the hunter deals `+c` to its prey and takes `−c` from it, `c = (Q−1)/(Q+1)`. Read c from the MEASURED α and r, never by feel. All values sit inside numbers.md's +20–50% band; a one-sided counter would need +57% to +107% for the same 1 TS.
+3. **Two-sided, one dial**: the hunter deals `+c` damage to its prey and takes `c` less damage from it, so `(1+c)/(1−c) = Q` and `c = (Q−1)/(Q+1)`. Read c from the MEASURED α and r, never by feel. All values sit inside numbers.md's +20–50% band; a one-sided counter would need +57% to +107% for the same 1 TS.
 
    | α \ r | 1.35 | 1.40 | 1.50 |
    |---|---|---|---|
@@ -70,7 +70,7 @@ Why this unit: any resolver can be measured in it (bisect the troop count until 
    | cavalry 50, crossbows 30, infantry 20 | −0.01 | −0.15 | +0.24 |
    | cavalry 100% | −0.02 | −0.01 | +0.38 |
 
-   Read it: an even split is safe and gains nothing; a scouted counter-pick gains +0.25 to +0.5 TS; a wrong guess costs as much. That is what scouting buys (§11), and why money-driven stat gaps are capped BELOW it (§5).
+   Read it: an even split is safe and gains nothing; a scouted counter-pick gains +0.25 to +0.5 TS; a wrong guess costs as much. That is what scouting buys (§11), and why money-driven stat gaps are capped inside it (§5).
 7. The send and rally screens show MI from the latest scout as "+0.4 tier" with the scout's age (battle-forge presents; the value comes from this rule).
 8. **The ring is whole only when all five lines are open.** Until crossbows open, cavalry has no prey and archers no hunter. progression.md opens crossbows in Age III (engaged free: day 1–3), inside the 7-day peace ward, so no PvP runs on a broken ring; Age II camps ([world.md](world.md)) field ≤ 40% archers. Line halls teach the ring in this order: archers hunt infantry (Age I); spearmen stop cavalry, infantry get inside spearmen (Age II); crossbows beat archers, cavalry rides down crossbows (Age III).
 
@@ -129,33 +129,33 @@ A march moves at its slowest line × (1 + speed pool, ≤ +50%) × terrain (worl
 | Pool | What is in it | Max | q × at max |
 |---|---|---|---|
 | Counter | ring position (§2) — its own category, never modified | ±1.0 TS pure; MI in a mix | 1.71 |
-| Lords | primary's talents + primary's four-piece set + both lords' skills, averaged over the probe's standard fight ([lords.md](lords.md)) | 0.50 TS | 1.31 |
-| Realm | research, buildings, alliance research, titles | 0.50 TS | 1.31 |
-| Temporary | earned items, event boosts, war-window buffs (stat boosts are never sold — [monetization.md](monetization.md)) | 0.25 TS | 1.14 |
+| Lords | the maxed pair of [lords.md](lords.md) §6: primary level, talents, four-piece set, skills + the secondary's skills | 0.78 TS (30 E) | 1.52 |
+| Realm | research, buildings, titles, alliance charters (+1.5% attack, defence, health ≈ 0.05 TS — [alliance.md](alliance.md)) | 0.30 TS | 1.18 |
+| Temporary | earned items, event boosts, war-window buffs — never sold ([monetization.md](monetization.md)) | 0.15 TS | 1.08 |
 | Structures (defender) | walls and towers, §10 | 0.50 TS × W/W_max | 1.31 |
 | **All non-counter pools** | | **1.25 TS** | 1.96 |
 
-1. Additive inside a pool, multiplicative across pools (numbers.md §9), clamped at resolve time. The clamps are entries in gameplay-forge's clamp ledger (names to confirm).
-2. **Visible caps**: the lord screen shows "Lord strength 0.42 / 0.50 tier"; a capped pool says "Capped". No investment silently does nothing.
-3. **I1 — counter beats stack**: pure lines, equal tier and count, a counter army at the median free day-90 stack beats the prey at the MAXIMUM stack: +1.0 − (1.25 − 0.60) = +0.35 TS.
-4. **I2 — scouting beats money**: on the same day, the heavy spender's stack lead over the median free player is ≤ 0.35 TS — less than a scouted counter-pick (+0.25 to +0.5 TS).
-5. **I3 — lords matter, never alone**: the lord pool (≤ 0.5 TS) is half a counter. A lord changes fights through WHEN and WHERE its skills act (lords.md); its stat share is capped.
+1. Additive inside a pool, multiplicative across pools (numbers.md §9), clamped at resolve time. The clamps are entries in gameplay-forge's clamp ledger (names to confirm). Lord utilities (march speed, structure damage, dead → severe ≤ 10 points) sit outside E under lords.md §6 rule 3 caps.
+2. **Visible caps**: the lord screen shows "Lord strength 0.62 / 0.78 tier"; a capped pool says "Capped". No investment silently does nothing.
+3. **I1 — counter beats stack** (lords.md §6 rule 1 in TS): pure lines, equal tier and count, a counter army with NO lords beats the prey with a maxed pair, +1.0 − 0.78 = +0.22 TS; at the median free day-30 stack it beats the prey at the MAXIMUM stack, +1.0 − (1.23 − 0.60) = +0.37 TS.
+4. **I2 — scouting answers money**: on the same day the heavy spender's lead over the median free player's main march is ≤ 0.30 TS — inside a scouted counter-pick (+0.25 to +0.5 TS).
+5. **I3 — said honestly**: in MIXED marches a maxed pair against an unbuilt one (0.78) outweighs the composition swing (≤ 0.5); once both pairs are built, counters decide. The free focus pair is built by day ≈ 57 (lords.md §0), so this window is the first two months.
 
-Stack targets (TS, all non-counter pools; lords.md, progression.md and monetization.md land inside them):
+Stack targets, main march (TS, lords + realm; lords.md, progression.md, alliance.md and monetization.md land inside them):
 
-| Day | Free (median) | Light | Heavy | Heavy − free |
-|---|---|---|---|---|
-| 7 | 0.15 | 0.20 | 0.35 | 0.20 |
-| 30 | 0.35 | 0.45 | 0.65 | 0.30 |
-| 90 | 0.60 | 0.75 | 0.95 | 0.35 |
-| 180 | 0.85 | 0.95 | 1.15 | 0.30 — money buys time to the cap, never a higher cap |
+| Day | Free (median) | Heavy | Heavy − free |
+|---|---|---|---|
+| 7 | 0.20 | 0.45 | 0.25 |
+| 30 | 0.60 | 0.88 | 0.28 |
+| 90 | 0.93 | 1.03 | 0.10 |
+| 180 | 1.03 | 1.08 | 0.05 — money buys time to the cap, never a higher cap |
 
-Free path (SKILL.md rule 6): a free player reaches the 1.25 TS cap in ≈ 200–240 days; lords.md and progression.md must show it with their own curves.
+Free path (SKILL.md rule 6): lord cap by day ≈ 57 (lords.md), realm cap by day ≈ 240 (progression.md and alliance.md confirm with their curves); other marches' pairs follow lords.md's all-eight path (day 213).
 
 | Fails when | Caught by |
 |---|---|
-| A max lord pair > 0.5 TS, or all pools > 1.25 TS | [ ] combat probe STACK (ablation) |
-| Heavy − free median > 0.35 TS at day 30 or 90 | [ ] stack telemetry by cohort (gameplay-forge) |
+| A maxed pair > 0.78 TS (30 E), or all pools > 1.25 TS | [ ] combat probe STACK (ablation) + lord_balance_probe |
+| Heavy − free median > 0.30 TS at day 7, 30 or 90 | [ ] stack telemetry by cohort (gameplay-forge) |
 | Any data row modifies c | [ ] grep of lord, research and item data for counter fields = 0 |
 
 ## 6. Losses — three buckets, by context
@@ -168,17 +168,17 @@ Free path (SKILL.md rule 6): a free player reaches the 1.25 TS cap in ≈ 200–
 | 2 | Rally on a stronghold or AI-lord hold (PvE) | 60 | 40 | 0 | Light | alliance PvE costs only time |
 | 3 | Defending your own castle | 30 | 70 | 0 | **Routed** | home never kills (rule 1) |
 | 4 | Reinforcing an ally; defending an alliance structure | 25 | 60 | 15 | Dead | help costs a little |
-| 5 | Field battle: march vs march, a gathering party hit | 35 | 55 | 10 | Dead | map fights mostly recoverable |
+| 5 | Field battle: march vs march, a gathering party hit, a campaign field camp ([liveops.md](liveops.md) §3.2) | 35 | 55 | 10 | Dead | map fights mostly recoverable |
 | 6 | Attacking an alliance structure or landmark (war window) | 25 | 50 | 25 | Dead | objective war |
 | 7 | Attacking a castle in a war window | 20 | 50 | 30 | Dead | aggression is a commitment |
 | 8 | Attacking a castle outside war windows (if world.md allows it) | 10 | 30 | 60 | Dead | raids move into the fair windows |
 | 9 | Tourneys and trial grounds ([liveops.md](liveops.md)) | 100 | 0 | 0 | — | loss-free standard modes |
 
 1. **Home never kills.** Troops defending their own castle cannot die. Beds full → **Routed**: back free after 24 h (not speedable, not healable). A castle can be beaten, plundered and breached (§10), never zeroed — the genre's overflow at home is its main quit trigger ([benchmark.md](benchmark.md)).
-2. **PvE never kills** (rows 1–2); a warded player's fights follow onboarding.md §4.
+2. **PvE never kills** (rows 1–2); a warded player's fights follow onboarding.md §4. Lord utilities may move ≤ 10 points of dead into severe (lords.md §6).
 3. **Wounded in beds are safe**: never killed, never plundered.
 4. **Overflow warning before every send**: expected severe = troops × the row's severe share; above free beds the send card says "May overflow your beds by ~6,500 — they would die" (icon + words, never colour alone; 0 extra taps).
-5. **War score** = Σ enemy (severe + dead) × power per troop (routed score 0), × the weak-target factor `clamp((P_def/P_att − 0.3)/0.3, 0, 1)` (0 below 30% of your power, full from 60%), × `0.5^(n−1)` for the n-th fight between the same two houses inside 24 h. Beating the small, or a friend, earns nothing.
+5. **Honour** (the casualty tally in reports and the alliance feed) = Σ enemy (severe + dead) × power per troop (routed count 0), × the weak-target factor `clamp((P_def/P_att − 0.3)/0.3, 0, 1)` (0 below 30% of your power, full from 60%), × `0.5^(n−1)` for the n-th fight between the same two houses inside 24 h. Events score ground, never honour ([liveops.md](liveops.md) §3.4) — nothing pays for corpses.
 
 Worked (row 5): a lost field march of 25,000 → 8,750 walk home, 13,750 to beds, 2,500 dead.
 
@@ -190,8 +190,8 @@ Worked (row 5): a lost field march of 25,000 → 8,750 walk home, 13,750 to beds
 | H2 | The worst normal day fits: max(lost field march 0.55; two lost window castle assaults 2 × 0.50; lost home defence of 1.25 marches × 0.70) × C_march | 1.00 ≤ 1.25 |
 | H3 | Full beds of the stage's top tier heal with 0 speed-ups in | ≤ 8 h ([core-loop.md](core-loop.md) §2) |
 | H4 | Healing full beds costs, in the median free player's own production at that stage | ≤ 24 h (economy.md checks) |
-| H5 | Heal cost per troop vs training; heal time per troop vs training | ≤ 40%; ≤ 25% |
-| H6 | Beds grow only from the infirmary tier and research — never sold (core-loop rule 1) | — |
+| H5 | Beds grow only from the infirmary tier and research (alliance charters included) — never sold (core-loop rule 1) | — |
+| H6 | Heal cost per troop vs training (economy.md sets 30%); heal time per troop vs training | ≤ 40%; ≤ 25% |
 
 Worked (C_march 25,000 at S4 is an EXAMPLE value): beds 31,000. A lost field march puts 13,750 in beds; two lost castle assaults 25,000; a lost home defence with 40,000 at home 28,000 — all fit. A third lost assault would add 12,500 to the 6,000 free: the §6 warning shows "~6,500" before that send. Heal time per top-tier troop ≤ 28,800 s / 31,000 = 0.93 s; lower tiers `∝ p_t`. Above 1.5 × C_march losses become free and fights weightless; below 1.0 × the genre's overflow spiral returns.
 
@@ -216,14 +216,14 @@ Record (cloud-forge; sizes PROPOSED): `id u64 · owner u32 · kind u8 (gather, h
 ## 9. Rallies, garrisons, reinforcements
 
 **Rallies** (ranks and scheduling: [alliance.md](alliance.md)):
-1. The leader picks a target and a join window: 5 / 10 / 30 min against players; up to 60 min on PvE strongholds. Capacity = 4 × C_march when rallies open (progression.md), 6 × at S6; ≤ 15 joiners.
+1. The leader picks a target and a join window: 5 / 10 / 30 min against players; up to 60 min on PvE strongholds (scheduled rallies and pledges: alliance.md §8). Capacity = 4 × C_march when rallies open (progression.md; camp rallies are taught in week 1, onboarding.md), 6 × at S6; ≤ 15 joiners.
 2. **One army, one command**: the leader's lord pair fights; joiners bring troops only. The report credits every joiner by name.
 3. **Requested mix**: the leader may post a composition from the latest scout; joiners see the rally's live MI ("+0.3 tier") and join with a preset in ≤ 3 taps.
 4. The rally leaves at window end with the marches that arrived; late marches turn home by themselves (0 taps, 0 cost). It moves at its slowest line. Cancel before departure: all go home, 0 cost.
 5. Losses pro rata by troops given (per line and tier); severe go to each joiner's own beds under that joiner's overflow rule.
-6. PvE rewards and war score by damage share; a joiner who gave ≥ 5% of capacity gets ≥ 5% of the reward, below 5% gets nothing (no token joins). Joiners pay no Resolve (core-loop §3).
+6. A march giving < 2% of rally capacity is not a participant (no reward share, no credit) — token joins cannot farm alliance.md's equal half. Reward splits: alliance.md §8 and liveops.md §4.2; honour by damage share. Joiners pay no Resolve (core-loop §3).
 
-**Garrison**: defenders = troops at home (not in beds, not routed) + reinforcements + the structure bonus (§10). The owner sets the garrison lord pair; unset or away → the highest-level lords at home stand in — never a castle without a command. Assaults are fought in arrival order: light rejoin after each fight, severe go to beds, routed leave — repeated assaults meet a shrinking garrison, so reinforcements matter. No ward, truce or shield can START while a hostile march targeting the castle is on the road.
+**Garrison**: defenders = troops at home (not in beds, not routed) + reinforcements + the structure bonus (§10). The owner sets the garrison lord pair; unset or away → the highest-level lords at home stand in — never a castle without a command. Assaults are fought in arrival order: light rejoin after each fight, severe go to beds, routed leave — repeated assaults meet a shrinking garrison, so reinforcements matter. No ward or shield can START while a hostile march targets the castle (launch → 30 min after the last arrival, monetization.md); the breach truce (§10) is the one exception — it starts by rule.
 
 **Reinforcements**: cap by the host's embassy tier, 1.0 × C_march at tier 1 → 3.0 × at tier 6; they fight under the host's garrison lord; loss row 4; recall any time. One arriving mid-fight joins the next.
 
@@ -235,19 +235,20 @@ One durability bar, **Walls & Gate**, W from 0 to W_max (W_max grows with the fo
 |---|---|---|
 | Structure bonus | +0.5 TS × W/W_max to the garrison | home advantage; engines exist to remove it |
 | Won assault, no engines | −8% W_max | 13 wins to breach — engines are required |
-| Won assault, standard engine train (engines 10% of a full rally, engine tier = wall tier) | −30% | breach in 3–4 won rallies |
-| Lost assault with breakers | −15% | breakers fire before the melee |
-| Auto-repair | +12.5% W_max per hour after 15 min without an assault; stored as (W0, t0) | full from 0 in 8 h; 0 ticks |
-| Repair button | +10% at once, free, 30-min cooldown | a defender's action in the war session |
+| Won assault, standard train (breakers at 10% of a full rally, engine tier = wall tier) | −30% | breach in 3–4 won rallies |
+| Lost assault, same train | −15% | breakers fire before the melee; breachers add 1.5× per capacity on wins only |
+| Auto-repair | +12.5% W_max per hour after 15 min without an assault (20%/h at well tier 6, progression.md); stored as (W0, t0) | full from 0 in 8 h; 0 ticks |
+| Repair button | +10% at once for 1 h of own stone output ([economy.md](economy.md) stone sink); 30-min cooldown | a defender's action in the war session |
+| Lord utilities | structure damage ≤ +20%, wall loss −8% (lords.md §5–6) | Godric breaks, Maud holds |
 
 Worked war window (engines; rallies 5 min apart): 100 → 70 (min 10) → repair 80 (min 11) → 50 (min 15) → 20 (min 20) → 0 (min 25). Four won assaults in 15 minutes breach a castle; one lucky hit never does.
 
 **At W = 0 — Breached (burning)**:
-1. **8 h breach truce**: no attacks or rallies on it; scouting stays open. The realm map shows it burning — smoke plume + the word "Burning" (world-forge; the realm zoom already reads burning and shielded).
-2. Walls restart at 25% when the truce ends; auto-repair continues.
+1. **8 h breach truce**: no attacks or rallies on it; scouting stays open; hostile marches already on the road turn home on arrival, unharmed. The realm map shows it burning — smoke plume + the word "Burning" (world-forge; the realm zoom already reads burning and shielded).
+2. Walls restart at 25% when the truce ends; auto-repair continues (the well puts the fire out: progression.md).
 3. **The owner chooses** (1 tap, any time in the truce): stay, or relocate once, free, to an open site in the own alliance's territory or own region. Never random.
-4. The truce ends if the owner attacks or scouts a player; camps, gathering, healing and reinforcing allies keep it. Once per 24 h: a second breach inside 24 h gives no truce and no plunder (already sacked).
-5. Troops and production are untouched: a breach costs the plunder (economy.md), the wall, and 8 h out of the war.
+4. The truce ends if the owner attacks or scouts a player; camps, gathering, healing and reinforcing allies keep it. Once per 24 h: a second breach inside 24 h gives no truce.
+5. **A breach adds no plunder**: plunder follows economy.md §7 (only the first 2 won assaults in 12 h plunder). Troops and production are untouched: a breach costs the wall and 8 h out of the war.
 
 Rejected: forced random relocation at zero (the genre's rule) — it throws the player away from the alliance, a quit trigger; burning that drains durability over time — a server tick for a state a formula gives.
 
@@ -281,7 +282,7 @@ The resolver emits per battle a ledger that report-forge turns into sentences (r
 | skill casts, top 5 | 5 × (lord, skill, round, value) | lord moments |
 | walls | W before, W after, per engine class | the breach story |
 | rounds, decisive round, end reason | 3 × u8 | rout, annihilation, round cap, wall held |
-| scout age used, war score, weak-target factor | u32, u32, u8 | fairness context |
+| scout age used, honour, weak-target factor | u32, u32, u8 | fairness context |
 | resolver_version, seed | u16, u32 | replay and audit |
 
 1. **Decomposition**: margin_ts = Σ factor_ts. Analytic if the frozen shape is multiplicative; otherwise by ablation (re-run with one factor neutral; ≤ 8 re-runs, lazily when the report is first opened, then cached — the cost falls only on reports that are read).
@@ -294,15 +295,15 @@ The resolver emits per battle a ledger that report-forge turns into sentences (r
 | Genre weak spot ([benchmark.md](benchmark.md)) or exploit | Our answer | Number |
 |---|---|---|
 | A 5% counter buried by talent and equipment stacks | counter = 1 tier, own category, never modified; pools capped | 1.0 TS vs ≤ 1.25 TS |
-| PvP decided by raw power and spending | scouted composition (MI) outweighs the money gap | lead ≤ 0.35 TS |
+| PvP decided by raw power and spending | scouted composition (MI) answers the money gap | lead ≤ 0.30 TS |
 | Overflow at home → death spirals; zeroed players quit | home never kills (routed 24 h); overflow warning; beds 1.25 × march | 0 dead at home |
 | Top-tier heal bills make players avoid fighting | heal ≤ 40% of training; full beds ≤ 24 h of own output | ≤ 8 h heal |
 | Castle at zero teleported at random | breach truce + the owner's free choice of site | 8 h truce |
-| Raiding the weak and inactive as a norm | weak-target factor on war score | 0 below 30% |
-| War-score farming between friends or alts | routed score 0; pair decay `0.5^(n−1)` per 24 h; weak-target factor | 3rd fight 25% |
+| Raiding the weak and inactive as a norm | weak-target factor on honour; plunder caps (economy.md §7) | 0 below 30% |
+| Honour farming between friends or alts | routed count 0; pair decay `0.5^(n−1)` per 24 h; weak-target factor | 3rd fight 25% |
 | Self-breach for a truce or a free move | costs 4 won assaults with engines (attackers lose 30% dead); once per 24 h | 1 per 24 h |
-| Token joins to leech rally rewards | < 5% of capacity earns nothing | 5% floor |
-| Shield raised as the attack lands | no ward, truce or shield starts with a hostile march on the road | 0 |
+| Token joins to leech rally rewards | < 2% of rally capacity is not a participant | 2% floor |
+| Shield raised as the attack lands | no ward or shield starts with a hostile march on the road (only the breach truce, by rule) | 0 |
 
 ## 14. Harness, server cost, save
 
@@ -313,7 +314,7 @@ The resolver emits per battle a ledger that report-forge turns into sentences (r
 | TIER: draw ratio per step, every line | r within 1.35–1.50, spread ≤ 0.03 |
 | COUNTER: t(n) hunter vs t(n+1) prey, equal count; 45 pairs t1–t9 + spear t10 vs cav t11 | 46/46 at 1.0 ± 0.1 TS |
 | LINES and POWER: neutral pairs, equal tier and count; equal-power random tier mixes | draw ±5%; draw ±10% |
-| STACK: ablation of a max lord pair / all pools; I1 in 5 pairs | ≤ 0.50 / ≤ 1.25 TS; 5/5 |
+| STACK: ablation of a maxed lord pair / all pools; I1 in 5 pairs | ≤ 0.78 (30 E) / ≤ 1.25 TS; 5/5 |
 | LOSS: 10,000 random battles per context | splits sum 100; rows 1–3 dead = 0 |
 | BEDS: worst normal day per S | fits; heal ≤ 8 h |
 | DETERMINISM: same inputs + seed, 1,000 runs | identical beats hash |
@@ -330,9 +331,9 @@ Verdict (PROPOSED wording): `COMBAT PROBE OK - r 1.40, counter 46/46 within 0.1 
 
 1. **Home never kills** (routed 24 h instead of dead) — the largest departure from the genre.
 2. The counter ring (who hunts whom) and its size (1 TS, c ≈ 26%) — likely sacred constants.
-3. Stack caps: lords 0.50, realm 0.50, temporary 0.25, total 1.25 TS; the day-90 gap ≤ 0.35 TS.
+3. Stack caps: lords 0.78 (lords.md's 30 E), realm 0.30, temporary 0.15, total 1.25 TS; heavy − free ≤ 0.30 TS on any day.
 4. Loss splits per context (§6), including whether castle attacks outside war windows exist (row 8).
 5. Breach: 8 h truce, once per 24 h, free relocation by choice; no random teleport.
-6. War score: weak-target factor (0 below 30% power) and pair decay.
+6. Honour: weak-target factor (0 below 30% power) and pair decay; never an event currency.
 7. Cavalry t11 as the only apex rung.
 8. Any dial here that collides with a shipped sacred constant (the shipped value wins until decided).

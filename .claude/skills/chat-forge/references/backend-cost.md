@@ -139,7 +139,7 @@ kept in memory and flushed hourly (the A8 budget check).
 | Messages sent per DAU per day `m` | 15 | 30 | 60 | most players send 0–5, alliance leaders 100+ [assumption] |
 | Online minutes per DAU per day `T` | 45 | 60 | 90 | core-loop.md: 4–8 sessions × 6–12 min |
 | Peak / average concurrency | 3.0 | 3.0 | 3.0 | evening and war-window peaks; every message priced as if sent at peak |
-| Co-play affinity (alliance, Circle) | 2.5 | 2.5 | 1.6 | mates are online together (war windows); capped so `f` ≤ 0.30 |
+| Co-play affinity (alliance, Circle) | 2.5 | 2.5 | 1.6 | mates are online together (war windows); stress value chosen so `f` = 0.30 (30 of 100 members online at once) |
 | Alliance size (average) `a` | 60 | 80 | 100 | alliance.md owns the cap; verify |
 | Realm size `R` | 3,000 | 4,000 | 5,000 | world.md owns N; verify |
 | Share of online realm players receiving the realm stream `s` | 0.25 | 0.50 | 1.00 | Hall is the ticker default ([channels.md](channels.md) §1 rule 2) |
@@ -181,6 +181,8 @@ backups        = storage × 0.4 (compressed, no indexes) × 7 dumps
   **2.8 GB**; backups 2.8 × 0.4 × 7 = 7.9 GB.
 - A1 cost: box €4–€15 + egress overage €0 + storage 2.8 × €0.04–€0.12 = €0.11–€0.34 + backups
   max(7.9 × €0.005–€0.025, minimum €0–€5) = €0.04–€5 + translation cap €0–€10 = **€4–€30/month**.
+- Not in the tool: a domain name (≈ €1/month), TLS certificates (free ACME), monitoring and error
+  tracking (self-hosted on the box or a free tier). A paid monitoring service needs its own line.
 
 ### 7.4 Three scenarios, five architectures (tool output, EUR per month, low–high price)
 
@@ -271,6 +273,7 @@ in `--model` before any growth decision.
 | Peak sockets | 1.9k base · 3.8k high · 9.4k stress (≈ 20–50 KB each → ≤ 0.5 GB RAM) |
 | Deliveries at peak | 95 / 1,230 / 11,280 per s; box size switches at 5,000/s in the tool — the load test decides |
 | DB writes | 6 / 15 / 40 per s average; 3× at peak |
+| Filter CPU | ≤ 5 ms per message × ≈ 93 accepted messages/s at stress peak ≈ 0.5 core |
 | Latency | send → other client p95 ≤ 1 s; ack p95 ≤ 500 ms |
 | Load test (cloud-forge; `chat_load_probe`) | stress profile for 30 min: p95 ≤ 1 s, CPU ≤ 60%, 0 lost messages, egress bytes logged |
 | RPO / RTO | ≤ 5 min (WAL shipped every 60 s) / ≤ 30 min (box rebuilt from script + restore) |

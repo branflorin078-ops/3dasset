@@ -88,7 +88,7 @@ pass. A filter that blocks the game's own verbs fails the clean corpus.
 | Egress per month | 42 GB | | |
 | Storage | 2.8 GB | | |
 | Reports per 1,000 messages | 1–3 | | |
-| Human moderation minutes per day | 8–68 | | |
+| Human moderation minutes per day | 6–68 | | |
 | Held-for-review items per day | < 1% of Market Cross messages | | |
 | Filter false positives in live appeals | ≤ 1% of automated actions overturned | | |
 | p95 delivery latency | ≤ 1 s | | |

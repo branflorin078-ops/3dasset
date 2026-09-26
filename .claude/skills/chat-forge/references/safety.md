@@ -87,7 +87,8 @@ A strike drops the player one tier for 7 days. Age bands (§10) cap the ladder f
 |---|---|---|---|
 | S1 mild | common swearing | masked with ✱ for readers who keep the "strict" setting (default strict; adults may choose "standard") | no |
 | S2 abuse | slurs, hate against protected groups, sexual harassment, severe insults | message rejected; sender told which rule class | yes |
-| S3 danger | threats of violence, self-harm statements, sexual content involving minors, sharing someone's real address or phone number | rejected; the S3 queue gets the item with 10 lines of context; chat mute 24 h pending review | yes (confirmed by a human) |
+| S3 danger to others | threats of violence, sexual content involving minors, sharing someone's real address or phone number | rejected; the S3 queue gets the item with 10 lines of context; chat mute 24 h pending review | yes (confirmed by a human) |
+| Care (not a sanction) | statements of self-harm or suicide | never punished: no strike, no mute; the message is not published to Market Cross (other channels: shown as sent); the sender privately gets a card with local help lines (list per country kept by l10n-forge/legal); the item enters the S3 queue for a human look ≤ 24 h | no |
 
 - **One list per shipped language**, three severity files each, curated by native speakers through
   l10n-forge (≥ 1 native review per language per release). Open-licence lists may seed them —
@@ -149,13 +150,13 @@ members of one alliance within 1 h count as one report.
 |---|---|
 | ≥ 3 independent weighted reports in 24 h against a T0/T1 account | chat mute 24 h pending review |
 | Seller score ≥ 9 or a known seller text signature | 1 h mute + anti-cheat flag |
-| S3 match | 24 h mute pending human review |
+| S3 (danger to others) match | 24 h mute pending human review; never for the care class |
 | Anything longer than 24 h | **human decision only** |
 
 **Workload model** (base scenario, [backend-cost.md](backend-cost.md) §7): 300,000 messages per
 day × 1–3 reports per 1,000 messages [assumption; measure] = 300–900 reports per day → grouped at
-≈ 6 reports per offender ≈ 50–150 cases → 70–85% closed by the automatic rules → **10–45 human
-cases per day × 45–90 s = 8–68 minutes of moderation per day**. Who does that work is an owner
+≈ 6 reports per offender ≈ 50–150 cases → 70–85% closed by the automatic rules → **8–45 human
+cases per day × 45–90 s = 6–68 minutes of moderation per day**. Who does that work is an owner
 decision (the owner, trusted volunteers, or a paid service — a paid service is outside the
 server budget and needs its own line).
 
@@ -183,7 +184,8 @@ reasons (§12). Appeals: a button in that mail → a form (≤ 500 chars) → st
 ## 10. Minors and age rating
 
 **Age gate**: at account creation a neutral birth-year picker (no default year, no hint of the
-threshold); only the **age band** is stored, never the date (data minimization). The band decides:
+threshold); only the **age band** and the month it next changes are stored (e.g. "13–15, until
+2028-04"), never the birth date (data minimization); the band moves up by itself on that month. The band decides:
 
 | Feature | Under the local age of digital consent (13–16 by country; the table is maintained by legal/l10n-forge) | Minor above it (to 17) | Adult (18+) |
 |---|---|---|---|
@@ -213,7 +215,7 @@ threshold); only the **age band** is stored, never the date (data minimization).
 | Item | Rule |
 |---|---|
 | Lawful basis | contract (providing chat) for messages; legitimate interest for safety logs and evidence — **legal to confirm** and write into the privacy notice |
-| Retention | [channels.md](channels.md) §1 (realm 3 d, alliance/whisper/Circle 30 d, Herald 7 d); evidence store 90 d or case closed + 30 d; IP addresses in gateway logs ≤ 7 d; moderation decisions pseudonymised 1 year |
+| Retention | [channels.md](channels.md) §1 (realm 3 d, alliance/whisper/Circle 30 d, Herald 7 d); author-deleted text hidden 24 h (report window), then erased; evidence store 90 d or case closed + 30 d; IP addresses in gateway logs ≤ 7 d; moderation decisions pseudonymised 1 year |
 | Erasure (Art. 17) | account deletion runs a chat job **≤ 30 days** (Art. 12(3) one month): whispers and Circle messages by the account hard-deleted; public-channel rows replaced by tombstones; read cursors, blocks and mutes deleted; sender id replaced by "Former lord" in evidence copies |
 | Backups | 7 daily compressed dumps + WAL; deleted rows leave the backups ≤ 7 days after deletion (stated in the privacy notice) |
 | Access / portability (Art. 15, 20) | export of the player's own messages still inside retention as JSON, from the account's data request flow |
@@ -241,6 +243,7 @@ threshold); only the **age band** is stored, never the date (data minimization).
 | A T0 account posts in Market Cross | [ ] `chat_trust_probe` ladder matrix |
 | An under-consent-age account can send free text or whisper a stranger | [ ] `chat_age_probe` band matrix |
 | Report brigade mutes an innocent player automatically | [ ] brigading unit test: 5 alliance-mates' reports count as 1 |
+| A self-harm statement earns a strike or a mute | [ ] `chat_filter_probe` care cases: 0 sanctions, help card shown, queue item created |
 | An erased account's whispers still in the DB after the job | [ ] `gdpr_erasure_probe`: 0 rows with the author id |
 | Moderation queue grows faster than it is worked | [ ] daily counter: open cases > 3× daily closed for 3 days → alert the owner |
 
