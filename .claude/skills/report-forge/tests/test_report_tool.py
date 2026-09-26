@@ -73,6 +73,15 @@ ok("[]" not in e["headline"]["vs"], "empty alliance tag must not print []")
 e = rt.explain(fx("even_draw.json"), 0)
 ok(e["rows"] == [] and e["even"]["key"] == "rpt.why.even" and e["advice"]["link"] == ["scout", None], "draw")
 
+# 4b. defender actions (kinds.md section 2) render for the castle side only
+r = fx("loss_castle.json")
+r["da"] = [[1, 2400, 12], [3, 400, 45]]
+ok(rt.check(r) == [], f"da: {rt.check(r)}")
+ok("Your recall brought 2,400 troops home 0:12 before contact." in rt.render(r, 1), "recall line for the defender")
+ok("WHAT YOU DID" not in rt.render(r, 0), "the attacker never sees the defender's actions")
+r["da"] = [[2, 900, 30, 0]]
+ok(rt.check(r) != [], "ally-arrived must name a stationed ally, not the owner")
+
 # 5. thresholds at their boundaries (explain.md section 3)
 base = fx("win_field.json")
 

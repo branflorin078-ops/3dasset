@@ -15,11 +15,11 @@ Unit note: 1080 px ≈ 400–430 dp on current phones, so **1 dp ≈ 2.5 px**. 4
 | Position | directly above the bottom action bar; 24 px side margins (ux.md places the bar) |
 | Size | visual strip 1032 × 84 px; **hit area 1032 × 120 px** (transparent parent `Control`; the extra 36 px extends upward, never over the action bar) |
 | Content | one line: channel icon 48 px · sender name 32 px bold · text 34 px, ellipsis at the end |
-| Source | the Hall; the Market Cross only if the player opted it in (sampled ≤ 1 per 10 s, [channels.md](channels.md) §7); no alliance → Market Cross sampled |
+| Source | the Fireside; the Market Cross only if the player opted it in (sampled ≤ 1 per 10 s, [channels.md](channels.md) §7); no alliance → Market Cross sampled |
 | Cadence | each line holds ≥ 3.0 s; lines arriving faster are dropped from the ticker (never from the channel), and the newest shows with "+N" |
-| Badge | WAX count badge (white numerals 9.12:1) for unread whispers + mentions only; 1–99, then "99+"; no red dot for Hall or Market Cross |
+| Badge | WAX count badge (white numerals 9.12:1) for unread whispers + mentions only; 1–99, then "99+"; no red dot for Fireside or Market Cross |
 | Tap | opens the panel at half height on the ticker's channel |
-| Long-press (400 ms) | channel switcher for the ticker: Hall / Market Cross / Off |
+| Long-press (400 ms) | channel switcher for the ticker: Fireside / Market Cross / Off |
 | Hidden | during battle presentation and full-screen ceremonies (battle-forge, feel-forge); returns ≤ 200 ms after |
 
 Stickers show in the ticker as a 56 px thumbnail plus the sender name; share cards as their
@@ -38,8 +38,8 @@ Layout from the top of the sheet (half state; full adds list height only):
 | Part | Height | Notes |
 |---|---|---|
 | Grab handle | 24 px bar in a 48 px strip | drag between Closed / Half / Full; the tab row below is also a drag area (a move > 12 px is a drag, less is a tap), so the drag target is ≥ 168 px tall |
-| Channel tabs | 120 px | Hall · Council (members only) · Market Cross · Whispers · Circles; icon 56 px (Blender-made art, never a line glyph) + label 28 px + count; labels shrink to 26 px then go icon-only when a translation is 30–40% longer |
-| Pinned announcement | 0 or 96 px | one line, tap to expand; Hall only |
+| Channel tabs | 120 px | Fireside · Council (members only) · Market Cross · Whispers · Circles; icon 56 px (Blender-made art, never a line glyph) + label 28 px + count; labels shrink to 26 px then go icon-only when a translation is 30–40% longer |
+| Pinned announcement | 0 or 96 px | one line, tap to expand; Fireside only |
 | Message list | the rest | newest at the bottom |
 | "N new ↓" pill | 88 px (hit 120 px) | appears when the player is > 1 screen above the bottom and messages arrive; never auto-jumps |
 | Input bar | 132 px | sticker 120 px · quick call 120 px · text field 624 × 108 px (hit: full bar height) · send 120 px; 24 px margins, 12 px gaps (24 + 3 × 120 + 624 + 4 × 12 + 24 = 1080) |
@@ -66,7 +66,7 @@ Layout from the top of the sheet (half state; full adds list height only):
 | Body text | 36 px, line height 1.3 (47 px), INK on PARCHMENT (12.66:1) |
 | Grouping | same sender within 2 min: no avatar, no header, 6 px gap instead of 12 px |
 | Mention of me | static WAX left bar 6 px + parchment tint; no blinking, no shake |
-| System (Herald) line | centred, 30 px IRON (7.46:1), no bubble, 16 px vertical padding |
+| System (Tidings) line | centred, 30 px IRON (7.46:1), no bubble, 16 px vertical padding |
 | Tombstone | "Message removed" 28 px italic IRON; no content, no reason text in public |
 | Emoji-only message (1–3 emoji) | 72 px glyphs, no bubble |
 | Sticker | 240 × 240 px, no bubble; header line as text |
@@ -101,7 +101,7 @@ Rendered by the rules in [share-cards.md](share-cards.md); the whole card is the
 
 | Rule | PROPOSAL |
 |---|---|
-| Per tab | count of messages after the read cursor; "99+" above 99; Herald lines do not count |
+| Per tab | count of messages after the read cursor; "99+" above 99; Tidings lines do not count |
 | HUD | only the ticker badge (whispers + mentions); chat adds **no red dot** to the HUD (core-loop.md A7: dots only for claimable items and idle plates; ux.md decides whether the badge counts in the dot budget) |
 | Opening a channel | ≤ 50 unread: scroll to the first unread with a "New" divider; > 50: open at the newest with "312 unread — jump to first" (one tap) |
 | Read cursor | advanced when a message has been on screen ≥ 500 ms; written to the server at most once per 10 s and on close ([backend-cost.md](backend-cost.md) §5) |
@@ -137,7 +137,7 @@ Rendered by the rules in [share-cards.md](share-cards.md); the whole card is the
 
 Long-press a message (400 ms) → a bottom action sheet (rows 120 px, in the thumb zone):
 Reply · Copy · Translate · Mention · **Report** · **Block** · **Mute sender** (1 h / 8 h / 24 h / always,
-this channel) · for officers in the Hall: Remove message · Mute member in the Hall (1 h / 24 h).
+this channel) · for officers in the Fireside: Remove message · Mute member in the Fireside (1 h / 24 h).
 Report is 3 taps: long-press → Report → reason (sent at once; an optional note field follows).
 Details and effects: [safety.md](safety.md) §8.
 
@@ -145,7 +145,7 @@ Details and effects: [safety.md](safety.md) §8.
 
 | State | What the player sees |
 |---|---|
-| Empty channel | "The Hall is quiet." + a Quick-call button (120 px) |
+| Empty channel | "The Fireside is quiet." + a Quick-call button (120 px) |
 | Loading | 3 skeleton rows after 300 ms; nothing before 300 ms (no flash) |
 | Offline | ticker shows "Reconnecting…" in IRON; sends queue (≤ 5), queued sends older than 2 min are dropped with "Not sent — tap to retry" |
 | Sending | own row at 60% opacity until the server ack |
@@ -199,7 +199,7 @@ MessageRow        HBoxContainer: Avatar (TextureRect 80 px) · VBoxContainer: He
 4. **Local cache**: last 100 messages per channel in `user://chat/` via
    `FileAccess.open_encrypted_with_pass()` (per-account key fetched from the game backend at login,
    so a logged-out device cannot read it); wiped on logout, account switch,
-   alliance leave (Hall/Council files) and when rows pass their retention.
+   alliance leave (Fireside/Council files) and when rows pass their retention.
 5. **Stickers load on demand** with `ResourceLoader.load_threaded_request()`; the picker shows a
    parchment placeholder until loaded (≤ 100 ms target on the reference phone).
 6. **Input**: `LineEdit` with `max_length = 200` (client guard; the server counts graphemes),

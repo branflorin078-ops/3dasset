@@ -39,7 +39,7 @@ stored and sent   {"type":"lord","v":1,"ref":{"p":55123,"lord":3},
 | `scout` Scout report | the scout's owner | all except Market Cross for T0–T1 | report-forge contract §4 | report-forge scout view, sections by its share policy | report retention; values "as of" |
 | `lord` Lord | the lord's owner | all; Market Cross T2+ | lord id (1 of 8), level, rarity tier (Issued / Sound / Fine / Masterwork), sworn flag, set pieces 0–4 (≈ 40 B) | read-only lord sheet (commander-forge screens via ui-forge) | never; "as of" date |
 | `invite` Alliance invitation | ranks with the recruit permission (alliance.md) | Whisper, Circle, Market Cross | alliance id, tag, members/cap, language, minimum spine tier, sigil id, token (16 B as 32 hex), expiry (≈ 120 B) | alliance profile with Join / Ask to join (alliance.md rules) | 7 d, or alliance full or disbanded |
-| `rally` Rally call | the rally leader (battle-forge) | **Hall and Council only** (never where enemies read) | rally id, target coord + kind, leader id, launch time, slots filled/total (≈ 70 B) | battle-forge rally join screen | at launch → "Marched" state |
+| `rally` Rally call | the rally leader (battle-forge) | **Fireside and Council only** (never where enemies read) | rally id, target coord + kind, leader id, launch time, slots filled/total (≈ 70 B) | battle-forge rally join screen | at launch → "Marched" state |
 
 ## 3. Card rules
 
@@ -104,9 +104,9 @@ The art plate is the largest element — ART SHOWN BIG.
 | Map tile | long-press tile (1) → Share (2) → channel (3) → sent + Undo |
 | Lord screen | Share (1) → channel (2) → sent + Undo |
 | Alliance recruit | Invite (1) → a player (whisper) or Market Cross (2) → sent + Undo |
-| Rally (battle-forge flow) | "Call the alliance" switch, ON by default → card posted in the Hall + a Herald line; 0 extra taps |
+| Rally (battle-forge flow) | "Call the alliance" switch, ON by default → card posted in the Fireside + a Tidings line; 0 extra taps |
 
-The channel sheet lists: Hall · Council (if member) · recent Whispers (5) · Circles · Market Cross
+The channel sheet lists: Fireside · Council (if member) · recent Whispers (5) · Circles · Market Cross
 (if trust allows); rows 120 px, in the thumb zone.
 
 ## 7. Abuse limits per type
@@ -117,7 +117,7 @@ The channel sheet lists: Hall · Council (if member) · recent Whispers (5) · C
 | `report`, `scout` | 1 per 30 s | only reports the sender took part in; Market Cross T2+ |
 | `lord` | 1 per 60 s | own lords only |
 | `invite` | Market Cross 1 per 30 min per alliance; whispers 10 per day per recruiter | token single-use in whispers, ≤ 20 uses in Market Cross; blocked players never receive invites |
-| `rally` | 1 per rally | Hall and Council only |
+| `rally` | 1 per rally | Fireside and Council only |
 
 Every card is reportable like a message; a comment that breaks the filter blocks the whole card.
 

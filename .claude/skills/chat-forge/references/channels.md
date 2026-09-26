@@ -16,17 +16,17 @@ format and the data use ([backend-cost.md](backend-cost.md) §3).
 | Code id | Diegetic name (PROPOSAL) | Members | Who can post | Retention (days / count guard) | Live fan-out |
 |---|---|---|---|---|---|
 | `r:<realm>` | Market Cross | every player of the realm | trust T1+ ([safety.md](safety.md) §5) | 3 d / last 1,000 kept for scroll-back | only to players with the realm tab open, or the realm ticker opted in (sampled, §7) |
-| `a:<alliance>` | Hall | alliance members | every member | 30 d / last 5,000 | every online member (default ticker channel) |
+| `a:<alliance>` | Fireside | alliance members | every member | 30 d / last 5,000 | every online member (default ticker channel) |
 | `o:<alliance>` | War Council | the top two ranks + ranks granted "council" (alliance.md) | members of the channel | 30 d / last 2,000 | every online member of the channel |
 | `w:<lo>:<hi>` | Whisper (1:1) | two players (`lo` < `hi` player ids, so one thread per pair) | both, unless one blocked the other | 30 d / last 500 per thread | the other player; push if offline (§8) |
 | `g:<id>` | Circle (group) | 3–20 invited players | members | 30 d / last 1,000 | online members |
-| `h:<alliance>` | Herald (system feed) | alliance members | server only | 7 d / last 500 | online members; merged into the Hall view as system lines |
-| `hr:<realm>` | Realm Herald | realm | server only (realm events, owner news) | 7 d / last 200 | shown as system lines in Market Cross |
+| `t:<alliance>` | Tidings (system feed) | alliance members | server only | 7 d / last 500 | online members; merged into the Fireside view as system lines |
+| `tr:<realm>` | Realm Tidings | realm | server only (realm events, owner news) | 7 d / last 200 | shown as system lines in Market Cross |
 
 Rules:
 
 1. **One realm channel per realm.** Language rooms (§9) are an opt-in split, not a default.
-2. **The Hall is the default ticker channel** for every player in an alliance; a player with no
+2. **The Fireside is the default ticker channel** for every player in an alliance; a player with no
    alliance sees Market Cross in the ticker (sampled, §7). This single default is the biggest
    cost lever in [backend-cost.md](backend-cost.md) §7 — realm fan-out is 61–83% of all
    deliveries in every scenario.
@@ -37,13 +37,13 @@ Rules:
    (rewards, sanctions, officer orders, reports) goes to the inbox (**mail-forge**) or the report
    archive (**report-forge**); chat only links to it with a share card ([share-cards.md](share-cards.md)).
 5. **Private data never crosses channels by itself**: an officer message can be shared to the
-   Hall only by re-typing or a share card that the sharer creates; there is no "forward".
+   Fireside only by re-typing or a share card that the sharer creates; there is no "forward".
 
 | Fails when | Caught by |
 |---|---|
 | Realm fan-out goes to every online player (ticker default = realm) | [ ] `chat_cost_probe` deliveries/day per channel vs the tool's base line |
 | A channel keeps rows past its retention | [ ] `chat_retention_probe`: 0 rows older than retention + 1 d |
-| A player who left an alliance still receives Hall or Council lines | [ ] `chat_membership_probe` leave/kick/disband cases |
+| A player who left an alliance still receives Fireside or Council lines | [ ] `chat_membership_probe` leave/kick/disband cases |
 
 ## 2. Message types
 
@@ -54,8 +54,8 @@ Rules:
 | Sticker | `s` | sticker id (u16) | 2 bytes of data | all player channels, all ages | 240 px painted sticker ([ui.md](ui.md) §7) |
 | Quick call | `q` | phrase key + validated args | ≤ 64 bytes | all player channels, all ages | text in the READER's language (§7) |
 | Share card | `k` | card envelope | ≤ 256 bytes | per card type ([share-cards.md](share-cards.md) §2) | 800 × 248 px card |
-| Announcement | `n` | text | ≤ 400 graphemes / 1,600 bytes | Hall; one pinned at a time | pinned strip at the top of the Hall |
-| System line | `y` | l10n key + args | ≤ 128 bytes | Herald channels | centred grey line, no avatar |
+| Announcement | `n` | text | ≤ 400 graphemes / 1,600 bytes | Fireside; one pinned at a time | pinned strip at the top of the Fireside |
+| System line | `y` | l10n key + args | ≤ 128 bytes | Tidings channels | centred grey line, no avatar |
 | Tombstone | `d` | id of the removed message | 12 bytes | all | "Message removed" in 28 px italic, no content |
 
 Rules:
@@ -76,13 +76,13 @@ Rules:
 
 | Event | Rule (PROPOSAL) |
 |---|---|
-| Player joins an alliance | sees the last 50 Hall messages (alliance setting: 0 / 50 / 200; default 50); never Council history |
+| Player joins an alliance | sees the last 50 Fireside messages (alliance setting: 0 / 50 / 200; default 50); never Council history |
 | Promoted into the Council | sees Council messages from the promotion time only |
-| Leaves, is kicked, alliance disbands | Hall, Council and Herald access ends at once; the client deletes those channels from its cache on the membership event |
+| Leaves, is kicked, alliance disbands | Fireside, Council and Tidings access ends at once; the client deletes those channels from its cache on the membership event |
 | Moves to another realm (migration, liveops.md) | Market Cross switches; whispers and Circles move with the player; realm history is not carried |
 | Blocks a player | that player's messages are hidden in every channel for the blocker; whispers stop both ways |
 | Account deleted (GDPR) | [safety.md](safety.md) §11: whispers/Circle messages by the account hard-deleted; public-channel rows replaced by tombstones within 30 d |
-| Alliance hopping | chat adds no rule of its own; alliance.md's cooldowns apply. The Herald shows "joined / left" lines so hopping is visible |
+| Alliance hopping | chat adds no rule of its own; alliance.md's cooldowns apply. The Tidings shows "joined / left" lines so hopping is visible |
 
 ## 4. Mentions
 
@@ -90,19 +90,19 @@ Rules:
 |---|---|---|---|
 | `@name` | anyone in a channel where the target is a member | ≤ 5 per message | mention badge + optional push ([ui.md](ui.md) §5, §8 here) |
 | `@council` | top two ranks | ≤ 10 per day per alliance | mention for every Council member |
-| `@all` (Hall) | top two ranks | ≤ 3 per day per alliance; ≥ 30 min apart | mention for every member; push only for members who opted in |
+| `@all` (Fireside) | top two ranks | ≤ 3 per day per alliance; ≥ 30 min apart | mention for every member; push only for members who opted in |
 | `@` in Market Cross | anyone T2+ | ≤ 5 per message | mention badge only, never a push (strangers must not push strangers) |
 
 The mention is stored as a player id inside the text (`<@55123>`) and rendered as the current
 name; typing `@` opens a picker of channel members sorted by last active (≤ 3 taps to insert).
 Blocked players cannot mention the blocker (silently dropped for that recipient).
 
-## 5. Announcements and the Herald
+## 5. Announcements and Tidings
 
 - **Pinned announcement**: one per alliance, set by the top two ranks, ≤ 400 graphemes, shows
-  the author and the date; replacing it moves the old one to the Hall as a normal line. The
+  the author and the date; replacing it moves the old one to the Fireside as a normal line. The
   scheduled announcement tool (leader burnout relief) belongs to alliance.md; chat renders it.
-- **Herald events** (PROPOSAL list; each owning system emits the key, chat renders it):
+- **Tidings events** (PROPOSAL list; each owning system emits the key, chat renders it):
 
 | Event | Owner | Merge rule |
 |---|---|---|
@@ -113,9 +113,9 @@ Blocked players cannot mention the blocker (silently dropped for that recipient)
 | gifts received | alliance (gameplay-forge) | aggregated: ≤ 1 line per 10 min ("12 gifts from camp kills") |
 | event started / ending in 1 h | liveops (design-forge liveops.md) | ≤ 2 lines per event |
 
-- **Herald cap**: ≤ 30 lines per hour per alliance; above it, lines merge into a digest line
-  ("8 more alliance events — open the Herald"). Herald lines never push.
-- A Herald line is not a claim: gifts are claimed in the alliance screen or the inbox (mail-forge).
+- **Tidings cap**: ≤ 30 lines per hour per alliance; above it, lines merge into a digest line
+  ("8 more alliance events — open Tidings"). Tidings lines never push.
+- A Tidings line is not a claim: gifts are claimed in the alliance screen or the inbox (mail-forge).
 
 ## 6. Whispers and Circles
 
@@ -156,10 +156,10 @@ design-forge core-loop.md A8 (≤ 4 per day, grouped, quiet hours 22:00–08:00 
 |---|---|---|---|
 | Whisper (accepted thread) | on | 1 push per thread per 10 min; later messages update the count | "A whisper from Aldric" — no message text by default |
 | Whisper request from a stranger | off | — | — |
-| `@name` in Hall, Council or Circle | on | 1 per channel per 30 min | "Aldric mentioned you in the Hall" |
+| `@name` in Fireside, Council or Circle | on | 1 per channel per 30 min | "Aldric mentioned you in the Fireside" |
 | `@all` / `@council` | opt-in | 1 per call | "Your alliance calls: rally at the ford" (from the quick-call key, localized) |
 | Rally call card | opt-in (battle-forge rally flow) | 1 per rally | localized rally key |
-| Market Cross, Herald, stickers, group chatter | never | — | — |
+| Market Cross, Tidings, stickers, group chatter | never | — | — |
 
 - Chat pushes use at most **2 of the 4** daily A8 slots by default. A player who turns on
   "every whisper" may exceed A8 for whispers only — the player's explicit choice
@@ -183,7 +183,7 @@ design-forge core-loop.md A8 (≤ 4 per day, grouped, quiet hours 22:00–08:00 
 |---|---|
 | A stranger's first whisper is shown before the recipient accepts | [ ] `chat_membership_probe` request case |
 | Quick call shows the sender's language to a reader of another language | [ ] `chat_l10n_probe`: 24 keys × shipped languages render, 0 missing keys |
-| Herald floods the Hall in a war hour (> 30 lines) | [ ] Herald merge unit test at 100 events/hour |
+| Tidings floods the Fireside in a war hour (> 30 lines) | [ ] Tidings merge unit test at 100 events/hour |
 | `@all` used more than 3 times a day | [ ] server cap test |
 | Chat push arrives in quiet hours or for Market Cross | [ ] `chat_push_probe` with a fake clock |
 | Council history visible to a newly promoted member | [ ] membership probe promotion case |

@@ -58,7 +58,7 @@ Token buckets (sustained rate, burst) per player per channel, plus a channel-wid
 | Channel | Player T2+ | Player T1 | Channel-wide cap | Slow mode |
 |---|---|---|---|---|
 | Market Cross | 1 per 10 s, burst 3 | 1 per 30 s, burst 1 | 20 accepted per min per realm, burst 30 (the cost tool's `realm_cap_per_min`) | when the cap fills: per-player cooldown 30 s, at 2× fill 60 s; the send button shows the countdown |
-| Hall | 1 per 2 s, burst 6 | same | 120 per min | at the cap: 5 s cooldown |
+| Fireside | 1 per 2 s, burst 6 | same | 120 per min | at the cap: 5 s cooldown |
 | War Council | 1 per 2 s, burst 6 | — | 60 per min | — |
 | Whisper | 1 per 2 s per thread, burst 5 | same | — | — |
 | Circle | 1 per 2 s, burst 5 | same | 60 per min | — |
@@ -74,10 +74,10 @@ would sell reach to gold sellers).
 
 | Tier | Reached when (PROPOSAL; S = spine-building tier, design-forge core-loop.md notation) | Adds |
 |---|---|---|
-| T0 | new account (< 48 h since creation) OR S < 2 | Hall, Council if promoted, whispers with alliance mates, quick calls, stickers, share cards in the Hall; Market Cross read-only |
+| T0 | new account (< 48 h since creation) OR S < 2 | Fireside, Council if promoted, whispers with alliance mates, quick calls, stickers, share cards in the Fireside; Market Cross read-only |
 | T1 | ≥ 48 h AND S ≥ 2 | Market Cross at 1 per 30 s; 3 new whisper threads per day (as requests) |
 | T2 | ≥ 7 d AND 0 active strikes | standard rates; 10 new threads per day; `@name` in Market Cross |
-| T3 | ≥ 30 d AND no strike in 30 d | may be appointed a realm warden (§9); plain, non-clickable URL text in Hall and Council if the owner allows it (owner decision) |
+| T3 | ≥ 30 d AND no strike in 30 d | may be appointed a realm warden (§9); plain, non-clickable URL text in Fireside and Council if the owner allows it (owner decision) |
 
 A strike drops the player one tier for 7 days. Age bands (§10) cap the ladder further.
 
@@ -103,7 +103,7 @@ A strike drops the player one tier for 7 days. Age bands (§10) cap the ladder f
 ## 7. Links, contacts and gold sellers
 
 **Rule: no clickable link anywhere, for anyone.** Text that looks like a link is either rejected
-or shown as plain text (T3 adults in Hall/Council only, if the owner allows).
+or shown as plain text (T3 adults in Fireside/Council only, if the owner allows).
 
 Seller score (sum of weights on the normalized copy; PROPOSAL values):
 
@@ -129,7 +129,7 @@ Seller score (sum of weights on the normalized copy; PROPOSAL values):
 | **Report** | reason (spam or selling · harassment · hate · sexual · threat or self-harm · cheating · other) + optional note ≤ 200 chars; the server snapshots the message + 10 before and 5 after into the evidence store (90 d) | ≤ 20 reports per player per day |
 | **Block** | hides all the target's messages in every channel for the blocker; stops whispers both ways; the target is not told | ≤ 500 blocks per player; unblock any time in settings |
 | **Mute sender** | hides the sender in one channel for 1 h / 8 h / 24 h / always | client-side plus server filter on catch-up |
-| **Officer tools (Hall)** | remove a message (tombstone); mute a member in the Hall 1 h or 24 h; every action logged in the alliance log | top two ranks (alliance.md); ≤ 50 actions per day |
+| **Officer tools (Fireside)** | remove a message (tombstone); mute a member in the Fireside 1 h or 24 h; every action logged in the alliance log | top two ranks (alliance.md); ≤ 50 actions per day |
 
 After a report the reporter sees "Thank you — we will look at it" and, when a decision is made,
 a short mail (mail-forge) saying action was taken or not (no details about the other player).
@@ -166,7 +166,7 @@ server budget and needs its own line).
 |---|---|---|
 | Owner / staff | everything, incl. permanent bans and appeals | — |
 | Realm warden (T3 volunteer, PROPOSAL 2–4 per realm) | approve/deny held messages; mute ≤ 1 h in Market Cross; escalate | every action logged; staff audit 10% weekly; removed after 2 overturned actions in 30 d |
-| Alliance officers | Hall only (§8) | alliance log |
+| Alliance officers | Fireside only (§8) | alliance log |
 
 **Sanctions ladder** (chat only; the game account is not touched unless cheating is involved):
 
@@ -191,7 +191,7 @@ threshold); only the **age band** and the month it next changes are stored (e.g.
 |---|---|---|---|
 | Free text | **off** (unless verified parental consent is added later — owner decision) | on, strict filter locked | on, strict by default, may choose standard |
 | Quick calls, stickers, share cards | on | on | on |
-| Hall (alliance) | reads mates' text with the strict filter plus contact masking (≥ 5 digits, e-mail shapes, handles shown as ✱); posts quick calls, stickers, cards | read and write | read and write |
+| Fireside (alliance) | reads mates' text with the strict filter plus contact masking (≥ 5 digits, e-mail shapes, handles shown as ✱); posts quick calls, stickers, cards | read and write | read and write |
 | Market Cross | sees only quick calls, stickers and cards (free text from others hidden); posts quick calls only | read and write | read and write |
 | Whispers | off | alliance and Circle mates only; never requestable by strangers | per setting |
 | Link-like text, lock-screen previews | off | off | per settings |
@@ -215,7 +215,7 @@ threshold); only the **age band** and the month it next changes are stored (e.g.
 | Item | Rule |
 |---|---|
 | Lawful basis | contract (providing chat) for messages; legitimate interest for safety logs and evidence — **legal to confirm** and write into the privacy notice |
-| Retention | [channels.md](channels.md) §1 (realm 3 d, alliance/whisper/Circle 30 d, Herald 7 d); author-deleted text hidden 24 h (report window), then erased; evidence store 90 d or case closed + 30 d; IP addresses in gateway logs ≤ 7 d; moderation decisions pseudonymised 1 year |
+| Retention | [channels.md](channels.md) §1 (realm 3 d, alliance/whisper/Circle 30 d, Tidings 7 d); author-deleted text hidden 24 h (report window), then erased; evidence store 90 d or case closed + 30 d; IP addresses in gateway logs ≤ 7 d; moderation decisions pseudonymised 1 year |
 | Erasure (Art. 17) | account deletion runs a chat job **≤ 30 days** (Art. 12(3) one month): whispers and Circle messages by the account hard-deleted; public-channel rows replaced by tombstones; read cursors, blocks and mutes deleted; sender id replaced by "Former lord" in evidence copies |
 | Backups | 7 daily compressed dumps + WAL; deleted rows leave the backups ≤ 7 days after deletion (stated in the privacy notice) |
 | Access / portability (Art. 15, 20) | export of the player's own messages still inside retention as JSON, from the account's data request flow |

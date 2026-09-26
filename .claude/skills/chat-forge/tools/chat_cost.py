@@ -22,7 +22,7 @@ DAYS = 30  # billing month
 
 COMMON = {
     "players": 50000,
-    # share of SENT messages per channel (system = server-written herald lines)
+    # share of SENT messages per channel (system = server-written Tidings lines)
     "mix": {"alliance": 0.55, "realm": 0.20, "private": 0.12, "group": 0.05, "officer": 0.03, "system": 0.05},
     # PROPOSAL retention in days (channels.md section 3)
     "retention": {"alliance": 30, "realm": 3, "private": 30, "group": 30, "officer": 30, "system": 7},

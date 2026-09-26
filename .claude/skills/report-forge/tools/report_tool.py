@@ -445,6 +445,10 @@ def render(rep, pov=0):
             L.append(f"  {EXAMPLE_ENGINES.get(g[0], g[0]):<10} ×{g[1]:<3} lost {g[2]}, wall damage {pct(g[3])}%")
     for n in e["notes"]:
         L.append("  " + n["text"])
+    if rep.get("da") and castle_side(rep) == v:
+        L.append("WHAT YOU DID BEFORE CONTACT")
+        for act in rep["da"]:
+            L.append("  " + act_text(rep, act))
     L.append("THEIR TROOPS             sent  out of action")
     for u, r in rows(rep["s"][o]):
         L.append(f"  {line_name(r[0]):<10} t{r[1]:<3} {num(r[2]):>9} {num(r[3] + r[4] + r[5]):>9}")
@@ -471,6 +475,17 @@ def render(rep, pov=0):
             L.append(f"  beat {m[0]:>3}  {moment_text(rep, v, m)}")
     L.append("REPLAY  " + ("available" if rep.get("bx") else STR["rpt.replay.expired"]))
     return "\n".join(L)
+
+
+def act_text(rep, act):
+    """Defender actions (kinds.md section 2): [kind, value, seconds before contact, participant]."""
+    kind, val, sec = act[0], act[1], act[2]
+    t = f"{sec // 60}:{sec % 60:02d}"
+    if kind == 2:
+        return s("rpt.act.2", name=name_of(rep, rep["s"][castle_side(rep)]["u"][act[3]]["id"]), n=num(val), t=t)
+    if kind == 4:
+        return s("rpt.act.4", lord=LORDS[val], t=t)
+    return s(f"rpt.act.{kind}", n=num(val), t=t)
 
 
 def moment_text(rep, v, m):
@@ -710,6 +725,12 @@ def check(rep):
         E("moments must be in beat order")
     if any(m[0] >= rep.get("bn", 10 ** 9) for m in mo):
         E("moment beat index beyond bn")
+    c_side = castle_side(rep)
+    for act in rep.get("da", []):
+        if c_side is None or act[0] not in (1, 2, 3, 4) or act[2] < 0:
+            E(f"defender action {act} needs a castle side, kind 1-4 and seconds >= 0")
+        elif act[0] == 2 and not (len(act) > 3 and 0 < act[3] < len(S[c_side]["u"])):
+            E(f"ally-arrived action {act} must name a stationed ally participant")
     if "rs" in rep and (len(rep["rs"]) != 5 or min(rep["rs"]) < 0):
         E("rs needs 5 non-negative ints")
     if "ld" in rep and not 0 <= rep["ld"] <= 1000:

@@ -79,7 +79,7 @@ Rules: socket open only while the app is in the foreground (closed on
 
 ```sql
 -- one table per retention class, each partitioned by day: retention = DROP PARTITION (no vacuum debt)
-CREATE TABLE chat_msg_30d (            -- Hall, Council, Whisper, Circle
+CREATE TABLE chat_msg_30d (            -- Fireside, Council, Whisper, Circle
   ch     text        NOT NULL,         -- 'a:812', 'w:55:77'
   seq    bigint      NOT NULL,
   ts     timestamptz NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE chat_msg_30d (            -- Hall, Council, Whisper, Circle
   flags  smallint    NOT NULL DEFAULT 0, -- 1 held, 2 removed, 4 author-deleted
   PRIMARY KEY (ch, seq, ts)
 ) PARTITION BY RANGE (ts);
--- chat_msg_3d (Market Cross) and chat_msg_7d (Herald): same columns
+-- chat_msg_3d (Market Cross) and chat_msg_7d (Tidings): same columns
 CREATE TABLE chat_channel (ch text PRIMARY KEY, head bigint NOT NULL, settings jsonb);
 CREATE TABLE chat_cursor  (player bigint, ch text, seq bigint, PRIMARY KEY (player, ch));
 CREATE TABLE chat_block   (player bigint, target bigint, ts timestamptz, PRIMARY KEY (player, target));
@@ -144,13 +144,13 @@ kept in memory and flushed hourly (the A8 budget check).
 | Co-play affinity (alliance, Circle) | 2.5 | 2.5 | 1.6 | mates are online together (war windows); stress value chosen so `f` = 0.30 (30 of 100 members online at once) |
 | Alliance size (average) `a` | 60 | 80 | 100 | alliance.md owns the cap; verify |
 | Realm size `R` | 3,000 | 4,000 | 5,000 | world.md owns N; verify |
-| Share of online realm players receiving the realm stream `s` | 0.25 | 0.50 | 1.00 | Hall is the ticker default ([channels.md](channels.md) §1 rule 2) |
-| Channel mix of sent messages | Hall 55% · Market Cross 20% · Whisper 12% · Circle 5% · Council 3% · Herald 5% | same | same | [assumption; measure per channel] |
+| Share of online realm players receiving the realm stream `s` | 0.25 | 0.50 | 1.00 | Fireside is the ticker default ([channels.md](channels.md) §1 rule 2) |
+| Channel mix of sent messages | Fireside 55% · Market Cross 20% · Whisper 12% · Circle 5% · Council 3% · Tidings 5% | same | same | [assumption; measure per channel] |
 | Sessions per DAU | 6 | 7 | 8 | core-loop.md |
 | Catch-up messages per session | 30 | 50 | 70 | page cap 50 (+20 realm) |
 | Bytes per delivery on the wire `b` | 200 | 250 | 300 | §3 |
 | Bytes per stored row | 400 | 420 | 450 | §4 |
-| Retention (days) | Market Cross 3 · Herald 7 · others 30 | same | same | [channels.md](channels.md) §1 |
+| Retention (days) | Market Cross 3 · Tidings 7 · others 30 | same | same | [channels.md](channels.md) §1 |
 
 ### 7.2 Formulas
 
@@ -159,7 +159,7 @@ DAU            = P × d
 sent_c         = DAU × m × mix_c                (Market Cross capped at 20/min × 1,440 × P/R)
 f_realm        = d × T / 1440 × peak            (share of a realm online at peak)
 f              = f_realm × affinity             (share of an alliance/Circle online when a mate writes)
-fan-out r_c    = Hall a·f · Market Cross R·f_realm·s · Whisper 1 · Circle 8·f · Council 5·f · Herald a·f
+fan-out r_c    = Fireside a·f · Market Cross R·f_realm·s · Whisper 1 · Circle 8·f · Council 5·f · Tidings a·f
 deliveries/day = Σ sent_c × r_c
 egress/day     = deliveries × b  +  DAU × sessions × catch-up × b  +  DAU × T × 2 pings × 80 B
                  +  DAU × sessions × 6 KB per connect
@@ -174,9 +174,9 @@ backups        = storage × 0.4 (compressed, no indexes) × 7 dumps
 
 - DAU = 50,000 × 0.40 = **20,000**; sent = 20,000 × 15 = **300,000 messages/day**.
 - f_realm = 0.40 × 45 / 1440 × 3 = 0.0375 (1,875 peak sockets); f = 0.0375 × 2.5 = 0.094.
-- Hall: 165,000 × (60 × 0.094 = 5.63) = 928,125 · Market Cross: 60,000 × (3,000 × 0.0375 × 0.25 =
+- Fireside: 165,000 × (60 × 0.094 = 5.63) = 928,125 · Market Cross: 60,000 × (3,000 × 0.0375 × 0.25 =
   28.1) = 1,687,500 · Whisper 36,000 × 1 = 36,000 · Circle 15,000 × 0.75 = 11,250 · Council 9,000 ×
-  0.47 = 4,219 · Herald 15,000 × 5.63 = 84,375 → **2.75 M deliveries/day** (95 per s at peak).
+  0.47 = 4,219 · Tidings 15,000 × 5.63 = 84,375 → **2.75 M deliveries/day** (95 per s at peak).
 - Egress: 2.75 M × 200 B = 0.55 GB + catch-up 20,000 × 6 × 30 × 200 B = 0.72 GB + pings 900,000 ×
   2 × 80 B = 0.14 GB + connects 120,000 × 6 KB = 0.72 GB = **2.13 GB/day → 64 GB/month** (0.3% of
   a 20 TB allowance).
@@ -262,7 +262,7 @@ in `--model` before any growth decision.
 | # | Lever | Saves (tool) |
 |---|---|---|
 | L1 | Realm cap 20 accepted msg/min per realm (slow mode) — one line every 3 s, about the most a reader can follow | stress: realm deliveries 563 M → 270 M per day |
-| L2 | Hall, not Market Cross, as the ticker default | base: realm deliveries 6.75 M → 1.69 M per day (s 1.0 → 0.25) |
+| L2 | Fireside, not Market Cross, as the ticker default | base: realm deliveries 6.75 M → 1.69 M per day (s 1.0 → 0.25) |
 | L3 | Ticker sampling ≤ 1 realm msg per 10 s (`{"stress":{"ticker_only_share":0.8}}`) | stress: 325 M → 174 M deliveries per day, egress 3.3 → 1.9 TB per month |
 | L4 | On-device translation, capped cloud fallback | €729–€1,863 per month at base vs tap-to-translate cloud |
 | L5 | Ring buffer for catch-up | most catch-up reads leave the database |

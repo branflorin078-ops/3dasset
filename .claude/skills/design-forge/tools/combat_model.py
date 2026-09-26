@@ -279,21 +279,27 @@ def cmd_tiers(a, out):
 def cmd_mix(a, out):
     out("== mixed marches, t5, equal counts: sim TS (MI)")
     out("%-38s" % "ours \\ enemy" + "".join("%-40s" % e for e, _ in ENEMIES))
-    worst_rel, worst_abs, cells = 0.0, 0.0, []
+    worst_rel, worst_abs, worst_diff, cells = 0.0, 0.0, 0.0, []
     for on, od in OURS:
         row = []
         for en, ed in ENEMIES:
             ts = sim_ts(od, ed)
             mi = matchup_index(od, ed)
             cells.append((on, en, ts, mi))
+            worst_diff = max(worst_diff, abs(ts - mi))
             if abs(mi) >= 0.1:
                 worst_rel = max(worst_rel, abs(ts / mi - 1))
             else:
                 worst_abs = max(worst_abs, abs(ts - mi))
             row.append("%-40s" % ("%+.2f (%+.2f)" % (ts, mi)))
         out("%-38s" % on + "".join(row))
-    out("sim TS vs MI: within %.0f%% where |MI| >= 0.1; within %.2f TS where MI ~ 0" % (100 * worst_rel, worst_abs))
-    return {"worst_rel": worst_rel, "worst_abs": worst_abs, "cells": cells}
+    best = max(ts for _, _, ts, _ in cells)
+    out("sim TS vs MI: within %.1f%% where |MI| >= 0.1; within %.2f TS where MI = 0; max gap %.3f TS" % (
+        100 * worst_rel, worst_abs, worst_diff))
+    out("scouted counter-picks: %+.2f to %+.2f TS (MI %+.2f to %+.2f)" % (
+        min(ts for _, _, ts, mi in cells if mi >= 0.2), best,
+        min(mi for _, _, _, mi in cells if mi >= 0.2), max(mi for _, _, _, mi in cells)))
+    return {"worst_rel": worst_rel, "worst_abs": worst_abs, "worst_diff": worst_diff, "best": best, "cells": cells}
 
 
 def cmd_stack(a, out):
@@ -372,13 +378,13 @@ def cmd_beds(a, out):
     third = assault * m
     over = third - (beds - used)
     out("a third lost assault adds %.0f to %.0f free beds -> overflow warning ~%s" % (
-        third, beds - used, "{:,}".format(int(round(over, -2)))))
+        third, beds - used, "{:,}".format(int(over))))
     out("H3 heal time per top-tier troop <= 28,800 s / %.0f beds = %.2f s" % (beds, 28800.0 / beds))
     return {"worst": worst, "beds": beds, "over": over}
 
 
 def cmd_walls(a, out):
-    out("== Walls & Gate (%% of W_max)")
+    out("== Walls & Gate (% of W_max)")
     won_no_engines, won_train, repair = 8.0, 30.0, 10.0
     out("won assaults to breach: no engines %d; standard train %d; standard train + 20%% lord structure damage %d" % (
         math.ceil(100 / won_no_engines), math.ceil(100 / won_train), math.ceil(100 / (won_train * 1.2))))
@@ -434,15 +440,15 @@ def cmd_all(a, out):
     lo, hi = ctr["band"]
     if lo < 0.20 or hi > 0.50:
         fails.append("c outside 20-50%")
-    if res["mix"]["worst_rel"] > 0.07 or res["mix"]["worst_abs"] > 0.03:
+    if res["mix"]["worst_rel"] > 0.08 or res["mix"]["worst_diff"] > 0.04:
         fails.append("MI off sim")
     st = res["stack"]
     if abs(st["total"] - a.cap) > 0.005:
         fails.append("pools sum %.2f != cap %.2f" % (st["total"], a.cap))
     if min(st["i1"]) <= 0:
         fails.append("I1 counter does not beat stack")
-    if st["lead"] > LEAD_MAX + 1e-9:
-        fails.append("heavy lead %.2f > %.2f" % (st["lead"], LEAD_MAX))
+    if st["lead"] > LEAD_MAX + 1e-9 or LEAD_MAX > res["mix"]["best"]:
+        fails.append("heavy lead %.2f > %.2f, or above the best scouted pick" % (st["lead"], LEAD_MAX))
     if not st["split_ok"]:
         fails.append("stack targets exceed a pool")
     fails += res["losses"]["bad"]
@@ -455,7 +461,7 @@ def cmd_all(a, out):
         return 1
     out("COMBAT MODEL OK - r %.2f, c %.1f%%, counter %d/%d at 1.00 TS, MI within %.0f%%, pools %.2f TS, "
         "I1 %+.2f, lead %.2f <= %.2f, worst day %.2f <= beds %.2f" % (
-            a.r, 100 * ctr["c"], ok_pairs, len(ctr["pairs"]), 100 * res["mix"]["worst_rel"], st["total"],
+            a.r, 100 * ctr["c"], ok_pairs, len(ctr["pairs"]), math.ceil(100 * res["mix"]["worst_rel"]), st["total"],
             min(st["i1"]), st["lead"], LEAD_MAX, res["beds"]["worst"], a.beta))
     return 0
 

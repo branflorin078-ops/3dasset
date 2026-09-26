@@ -1,6 +1,6 @@
 ---
 name: chat-forge
-description: In-game chat for Castle Conquest — channels (realm, alliance, officer, whisper, group, herald system feed), message types (text, painted stickers, quick calls, share cards for coordinates, battle and scout reports, lords, alliance invites, rally calls), the bottom ticker and one-hand chat panel, unread counts, mentions, on-device translation, safety (filter, report/block/mute, rate limits, trust ladder, gold-seller filtering, moderation queue, minors and store rules, GDPR deletion), the WebSocket backend and its cost model for 50,000 players inside €200/month, offline catch-up, push rules and the chat harness. Use for "add chat", "alliance chat", "world chat", "chat filter", "mute/block/report a player", "share this report to chat", "chat cost", "chat translation". Not for the inbox (mail-forge), report content (report-forge) or general screens (ui-forge).
+description: In-game chat for Castle Conquest — channels (realm, alliance, officer, whisper, group, Tidings system feed), message types (text, painted stickers, quick calls, share cards for coordinates, battle and scout reports, lords, alliance invites, rally calls), the bottom ticker and one-hand chat panel, unread counts, mentions, on-device translation, safety (filter, report/block/mute, rate limits, trust ladder, gold-seller filtering, moderation queue, minors and store rules, GDPR deletion), the WebSocket backend and its cost model for 50,000 players inside €200/month, offline catch-up, push rules and the chat harness. Use for "add chat", "alliance chat", "world chat", "chat filter", "mute/block/report a player", "share this report to chat", "chat cost", "chat translation". Not for the inbox (mail-forge), report content (report-forge) or general screens (ui-forge).
 ---
 
 # chat-forge — words between lords: safe, readable, and inside the budget
@@ -28,12 +28,12 @@ changes as "PROPOSAL (verify against <file>)".
    strict filter locked, whispers only with alliance and Circle mates ([safety.md](references/safety.md) §10).
 5. **Trust is earned, never bought.** Rates and reach grow with account age and clean play only.
    Nothing in chat is sold — no paid length, speed, colour, reach or realm-wide horn (money-law).
-6. **Retention per channel, erasure within 30 days.** Market Cross 3 d, Herald 7 d, Hall / Council /
+6. **Retention per channel, erasure within 30 days.** Market Cross 3 d, Tidings 7 d, Fireside / Council /
    Whisper / Circle 30 d, each with a count guard; evidence 90 d. Nothing is kept "just in case"
    ([channels.md](references/channels.md) §1, [safety.md](references/safety.md) §11).
 7. **Cost shape A1 only**: persistent WebSocket gateway + Postgres on a flat-traffic box; never a
    per-delivered-message or per-listener-read service for fan-out (those fail at the BASE scenario,
-   €65–€283/month); the Hall is the ticker default; the realm channel is capped at 20 accepted
+   €65–€283/month); the Fireside is the ticker default; the realm channel is capped at 20 accepted
    messages per minute; translation is on-device with a €10 cloud breaker
    ([backend-cost.md](references/backend-cost.md) §7). Measured by `core/sd_cost_probe.gd`, never guessed.
 8. **Isolation**: chat never shares a process or database with saves, economy or the map; with the
@@ -41,7 +41,7 @@ changes as "PROPOSAL (verify against <file>)".
 9. **Share cards carry references; the server builds the snapshot.** chat-forge owns the card
    format; report-forge owns report content; battle-forge owns rallies ([share-cards.md](references/share-cards.md)).
 10. **Push only for whispers, mentions and rally calls**, inside design-forge core-loop.md A8
-    (≤ 4 per day, quiet hours 22:00–08:00 local); never for Market Cross, the Herald or anything paid.
+    (≤ 4 per day, quiet hours 22:00–08:00 local); never for Market Cross, Tidings or anything paid.
 11. **The painted identity holds in chat.** Stickers come from the painted lane (game-art-director);
     tab and card icons are Blender-made art, never white or line glyphs; faces are never code-built;
     card art is the largest element of a card (ART SHOWN BIG).
@@ -53,7 +53,7 @@ changes as "PROPOSAL (verify against <file>)".
 | Item | Value |
 |---|---|
 | Text message | ≤ 200 graphemes and ≤ 800 bytes; ≤ 3 line breaks; no edit, delete any time |
-| Rates (T2+) | Market Cross 1 per 10 s (channel cap 20/min) · Hall 1 per 2 s · whisper 1 per 2 s · ≤ 600 per day |
+| Rates (T2+) | Market Cross 1 per 10 s (channel cap 20/min) · Fireside 1 per 2 s · whisper 1 per 2 s · ≤ 600 per day |
 | Trust ladder | T0 < 48 h or spine tier < 2 · T1 · T2 ≥ 7 d clean · T3 ≥ 30 d clean |
 | Ticker / panel | strip 84 px, hit area 120 px · half sheet 960 px · full 1690 px · targets ≥ 120 px (48 dp) · body text 36 px |
 | Latency | send → other client p95 ≤ 1 s; optimistic own row ≤ 1 frame |
@@ -105,7 +105,7 @@ changes as "PROPOSAL (verify against <file>)".
 
 | File | Holds |
 |---|---|
-| [references/channels.md](references/channels.md) | channel catalogue, message types, history rules, mentions, Herald, whispers and Circles, quick calls, push policy |
+| [references/channels.md](references/channels.md) | channel catalogue, message types, history rules, mentions, Tidings, whispers and Circles, quick calls, push policy |
 | [references/ui.md](references/ui.md) | ticker, panel, row anatomy, contrast table, unread, translation UX, stickers, states, motion, Godot 4 patterns, budgets |
 | [references/safety.md](references/safety.md) | filter pipeline, hygiene, normalization, rate limits, trust ladder, wordlists, sellers, player tools, moderation, minors, GDPR, DSA |
 | [references/backend-cost.md](references/backend-cost.md) | isolation, shape, transport, wire protocol, schema, catch-up, push, the full cost model for 50,000 players, price verify list, levers |
@@ -128,7 +128,7 @@ separately.
 3. **Who moderates**: 6–68 minutes per day at base, S3 cases reviewed ≤ 24 h — the owner, volunteers or a paid service (outside the server budget).
 4. **Push**: may a player's "every whisper" setting exceed the A8 budget of 4 per day?
 5. **Audience and rating**: target age, Families-policy scope, and whether a parental-consent path for free text is ever built.
-6. **Plain URL text** for T3 adults in Hall and Council (never clickable): allow or not.
+6. **Plain URL text** for T3 adults in Fireside and Council (never clickable): allow or not.
 7. **Sticker packs**: always free, or sold as stat-free cosmetics under the money-law.
-8. **Names**: Market Cross, Hall, War Council, Whisper, Circle, Herald, horn calls (story-forge canon).
+8. **Names**: Market Cross, Fireside, War Council, Whisper, Circle, Tidings, horn calls (story-forge canon).
 9. **Cloud translation fallback**: ship it at all (needs a DPA) and keep the €10 monthly breaker.
