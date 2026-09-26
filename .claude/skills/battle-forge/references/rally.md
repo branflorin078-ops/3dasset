@@ -149,7 +149,7 @@ The genre's tutorial never teaches rallies; core-loop §10 places a guided first
 rotating daily order in week 1 (onboarding-forge owns the sequence). battle-forge supplies three
 one-line highlights, each dismissed on tap, each ≤ 40 characters in English:
 1. on Join — "Your troops march to <leader>'s castle";
-2. on the arrival line — "Green tick: you will make it in time" (the tick is a shape icon, not colour only);
+2. on the arrival line — "The tick means you will make it in time" (a shape icon, never colour alone);
 3. on the battle view — "The gold corner marks your troops".
 
 ## 11. Checklist — any rally change

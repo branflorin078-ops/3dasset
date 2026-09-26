@@ -18,8 +18,7 @@ published gem rate, MON-001 (free-viable gem map), MON-002 (billing blocked), FE
 - **Wait**: a purchase is instant; the allowance resets Monday 00:00 UTC (core-loop's reset clock).
 - **Witness**: cosmetics on the keep and on the realm map — never a price, a spend total or a spend rank.
 
-The promise, printed in the shop header (story-forge words it):
-**"Coin can hire one extra shift. In a war season, a quarter shift. Everything else is earned."**
+Shop-header promise (story-forge words it): **"Coin can hire one extra shift. In a war season, a quarter shift. Everything else is earned."**
 
 ## 1. The laws this file rests on
 
@@ -52,11 +51,10 @@ a realm's PvP season ([liveops.md](liveops.md)); **war window** — core-loop §
 | Production boosts | +50% mill output for 24 h | yes, at expected yield (= 12 h of that resource) | as goods | research, events |
 | Works | hourglasses 1 m–24 h; gem finish | yes, when USED | cap × 0.25; muster + infirmary ≤ 480 min per window (core-loop §5 rule 6) | daily orders, writ, alliance shop |
 | Journeys | caravan haul; moving the seat | haul as goods; move: no | move not sold | writ, events |
-| Peace ward | 8 h, 24 h | no | not sold | writ, events, newcomer ward ([onboarding.md](onboarding.md)) |
 | Cosmetics | dressings, banners, pennants, frames | no | sold | plain versions on the chronicle free track |
 | Illuminated chronicle | §7 | its goods and works: yes | sold | the free track |
 | Month's purse | gems each day for 30 days | when converted | sold | gems are also earned (MON-001) |
-| Gems | 6 packs at the published rate | when converted | sold | map gem veins, chests ([economy.md](economy.md)) |
+| Gems | 6 packs at the published rate | when converted | sold | map gem veins, chests ([economy.md](economy.md)); the alliance join purse ([onboarding.md](onboarding.md)): gems worth 1 h Universal |
 
 Every SKU lists exact contents and quantities (no mystery, no random). Bought goods land in storage,
 never as openable items, with no extra raid protection (economy.md owns protection). Goods sized in
@@ -64,7 +62,7 @@ own-output hours scale with the city, so no offer inflates out of relevance or o
 
 | Fails when | Caught by |
 |---|---|
-| A SKU grants a type outside {resource, rp, boost_production, hourglass, gems, cosmetic, caravan, seat_move, ward} | [ ] offers_test grant whitelist |
+| A SKU grants a type outside {resource, rp, boost_production, hourglass, gems, cosmetic, caravan, seat_move} | [ ] offers_test grant whitelist |
 | A SKU has no free-route line, or a line naming a source that does not exist | [ ] offers_test: every route maps to a live source id |
 | Goods are sized in fixed amounts, not own-output hours | [ ] data check: goods fields are `hours_own_output` |
 
@@ -73,12 +71,12 @@ own-output hours scale with the city, so no offer inflates out of relevance or o
 | # | Never on a paid surface | Why | Caught by |
 |---|---|---|---|
 | 1 | Plate count, permanent or rented | the genre's most resented sale: a core queue behind a status rung | grant whitelist |
-| 2 | Lords and lord advancement: shards, skill marks, talent points, respecs; a lord first seen on a paid surface | exclusive leaders make a sunk-cost ladder | whitelist; [lords.md](lords.md) acquisition table has 0 paid rows |
+| 2 | A lord; a lord first seen or exclusive on a paid surface; talent points, respecs, random draws. Seals and lord XP: recommended never — if the owner accepts [lords.md](lords.md) §17 #2, only named Seals and XP, deterministic, ≤ 35 Seals + 5,040 XP per week | lord power is power (L2); exclusives make a sunk-cost ladder | whitelist; lords.md acquisition table: 0 paid-only rows |
 | 3 | Equipment, sets and their crafting materials | structurally unsellable (L2) | whitelist |
 | 4 | Troops, troop tiers, combat stats, combat boosts (attack, defence, health, march size) | power | whitelist |
 | 5 | Stats on cosmetics, including "set bonuses" on looks | blurs look and power | `skin_contract_test`; cosmetic `stats == {}` |
 | 6 | War imagery on a buy screen; a buy button on a war screen | money-law (L1) | art tags; ux_flow_probe (§10) |
-| 7 | A ward while a hostile march is inbound (launch → 30 min after the last hostile arrival); any ward or seat move in a war season; a seat move away from an inbound march | buying out of an attack | cloud-forge rule test |
+| 7 | Wards of any kind ("a ward on sale is a shield on sale", onboarding.md §4; owner #5); a seat move in a war season, or while a hostile march is inbound (launch → 30 min after the last arrival) | buying out of an attack | cloud-forge rule test |
 | 8 | Random items for money or gems: chests, keys, wheels, card flips | gambling law and PEGI-7 (§9) | no `random` grant on any paid SKU |
 | 9 | Earned honours: titles, landmark crests, season-victory banners, war honours, alliance rank — and their reserved laurel-and-seal motif | status must mean deeds | art register: motif only on earned (EVR/RNK) rows |
 | 10 | Activity points, chronicle levels, level skips, point boosters; favour past the weekly cap (§6) | ONE activity counter (core-loop §7) | whitelist |
@@ -156,9 +154,9 @@ peace-week stockpiles would decide the war (hence the hold cap).
 | 6 | Gem packs | always | €0.99 / 4.99 / 9.99 / 19.99 / 29.99 / 49.99 | published rate | — | — |
 | 7 | Cosmetic shelf | always; 6–8 items rotate | gems or money | stat-free looks | — | each item states its return (≤ 180 d) |
 
-1. **Pop-ups**: ≤ 1 per day, ≤ 3 per week; none in an account's first 72 h; none in the first
-   60 s of a session (the glance, core-loop §8.1); none within 30 min after a lost battle, a raid
-   on the player or a wall at zero; none on a war screen; never a push notification (core-loop A8).
+1. **Pop-ups**: ≤ 1 per day, ≤ 3 per week; none in an account's first 72 h or inside a guided
+   step (onboarding.md); none in a session's first 60 s (core-loop §8.1); none within 30 min after a
+   lost battle, a raid or a wall at zero; none on a war screen; never a push (core-loop A8).
 2. **Personalised by progress only** (spine tier, lines trained, milestone reached) — never by
    spend history, predicted spend, days since the last purchase or a recent loss. Same goods, same
    price for every player at the same progress.
@@ -229,6 +227,7 @@ S 28 / 42 / 56 d  →  L 20 / 30 / 40,  overflow 4 / 6 / 8
 |---|---|---|
 | Each level | 1 h own output or 1 h Universal, alternating (20 h + 20 h) | the same again (20 h + 20 h) |
 | Cosmetics | plain pennant, banner, frame, keep dressing at 10 / 20 / 30 / 40 | 8 illuminated pieces at every 5th level; the illuminated keep dressing at 40 |
+| Lords | 60 Plain Seals per 8 weeks and Fable's free step ([lords.md](lords.md) §11) | Seals only if paid Seals are accepted (§3 #2) |
 | Overflow page | 1 h own output | + an illuminated marginal flourish |
 
 1. Points are activity points: never sold, never boosted (no "+50% points"), no level skips.
@@ -257,20 +256,20 @@ S 28 / 42 / 56 d  →  L 20 / 30 / 40,  overflow 4 / 6 / 8
 |---|---|---|---|---|---|
 | Spine | top keep tier | 120 d | ≥ free ÷ 1.78 | 2.0 | progression.md |
 | Troops | t10 in one line (cavalry t11) | 150 d | ≥ free ÷ 1.78 | 2.0 | progression.md, combat.md |
-| A lord | top rarity, max level | 120 d | = free | 1.0 | lords.md |
+| A lord | first lord complete, L50 | 60 d (lords.md: 32 d, 57 d) | = free; paid Seals: ≥ free ÷ 1.5 | 1.0 (1.5) | lords.md |
 | A lord's four-piece set | complete | 90 d | = free | 1.0 | lords.md |
 | Guild patronage | rank X | 300 d | 105 d | 2.0 | §6 |
 | Chronicle | free top | 70% of season days | = free | 1.0 | §7 |
 | War-season score | season median | — | ≤ free × 1.25 | 1.25 | liveops.md |
 | Earned honours | any | earnable | cannot be bought | — | §3 #9 |
 
-Ratio 1.0 holds only while lords.md keeps lord advancement on earned-only currencies; a lord step
-that costs a sellable resource counts under the allowance and its ratio is reported.
+Lord ratio 1.0 holds while Seals and lord XP stay unsold and no lord step costs a sellable resource;
+with paid Seals, lords.md's cap applies (heavy ≈ 1.5×; its rule ≤ 2× on every lord path).
 
 **8.2 Earned share and the top 100.** Every grant and every plate-hour carries a source tag
 (`play` | `bought`), in one unit, **work-hours**: plate hours elapsed, hourglass minutes ÷ 60,
 goods in own-output hours at grant time. Earned share `E = play ÷ all`, lifetime per account.
-At the cap `E_min` = 0.56 (peace), 0.84 (war) — §4.
+At the cap `E_min` = 0.56 (peace), 0.84 (war) — §4. A realm under 5,000 players uses its top 2%.
 
 | Metric (per realm, weekly) | Target | Alarm (2 weeks running) | Action |
 |---|---|---|---|
@@ -279,12 +278,9 @@ At the cap `E_min` = 0.56 (peace), 0.84 (war) — §4.
 | Max-allowance ÷ engaged-free median power, day 90 | ≤ 1.8× | > 2.0× | allowance bug hunt (cloud-forge) |
 | Max-allowance ÷ engaged-free season score | ≤ 1.2× | > 1.25× | review R war |
 
-A realm under 5,000 players uses its top 2% instead of the top 100.
-
-**8.3 Watch, never target**: payer share of monthly actives; illuminated-chronicle attach rate
-among D30 actives; median day of first purchase; refund rate per SKU (> 5% → the SKU is pulled
-for review); "pay to win" support tickets per 1,000 DAU; revenue share of the top 1% of payers
-(> 50% = whale dependence, flagged to the owner).
+**8.3 Watch, never target**: payer share of monthly actives; chronicle attach rate among D30
+actives; median day of first purchase; refund rate per SKU (> 5% → SKU pulled for review); "pay to
+win" tickets per 1,000 DAU; top-1% payers' revenue share (> 50% = whale dependence, owner flag).
 
 ## 9. Store compliance and age rating
 
@@ -310,26 +306,23 @@ counsel before launch (owner item — game-director rule 6).
 
 ## 10. Money-law screens and art
 
-- **War screens** — no buy button, no gem button, no offer: battle presentation and replays,
-  reports, march and rally dispatch, scout reports, the war-window tally, the realm map while a
-  hostile march targets the player. A report links to the infirmary; the gem finish lives only
-  there, with hourglass art (core-loop §5 rule 5).
-- **Buy screens** — no war imagery anywhere, backgrounds, head-pieces and offer icons included:
-  the shop, offer cards and pop-ups, the chronicle sheet, gem-finish confirms, the purse.
-- **Allowed subjects**: goods as things (SHP-*), works (masons on scaffolds, a turning hourglass,
-  scribes at desks), journeys (JRN-*: a laden caravan on a road, a barge at a quay), the cosmetic on
-  the player's own keep. Light: working noon or campaign dawn (environments.md); never siege dusk.
+- **War screens** (no buy button, gem button or offer): battle presentation and replays, reports,
+  march and rally dispatch, scout reports, the war-window tally, the realm map while a hostile march
+  targets the player. A report links to the infirmary, where the gem finish shows hourglass art only.
+- **Buy screens** (no war imagery anywhere — backgrounds, head-pieces, offer icons): the shop, offer
+  cards and pop-ups, the chronicle sheet, gem-finish confirms, the purse.
+- **Allowed**: goods as things (SHP-*); works (masons on scaffolds, a turning hourglass, scribes);
+  journeys (JRN-*: a laden caravan, a barge at a quay); the cosmetic on the player's own keep; frame
+  previews on an empty ground or a court portrait. Light: working noon or campaign dawn; never siege dusk.
 - **Forbidden**: drawn or raised weapons, troops in formation, siege engines, fire or smoke over
-  buildings, the wounded or dead, blood, enemy banners, march lines, a lord in armour. BND-siege
-  and BND-warlord were refused for exactly this (owner ledger).
-- **Card layout**: the goods render fills ≥ 50% of the card (ART SHOWN BIG); the price never
-  overlaps the focal band; Close is visible from the first frame, ≥ 48 dp, the same height as Buy,
-  labelled "Close" — no shaming copy; no red dots on offers (core-loop A7); offer icons are
-  Blender-made art, never glyphs; at most 1 offer icon on the HUD ([ux.md](ux.md) owns the rail).
-- **Cosmetics** are built through blender-forge; they leave the ownership tint-mask areas
-  untouched (banners, pennons, roof-trim band — blender-forge architecture.md §7), never use the
-  relationship colours decoratively, keep KEEP_ASPECT 1.50 and the keep's tier silhouette readable
-  at region zoom, and carry `stats == {}`.
+  buildings, the wounded or dead, blood, enemy banners, march lines, an armed lord. BND-siege and
+  BND-warlord were refused for exactly this (owner ledger).
+- **Card**: the goods render fills ≥ 50% of the card (ART SHOWN BIG), price clear of the focal band;
+  Close visible from the first frame, ≥ 48 dp, as tall as Buy, labelled "Close" (no shaming copy); no
+  red dots on offers; offer icons are Blender-made art; ≤ 1 offer icon on the HUD ([ux.md](ux.md)).
+- **Cosmetics** (built through blender-forge) leave the ownership tint-mask areas untouched
+  (blender-forge architecture.md §7), never use relationship colours decoratively, keep KEEP_ASPECT
+  1.50 and the tier silhouette readable at region zoom, and carry `stats == {}`.
 
 | Fails when | Caught by |
 |---|---|
@@ -348,7 +341,7 @@ counsel before launch (owner item — game-director rule 6).
 | No spending ceiling; top ranking an open spending contest (top-server spenders "$10–20k+", reviews) | free players leave the top | the allowance | ≤ 1.78× peace, ≤ 1.20× war |
 | Pass sells extra levels and +50% progress points | paid ranks on a shared track | points never sold; paid track ≤ free track | 1.0× on points |
 | Random paid key chests (≈ 3% top-leader drop, one guide) | gambling risk, rating risk | no paid random items | 0 |
-| Paid relocation and shields during war | buying out of attacks | none in war seasons; never with an inbound march | 30 min after the last arrival |
+| Paid relocation and shields during war | buying out of attacks | wards never sold; no seat move in war seasons or with an inbound march | 0 wards sold |
 | Offers crowding navigation, red-dot fatigue | offer blindness, resentment | pop-up and icon budget; no dots on offers | ≤ 1 per day, ≤ 3 per week |
 | Purchases gifting the alliance | spending normalised socially | [alliance.md](alliance.md) caps them; never names a price | — |
 | Paid shortcuts decide persistent war | strategy erased | war-season R and war-window cap | 1.25; ≤ 480 min |
@@ -359,21 +352,19 @@ counsel before launch (owner item — game-director rule 6).
 |---|---|---|
 | `core/offers_test.gd` + shop police (shop-forge; extend) | grant whitelist, `free_route`, `return_at`, value claims, `money_ok` art tags, progress-only eligibility, no currency literals | `OFFERS OK - 0 forbidden grants, 0 missing free routes, 0 untagged art` |
 | `fair_money_probe` (new; qa-forge; path to confirm) | §4 ratios, `E_min`, patronage and chronicle paths; 90 days × free / light / max | `FAIR MONEY OK - peace 1.78x <= 2.00, war 1.20x <= 1.25, E_min 0.56, patronage X 300d/105d` |
-| allowance server test (cloud-forge) | hold, use, war-window and favour caps; ward and seat-move blocks | `ALLOWANCE OK - 0 over-cap grants in 10000 fuzzed purchases` |
+| allowance server test (cloud-forge) | hold, use, war-window and favour caps; seat-move blocks; 0 ward SKUs | `ALLOWANCE OK - 0 over-cap grants in 10000 fuzzed purchases` |
 | `ux_flow_probe`, `ux_touch_probe`, `menu_test`, `a11y_audit` | pop-up timing, Close/Buy parity, war-screen scan | existing lines |
 | `tools/econ_sim.py` | bought goods as `pack_mult` sources for the light and heavy profiles | day-30 band, [numbers.md](numbers.md) §6 |
 | weekly telemetry job (cloud-forge) | §8.2 table per realm | dashboard row per realm |
 
-**Save migration** (gameplay-forge, shop-forge): every held item loads as `play` origin (billing
-is blocked, MON-002 — confirm no real purchase exists; if one does, tag its grants `bought`);
-Favour is seeded from stored daily points, else 0; allowance counters start at 0 on the first
-Monday after load.
+**Save migration**: held items load as `play` origin (billing is blocked, MON-002 — if any real
+purchase exists, tag its grants `bought`); Favour seeds from stored daily points, else 0; allowance
+counters start at 0 on the first Monday after load.
 
-**Server cost** (estimate; measure with `core/sd_cost_probe.gd`): the source tag is 1 byte on
-grants already written (0 new writes); the two allowance counters ride on the plate-start write;
-a purchase = 1 token validation + 2 writes. Assuming 5% payers × 0.3 purchases per day at 50,000
-players ≈ 750 purchases ≈ 1,500 writes per day — under 0.1% of the loop's 2.9 M (core-loop §11).
-Plus one top-100 query per realm per day and one voided-purchases poll per day.
+**Server cost** (estimate; measure with `core/sd_cost_probe.gd`): the source tag is 1 byte on grants
+already written; the two allowance counters ride on the plate-start write; a purchase = 1 token
+validation + 2 writes. At 5% payers × 0.3 purchases per day (assumed) × 50,000 players ≈ 1,500
+writes per day, < 0.1% of the loop's 2.9 M (core-loop §11), plus 1 top-100 query per realm per day.
 
 ## 13. Owner decisions required
 
@@ -381,8 +372,8 @@ Plus one top-100 query per realm per day and one voided-purchases poll per day.
 2. Guild Patronage: the name; coin favour yes or no; `f_e` (favour per €).
 3. Illuminated chronicle price (€4.99 proposed); payable with gems (recommended yes).
 4. Largest SKU €49.99; the personal budget tool; the under-18 default limit (€50) and the age screen, with counsel.
-5. Wards and seat moves: sold in peace weeks only (recommended) or never.
+5. Wards never sold (recommended, matches onboarding.md §4); seat moves sold in peace weeks only, or never.
 6. Resolve never sold; ≤ 480 min war-window gem finish — the same decisions as core-loop §12.
-7. Paid random items: never (recommended) — confirm as a standing ruling.
+7. Paid random items: never (recommended). Paid Seals (lords.md §17 #2): recommended no; if yes, as §3 #2.
 8. Play Console target-audience declaration (Families policy applies if under-13 is included).
 9. Names (story-forge): Guild Patronage / Favour, the illuminated chronicle, First purse, Month's purse, the shop-header promise.

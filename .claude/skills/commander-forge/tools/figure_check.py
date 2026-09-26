@@ -3,7 +3,7 @@ quality bar (references/qa.md). Plain Python + Pillow + numpy; no Blender.
 
     py tools/figure_check.py <image.png> [--mask m.png] [--face x0,y0,x1,y1]
                              [--kind bust|figure|token] [--rim right|left|none]
-                             [--sheet out.png] [--json out.json]
+                             [--pair unsworn.png] [--sheet out.png] [--json out.json]
 
 - Mask: --mask, else <stem>_mask.png (figure_kit.render_with_mask), else the
   image's own alpha, else a border key (approximate - printed as such).
@@ -11,6 +11,8 @@ quality bar (references/qa.md). Plain Python + Pillow + numpy; no Blender.
   (figure_kit.write_meta). Paintings: pass --face by hand.
 - Prints one line per check:  CHECK <name> <value> <op> <target> PASS|FAIL|INFO
   then:                        FIGURE_CHECK <file> kind=<k> pass=<n> fail=<m>
+- --pair: the same shot with the lord UNSWORN; checks that the sworn gilt rim
+  reads (edge band on the rim side: L* and yellowness b* both rise).
 - Exit code 1 when any check FAILS (so a chain stops on a red figure).
 Thresholds are PROPOSALS until calibrated on the first approved lord
 (qa.md section 6 records the calibrated values).
@@ -42,6 +44,7 @@ TARGETS = {
         "face_minus_body_L": (">=", 3.0), "face_clip": ("<=", 0.02),
         "face_chroma": ("range", (10.0, 40.0)), "face_px_256": (">=", 24.0),
     },
+    "pair": {"sworn_dL": (">=", 4.0), "sworn_db": (">=", 5.0)},
     "token": {
         "sep_dL_128": (">=", 18.0), "solidity_128": ("range", (0.40, 0.85)),
     },
@@ -232,9 +235,28 @@ def measure(path, mask_path=None, face=None, kind="bust", rim="right"):
     return r, kind
 
 
+def sworn_delta(sworn_path, unsworn_path, mask_path=None, rim="right"):
+    """Rim-side edge band of the SWORN render minus the UNSWORN one (same shot)."""
+    ia = Image.open(sworn_path).convert("RGBA")
+    ib = Image.open(unsworn_path).convert("RGBA").resize(ia.size, Image.BILINEAR)
+    m, _ = load_mask(sworn_path, ia, mask_path)
+    La, _, Ba = srgb_to_lab(np.asarray(ia.convert("RGB"), np.float32) / 255.0)
+    Lb, _, Bb = srgb_to_lab(np.asarray(ib.convert("RGB"), np.float32) / 255.0)
+    H, W = m.shape
+    k = max(2, round(0.006 * max(H, W)))
+    xs = np.nonzero(m)[1]
+    cx = (xs.min() + xs.max()) / 2
+    side = (np.arange(W)[None, :] >= cx) if rim != "left" else (np.arange(W)[None, :] < cx)
+    e = m & ~shrink(m, k) & side
+    return {"sworn_dL": float(La[e].mean() - Lb[e].mean()), "sworn_db": float(Ba[e].mean() - Bb[e].mean())}
+
+
 def judge(r, kind):
     rows, fails = [], 0
-    for name, (op, tgt) in TARGETS.get(kind, {}).items():
+    targets = dict(TARGETS.get(kind, {}))
+    if "sworn_dL" in r:
+        targets.update(TARGETS["pair"])
+    for name, (op, tgt) in targets.items():
         if name not in r:
             continue
         v = r[name]
@@ -247,7 +269,7 @@ def judge(r, kind):
         fails += 0 if ok else 1
         rows.append((name, v, op, tgt, "PASS" if ok else "FAIL"))
     for name in sorted(r):
-        if name not in TARGETS.get(kind, {}) and name != "mask_source":
+        if name not in targets and name != "mask_source":
             rows.append((name, r[name], "", "", "INFO"))
     return rows, fails
 
@@ -284,11 +306,14 @@ def main():
     ap.add_argument("--face", help="x0,y0,x1,y1 image fractions, y down")
     ap.add_argument("--kind", choices=sorted(TARGETS))
     ap.add_argument("--rim", default="right", choices=("right", "left", "none"))
+    ap.add_argument("--pair", help="the same shot rendered UNSWORN")
     ap.add_argument("--sheet")
     ap.add_argument("--json")
     a = ap.parse_args()
     face = [float(v) for v in a.face.split(",")] if a.face else None
     r, kind = measure(a.image, a.mask, face, a.kind, a.rim)
+    if a.pair:
+        r.update(sworn_delta(a.image, a.pair, a.mask, a.rim))
     rows, fails = judge(r, kind)
     print("MASK", r["mask_source"])
     for name, v, op, tgt, verdict in rows:

@@ -60,6 +60,7 @@ PRICES = {
     "vps_overage_per_tb": [1.0, 1.2],
     "volume_per_gb": [0.04, 0.12],    # block storage per GB-month
     "object_per_gb": [0.005, 0.025],  # backup object storage per GB-month
+    "object_min_fee": [0, 5],         # some object stores bill a monthly minimum instead
     "hyper_vm_small": [15, 35],       # 2 vCPU / 4 GB on a hyperscaler, per box
     "hyper_vm_large": [30, 70],       # 4 vCPU / 8 GB on a hyperscaler, per box
     "hyper_egress_per_gb": [0.05, 0.11],
@@ -155,7 +156,8 @@ def costs(c, t, p):
     """Monthly EUR (low, high) per architecture."""
     out = {}
     storage = mul(p["volume_per_gb"], t["storage_gb"])
-    backups = mul(p["object_per_gb"], t["backup_gb"])
+    per_gb = mul(p["object_per_gb"], t["backup_gb"])
+    backups = [max(per_gb[0], p["object_min_fee"][0]), max(per_gb[1], p["object_min_fee"][1])]
     mt = p["translation_fallback_cap"]
     large = t["peak_deliv_s"] >= c["peak_box_threshold"]
     box = p["vps_large"] if large else p["vps_small"]
@@ -197,7 +199,7 @@ def polling(c, s, t, p):
         rows["poll every %ds" % n] = (req_day, req_day * c["poll_bytes"] / 1e9,
                                       mul(p["serverless_per_million_req"], req_day * DAYS / 1e6))
     hb = t["opm"] * c["heartbeat_per_min"]
-    rows["websocket (connects + pings)"] = (t["dau"] * s["sessions"] + hb, t["egress_hb_gb"], [0.0, 0.0])
+    rows["websocket (connects + ping frames)"] = (t["dau"] * s["sessions"] + hb, t["egress_hb_gb"], [0.0, 0.0])
     return rows
 
 
@@ -241,7 +243,7 @@ def show(name, c, s, p, detail):
             print("    %-52s %9s chars  %s" % (k, big(chars), eur(r)))
         print("  polling vs websocket (per day; serverless request price per month):")
         for k, (req, gb, r) in polling(c, s, t, p).items():
-            print("    %-30s %9s req  %6.2f GB/day  %s" % (k, big(req), gb, eur(r)))
+            print("    %-34s %9s req  %6.2f GB/day  %s" % (k, big(req), gb, eur(r)))
     return t
 
 

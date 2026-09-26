@@ -72,6 +72,13 @@ atlas.filepath_raw = os.path.join(OUT, "strand_atlas.png")
 atlas.file_format = 'PNG'
 atlas.save()
 cards = FK.mat_hair_cards("HairCards", atlas.filepath_raw)
+flat_n = bpy.data.images.new("flat_normal", 8, 8)                            # textured-skin branch
+flat_n.pixels.foreach_set(np.tile(np.array([0.5, 0.5, 1.0, 1.0], np.float32), 64))
+flat_n.filepath_raw = os.path.join(OUT, "flat_normal.png")
+flat_n.file_format = 'PNG'
+flat_n.save()
+skin_tx = FK.mat_skin("SkinTextured", albedo=atlas.filepath_raw, rough_map=atlas.filepath_raw,
+                      normal_map=flat_n.filepath_raw)
 strands = FK.mat_hair_strands("HairStrands", melanin=0.8)
 cornea = FK.mat_cornea("Cornea")
 obj_path = os.path.join(OUT, "head_proxy.obj")
@@ -82,7 +89,8 @@ if hasattr(bpy.ops.wm, 'obj_export'):
     bpy.ops.wm.obj_export(filepath=obj_path, export_selected_objects=True)
     for o in FK.import_base(obj_path):
         bpy.data.objects.remove(o, do_unlink=True)
-print("QA_MATS", dict(cards=cards.mat.name, strands=strands.name, cornea=cornea.mat.name))
+print("QA_MATS", dict(cards=cards.mat.name, strands=strands.name, cornea=cornea.mat.name,
+                     skin_textured=skin_tx.mat.name))
 
 # -- read back what the skin actually carries -------------------------------------
 p = skin.p

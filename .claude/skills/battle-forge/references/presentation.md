@@ -98,7 +98,7 @@ Numbers are losses in troops ("−1,240"), never "damage points" the player cann
 
 ## 4. Readable counters — the main genre fix
 
-The genre's counter bonus of about 5% ([benchmark.md in design-forge]) is buried under stat
+The genre's counter bonus of about 5% (design-forge `benchmark.md`) is buried under stat
 stacks; players conclude that only raw power matters. Our counters are bigger (combat.md
 proposes +20–50%) and they are **shown every time they land**.
 

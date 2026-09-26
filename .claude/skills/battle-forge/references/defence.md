@@ -16,7 +16,7 @@ are shown and operated. Every number is a **PROPOSAL**. Taps as in [flows.md](fl
 | Defence tools | stocked tools (DEF-* art prefix exists; siege-forge's defensive tools: drop-stones, murder holes, hoardings) | `trap` | siege-forge |
 | Stationed allies | reinforcements (§5) | `reinforce` with the allies' pennons | — |
 | Infirmary beds | the hospital archetype | outcome card numbers | — |
-| Ward | earned or held item | blue-free pale-gold dome on the map, no battle | effects.md shield/ward language |
+| Ward | earned or held item | no battle: a pale-gold dome over the castle on the map | game-art-director effects.md shield/ward language |
 
 ## 2. Warnings — ETA bands and information tiers
 
