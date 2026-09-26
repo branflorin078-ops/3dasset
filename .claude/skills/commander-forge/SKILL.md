@@ -5,9 +5,9 @@ description: Lords (commanders) of Castle Conquest end to end, never empty figur
 
 # commander-forge — a lord is a person, a kit and a promise
 
-The owner's standard for lords, in his words: **"not empty figurines — high
-quality details and contrast"**, done "like a senior 3D designer with 40 years
-of experience". A lord appears in seven places: the hall stage, the lord
+The owner's standard for lords (paraphrased from the owner): **not empty
+figurines — high quality details and contrast**, done like a senior 3D
+designer with 40 years of experience. A lord appears in seven places: the hall stage, the lord
 screens, cards and lists (portraits), the realm map (token), battle (skill
 moments), reports and chat (portrait chips). This skill owns how every one of
 them looks and reads, and applies the design numbers that
@@ -36,8 +36,9 @@ a lord will get, and what tier that means, before any work starts.
    with its licence, URL and check date before it enters a build.
 2. **Design numbers come from design-forge `lords.md`.** This skill applies
    them (states, screens, visuals) and never invents stats, costs or drop
-   rates. Sacred balance constants (`CMD_FX_CAP`, the clamp ledger in
-   `data/commanders.gd` — path to confirm) are never touched.
+   rates. Lord balance values in `data/commanders.gd` (`CMD_FX_CAP`, the
+   clamp ledger — path to confirm) belong to gameplay-forge; sacred balance
+   constants are never changed (proposals to the owner only).
 3. **One channel, one meaning** ([design.md](references/design.md) §4): the
    rim light on a lord = SWORN only (gilt `#E0BC6A`); kit emission = that
    piece's tier; card frame = lord rarity; house colour = identity; line
@@ -148,9 +149,9 @@ screens are specified for ui-forge ([screens.md](references/screens.md)).
 | Tool | Runs in | Does |
 |---|---|---|
 | `tools/figure_kit.py` | Blender (via forge_run) | `import_base`, `vgroup_points`, `mat_skin`, `mat_cornea`, `mat_hair_strands`, `mat_hair_cards`, `body_section`, `body_profile`, `plate_on_body`, `clearance`, `hero_rig`, `set_sworn`, `bust_camera`, `render_with_mask`, `write_meta`, `box_corners` |
-| `tools/figure_check.py` | Python + Pillow + numpy | fill, silhouette solidity and windows at 128 px, value bands, edge separation, rim ratio, face L*/clip/chroma/detail, sworn pair delta; `--sheet` contact sheet; exit 1 on FAIL |
+| `tools/figure_check.py` | Python + Pillow + numpy | fill, silhouette solidity and windows at 128 px, value bands, edge separation, rim ratio, face L*/clip/chroma/detail, sworn pair delta (`--pair`), lineup overlap (`--lineup`), contact sheet (`--sheet`); exit 1 on FAIL |
 | `examples/figure_probe.py` | Blender (via forge_run) | smoke test of every figure_kit function on stand-in primitives (never an asset) |
-| `tests/test_figure_check.py` | Python | 5 synthetic-image tests → `PASS all 5 tests` |
+| `tests/test_figure_check.py` | Python | 6 synthetic-image tests → `PASS all 6 tests` |
 
 ```
 py <skills>/blender-forge/tools/forge_run.py run <skills>/commander-forge/examples/figure_probe.py preview <ABS outdir>
@@ -159,7 +160,7 @@ py <skills>/commander-forge/tests/test_figure_check.py
 ```
 Measured 2026-09-26 in the authoring sandbox (Blender 4.0.2, 4 CPU cores, no
 GPU): probe preview 32–59 s, `FIGURE_CHECK … pass=15 fail=0`, tests
-`PASS all 5 tests`. Not yet run on the owner's Blender 5.2.1 — run the probe
+`PASS all 6 tests`. Not yet run on the owner's Blender 5.2.1 — run the probe
 once there before the first real figure.
 
 ## Output contract

@@ -3,9 +3,11 @@
 The owner's standard: "no empty looks — high quality details and contrast, like a senior
 designer with 40 years of experience". This file turns that sentence into tests. Every 2D
 asset is judged at the size the player really sees, in the squint, and with numbers from
-§9. The 3D twin of these rules (render-side measurement, value plan before materials) is
-blender-forge [art-direction.md](../../blender-forge/references/art-direction.md); keep
-thresholds in step with it.
+§9. The 3D twin is blender-forge [art-direction.md](../../blender-forge/references/art-direction.md)
+and its `value_probe.py` (item cards on a backdrop: each value band ≥ 15% of the subject, focal
+≥ 1.20 × the rest's detail RMS). Its metrics are defined differently from §9's (whole paintings,
+8 × 8 cells), so the numbers are not interchangeable; the band edges (dark < 30, light ≥ 70 L*)
+are shared, and a change to one file's method is reported to the other's owner.
 
 **Calibration first (once, then on every new anchor).** Thresholds below are STARTING
 values. Run §9 on the three anchors — `commanders/edwin.png` (portrait proof standard),
@@ -298,7 +300,7 @@ def report(path, focal=None, icon=False):
     Ls = lab(fit(rgb, 64).filter(ImageFilter.GaussianBlur(1)))[..., 0]          # the squint
     p2, p98 = np.percentile(Ls, [2, 98])
     print(f"SQUINT   groups {value_groups(Ls)} | range {p98 - p2:.0f} L* | dark/mid/light % "
-          f"{(Ls < 35).mean()*100:.0f}/{((Ls >= 35) & (Ls <= 65)).mean()*100:.0f}/{(Ls > 65).mean()*100:.0f}")
+          f"{(Ls < 30).mean()*100:.0f}/{((Ls >= 30) & (Ls < 70)).mean()*100:.0f}/{(Ls >= 70).mean()*100:.0f}")
     L = lab(fit(rgb, 256))[..., 0]; rms = np.array([c.std() for c in cells(L, 8)])
     floor = np.median(rms) + 2.0; top = np.argsort(rms)[::-1][:6]
     print(f"FOCAL    top cell / (median+2) {rms.max()/floor:.2f} | top-6 cells (col,row) "

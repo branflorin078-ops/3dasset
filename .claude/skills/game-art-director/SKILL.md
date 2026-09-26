@@ -52,10 +52,12 @@ Two output forms:
 5. **Read at real size, value first — no empty looks** (owner: "no empty looks — high
    quality details and contrast"). Every asset is judged at its smallest display size
    (44 px icons, 128 px cards, 96 px lord chips — [readability.md](references/readability.md)
-   §1) and passes the read test: 3–5 value groups in the squint, one focal area with the
-   image's highest local contrast (≥ 2.0 × the median), the 60/30/10 detail budget, a contact
-   shadow, edge highlights on the lit side, one honest history mark. A result that fails is
-   not recorded as shipped; it gets a corrective DELTA.
+   §1) and passes the read test for its class (readability.md §9 gate table): paintings
+   show 3–5 value groups in the squint, one focal area with the image's highest local
+   contrast (≥ 2.0 × the median) and the 60/30/10 detail budget; icons and medallions show
+   3–4 groups, an INK outline on light grounds and a rim light on dark ones; every asset
+   has a contact shadow, edge highlights on the lit side and one honest history mark. A
+   result that fails is not recorded as shipped; it gets a corrective DELTA.
 6. **Colour channels never swap jobs.** Self / ally / enemy / neutral hues are RESERVED for
    relationship markers on the map and battle layers (readability.md §4) — never in painted
    decoration, chrome, rarity, sigils or alliance tinctures; relationship is always shown by

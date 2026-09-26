@@ -459,9 +459,9 @@ def cmd_all(a, out):
     if fails:
         out("COMBAT MODEL FAIL - " + "; ".join(fails))
         return 1
-    out("COMBAT MODEL OK - r %.2f, c %.1f%%, counter %d/%d at 1.00 TS, MI within %.0f%%, pools %.2f TS, "
+    out("COMBAT MODEL OK - r %.2f, c %.1f%%, counter %d/%d at 1.00 TS, MI within %.1f%%, pools %.2f TS, "
         "I1 %+.2f, lead %.2f <= %.2f, worst day %.2f <= beds %.2f" % (
-            a.r, 100 * ctr["c"], ok_pairs, len(ctr["pairs"]), math.ceil(100 * res["mix"]["worst_rel"]), st["total"],
+            a.r, 100 * ctr["c"], ok_pairs, len(ctr["pairs"]), 100 * res["mix"]["worst_rel"], st["total"],
             min(st["i1"]), st["lead"], LEAD_MAX, res["beds"]["worst"], a.beta))
     return 0
 
