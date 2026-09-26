@@ -39,6 +39,7 @@ END_NAMES = {0: "annihilated", 1: "routed", 2: "withdrew", 3: "wall held",
              4: "gate broken", 5: "recalled"}
 PLACE_CASTLE = 1
 BATTLE_KINDS = (1, 2, 3)
+HEAD_STATS = ("enemy_out", "taken", "home_wounded", "lost", "your_out", "lost_none", "plundered")
 LINE_MAX_TIER = (10, 10, 10, 10, 11)
 # PROPOSAL counter graph (design-forge combat.md decides): line -> the line that counters it
 COUNTERED_BY = {4: 1, 2: 4, 3: 4, 0: 2, 1: 0}
@@ -342,19 +343,25 @@ def headline(rep, v, outcome, band):
         place = STR["rpt.place.own"]
     key = "rpt.head.vs" if opp.get("tg") else "rpt.head.vs_notag"
     vs = s(key, name=name_of(rep, opp["id"]), tag=opp.get("tg", ""), place=place, x=rep["at"][0], y=rep["at"][1])
-    stats = []
+    codes = head_codes(rep, v, outcome)
+    stats = [s("rpt.head." + HEAD_STATS[c], n=num(n), res=STR[f"res.{r}"] if r is not None else "")
+             for c, n, r in codes]
+    return {"word": word, "margin": STR[f"rpt.margin.{outcome}.{band}"], "vs": vs, "stats": stats, "codes": codes}
+
+
+def head_codes(rep, v, outcome):
+    """The two headline numbers as [code, n, resource or None] (layouts.md section 1).
+    Loss: what comes back first, then what is gone (dead, else plunder, else "None lost")."""
+    o = 1 - v
+    S = rep["s"]
+    rs = rep.get("rs") or [0] * 5
+    top_res = max(range(5), key=lambda k: rs[k])
     if outcome == "loss":
-        stats = [s("rpt.head.home_wounded", n=num(light(S[v]) + hosp(S[v]))),
-                 s("rpt.head.lost", n=num(dead(S[v]))) if dead(S[v]) else STR["rpt.head.lost_none"]]
-    else:
-        stats.append(s("rpt.head.enemy_out", n=num(out(S[o]))))
-        rs = rep.get("rs")
-        if rs and v == 0 and any(rs):
-            i = max(range(5), key=lambda k: rs[k])
-            stats.append(s("rpt.head.taken", n=num(rs[i]), res=STR[f"res.{i}"]))
-        else:
-            stats.append(s("rpt.head.your_out", n=num(out(S[v]))))
-    return {"word": word, "margin": STR[f"rpt.margin.{outcome}.{band}"], "vs": vs, "stats": stats}
+        second = ([3, dead(S[v]), None] if dead(S[v]) else
+                  [6, rs[top_res], top_res] if v == 1 and any(rs) else [5, 0, None])
+        return [[2, light(S[v]) + hosp(S[v]), None], second]
+    second = [1, rs[top_res], top_res] if v == 0 and any(rs) else [4, out(S[v]), None]
+    return [[0, out(S[o]), None], second]
 
 
 # ---- ledger booking (explain.md section 2.1) -------------------------------------
@@ -593,10 +600,7 @@ def list_line(rep, pov):
     S = rep["s"]
     o = 1 - pov
     top = e["rows"][0] if e["rows"] else None
-    if e["outcome"] == "loss":
-        nums = [light(S[pov]) + hosp(S[pov]), dead(S[pov])]
-    else:
-        nums = [out(S[o]), max(rep.get("rs") or [0]) if pov == 0 else out(S[pov])]
+    nums = [[c, n] + ([r] if r is not None else []) for c, n, r in e["headline"]["codes"]]
     return {"r": rep["id"], "k": rep["k"], "ts": rep["ts"], "o": ("win", "loss", "draw").index(e["outcome"]),
             "m": e["margin"], "p": S[o]["u"][0]["id"], "tg": S[o]["u"][0].get("tg", ""), "pl": rep["pl"][0],
             "at": rep["at"], "n": nums, "c": [FACTORS.index(top["factor"]), 1 if top["n"] > 0 else 0] if top else []}

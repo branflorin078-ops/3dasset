@@ -93,8 +93,8 @@ defences credit; siege credit only with engines; moments in beat order, ≤ 8, b
 
 | Record | Minified JSON | gzip | Opponent's view gzip | Budget (gzip) |
 |---|---|---|---|---|
-| Field battle, 3 lines each, 2 lords each, 8 moments (`win_field.json`) | 834 | 428 | 426 | ≤ 600 |
-| Castle battle with engines and walls (`loss_castle.json`) | 869 | 453 | 424 | ≤ 600 |
+| Field battle, 3 lines each, 2 lords each, 8 moments (`win_field.json`) | 834 | 427 | 426 | ≤ 600 |
+| Castle battle with engines and walls (`loss_castle.json`) | 869 | 458 | 432 | ≤ 600 |
 | Draw, 1 line each (`even_draw.json`) | 522 | 290 | 290 | ≤ 600 |
 | Rally, 3 attackers (`rally_stronghold.json`) | 746 | 382 | 379 | ≤ 600 |
 | Rally, 12 attackers (synthetic, `size --rally 12`) | 1,306 | 549 | — | ≤ 1,200 |
@@ -102,7 +102,7 @@ defences credit; siege credit only with engines; moments in beat order, ≤ 8, b
 | Scout, tier 2 (`scout_t2.json`) | 287 | 200 | — | ≤ 300 |
 | Hunt of 5 camps (`hunt.json`) | 258 | 177 | — | ≤ 300 |
 | Gather trip (`gather.json`) | 142 | 129 | — | ≤ 200 |
-| Inbox list line per viewer (§6) | 118–130 | — | — | ≤ 160 minified |
+| Inbox list line per viewer (§6) | 129–139 | — | — | ≤ 160 minified |
 | Beat log (battle-forge's, opaque) | — | ~1,800 (estimate until measured on real logs) | — | ≤ 4,000 |
 
 Where the bytes go in the 834-byte field battle: sides 415 (50%: 6 troop rows × 26, 4 lord
@@ -119,7 +119,7 @@ The beat log is 3–4× the report. That is why it has its own, shorter retentio
 ([storage.md](storage.md) §1) and why nothing presentation-only is stored.
 
 A "summary form" (moments dropped, tiers collapsed per line) was measured and **rejected**:
-it saves only 12% of gzip bytes (428 → 373) and would cost one rewrite per record.
+it saves only 12% of gzip bytes (427 → 376) and would cost one rewrite per record.
 
 ## 5. Projections — what each viewer is sent
 
@@ -145,7 +145,7 @@ mail-forge stores one list line per viewer so the inbox and the report headline 
 **0 extra reads** ([layouts.md](layouts.md) §1, 0 ms headline):
 
 ```json
-{"r":"7f3c9a01d2e45b68","k":1,"ts":1790431500,"o":0,"m":62,"p":51208,"tg":"RVN","pl":4,"at":[412,388],"n":[2780,84000],"c":[0,1]}
+{"r":"7f3c9a01d2e45b68","k":1,"ts":1790431500,"o":0,"m":62,"p":51208,"tg":"RVN","pl":4,"at":[412,388],"n":[[0,2780],[1,84000,2]],"c":[0,1]}
 ```
 
 | Key | Meaning |
@@ -153,7 +153,7 @@ mail-forge stores one list line per viewer so the inbox and the report headline 
 | `r`, `k`, `ts` | report id, kind, time |
 | `o`, `m` | outcome for this viewer (0 win, 1 loss, 2 draw) and margin ‰ |
 | `p`, `tg`, `pl`, `at` | opponent id and tag, place type, tile |
-| `n` | the two headline numbers: win → enemy out of action, taken (largest resource) or own out; loss → wounded coming back, lost |
+| `n` | the two headline numbers as `[code, value, resource?]`; codes 0 enemy out of action, 1 taken, 2 wounded coming back, 3 lost, 4 your wounded, 5 none lost, 6 plundered (resource 0–4 = gold, food, wood, stone, iron). Win → [0, 1 or 4]; loss → [2, 3 else 6 else 5] |
 | `c` | top cause `[factor, 1 for / 0 against]` → the Why line key without opening the record |
 
 Priority, red dots, grouping, expiry and push are mail-forge's rules; report-forge only

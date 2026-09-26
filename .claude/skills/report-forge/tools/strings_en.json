@@ -21,6 +21,7 @@
   "rpt.head.home_wounded": "Wounded coming back {n}",
   "rpt.head.lost": "Lost {n}",
   "rpt.head.lost_none": "None lost",
+  "rpt.head.plundered": "Plundered {n} {res}",
   "rpt.head.your_out": "Your wounded {n}",
   "rpt.why.counter.for": "Your {a_line} countered their {d_line}.",
   "rpt.why.counter.against": "Their {a_line} countered your {d_line}.",

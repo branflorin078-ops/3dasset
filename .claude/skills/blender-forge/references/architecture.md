@@ -78,6 +78,45 @@ material, so identity never jumps.
 25%. Each neighbour pair must differ in silhouette at a glance. Use
 `tools/rarity_sheet.py` to tile the strip (it takes any labelled PNGs).
 
+### 4.1 Visual ages ride on unlock bands
+
+Genre pattern (design-forge `references/benchmark.md`, in our words): one
+spine building gates everything, and every 5–6 spine levels an "age" bundles
+a mechanical unlock with a visible change of the whole city; the models swap
+per age and the change is the player's graduation reward (age boundaries
+[unverified]). Our rules:
+
+1. **Six ages = the six visual tiers above.** Which keep levels form each
+   band and what each band opens belong to design-forge
+   (`design-forge/references/progression.md` §1 — PROPOSAL: keep levels 1–30
+   in six ages of five, `tier(ℓ) = ⌈ℓ/5⌉`; verify against `data/buildings.gd`).
+   This file owns what each age LOOKS like.
+2. **The look and the unlock land on the same level-up.** A silhouette step
+   with no unlock is noise; an unlock with no silhouette step is invisible.
+3. **The keep carries the age.** Each age adds one keep silhouette element
+   inside the `KEEP_ASPECT 1.50` frame (caps, hoardings, towers, banners —
+   never a taller or wider box), and the castle's own kit (walls, gate, ground
+   skirt) steps one material on the ladder above.
+4. **Levels between ages still show.** Levels 2–5 of a band each add one
+   outline-breaking prop from ONE shared kit — banner pole, pennon, weather
+   vane, chimney stack, hoist beam, crenel shields, awning, lantern bracket —
+   placed on empties `lvl_2` … `lvl_5` authored like the `fx_*` / `npc_*`
+   empties (§8) (progression.md's PROPOSAL; anchor names to confirm with
+   castle-forge). Each prop is ≥ 6% of the building's height (≥ 4–7 px at the
+   60–120 px overview) and breaks the OUTLINE at 25% — a prop inside the
+   silhouette does not count.
+5. **Measure the step.** From the alpha pass (art-direction.md §9.2) of two
+   neighbouring ages at 25%, the changed silhouette must be ≥ 10% of the union
+   (PROPOSAL — a pair of caps on a keep measures ~5–8%, a new storey ~15–20%):
+   ```python
+   from PIL import Image; import numpy as np
+   a, b = (np.asarray(Image.open(p).getchannel('A').reduce(4)) > 127 for p in (age_n_mask, age_n1_mask))
+   print("SILHOUETTE_DELTA %.1f%%" % (100 * (a ^ b).sum() / (a | b).sum()))
+   ```
+6. **Everything ages together.** Troop kit climbs the same material ladder
+   (t1 cloth → t10 plate; progression.md §6, battle-forge presentation §2),
+   so the city, its walls and its soldiers read as one age.
+
 ## 5. Construction logic (the owner's ruling, made geometric)
 
 "Real construction elements, never boxes with stripes":
@@ -138,6 +177,9 @@ roof trims, flag pennons, map city ring). Author it once:
   is 1. One mesh serves every player and alliance colour.
 - The owner palette must stay readable against the terrain and never collide
   with the rarity ladder colours (glow.md) or the unit line accents.
+- Which colour feeds the mask — relationship colour or alliance tincture — is
+  the realm rules' call (design-forge `references/world.md` §12,
+  game-art-director `references/readability.md`); the mesh never changes.
 - **States** are engine overlays on the same mesh: under construction
   (a reusable scaffold kit sized to the footprint: poles, ladders, a hoist),
   burning (particle emitters at authored empties named `fx_fire_*`), shielded
@@ -165,3 +207,67 @@ roof trims, flag pennons, map city ring). Author it once:
 7. `fx_*` / `npc_*` empties present and named.
 8. Triangles and texel density within the table in section 6.
 9. Sits in the ground (plinth sunk, skirt present), no floating.
+10. Age strip: each neighbouring pair's `SILHOUETTE_DELTA` ≥ 10% (§4.1), the
+    step on the level that opens the band; `lvl_2` … `lvl_5` empties present
+    and each prop breaks the outline at 25%.
+11. House family (§10): the job prop, footprint, anchors and tier logic equal
+    the default family's; the building is named at the overview in 1 s.
+12. Value gate on the city-close render with `--mask` (qa.md §2): `flat` and
+    `silhouette` gated, the rest reported as numbers.
+
+## 10. House families — many cultures from one kit
+
+Genre pattern (benchmark.md, in our words): each culture gets its own
+architecture, grouped in practice into a few regional families [unverified
+detail], and city skins layer on top — in the genre, skins carry stats. We
+take the family idea and refuse the stats.
+
+- **A family is a swap, not a rebuild**: a new trim-sheet atlas (2048²), a new
+  roof kit and ≤ 12 signature pieces on the SAME structural kit — the 1 m
+  grid, footprints, openings, `fx_*` / `npc_*` / `lvl_*` anchors and job props
+  (§3, §6). ≥ 75% of the ~40 kit pieces are shared; texel density is
+  identical (128–160 px/m) so families can stand side by side.
+- **Function and tier never change with the family**: same job prop at 1.3–1.6×,
+  same tier ladder logic (§4), same owner-colour mask (§7). A family changes
+  wall and roof language only.
+- **Where families appear** (PROPOSAL — the owner decides): AI lords' cities
+  and camp regions of the realm map first (variety without new archetypes);
+  later, cosmetic city styles sold WITHOUT stats (money-law; design-forge
+  `references/monetization.md`, shop-forge).
+
+Starting set (working names; story-forge names them; each rooted in a real
+regional building tradition, general historical knowledge):
+
+| Family | Real-world root | Walls | Roofs | Signature pieces (≤ 12) |
+|---|---|---|---|---|
+| Lowland (default) | English / Norman lowland | timber frame on rubble → ashlar | thatch → clay tile → slate, lead | jettied storey, close studding, carved barge-boards |
+| March (north border) | border tower houses | thick rubble, lime-washed, few small openings | stone slab, turf on tier 1–2 | corbelled corner turrets, crow-stepped gables, walled yard |
+| Riverland (south) | southern brick and terracotta towns | brick, rendered panels | low-pitch curved clay tile | open loggia, brick machicolations, swallowtail merlons, belfry |
+| Forest (wild marches) | northern log and stave building | log crib, vertical plank | steep shingle, stacked roofs | carved finials, log-crib corners, raised granary on posts |
+
+Test: render one archetype (e.g. the smithy, tier 3) in every family from the
+game camera and downscale to 25%: the building is named in 1 s in every
+family, and the family is named in 1 s from roof and wall alone.
+
+## 11. Map troops — token squads (cross-reference)
+
+Genre pattern [observational]: an army on the map is a small squad with a
+banner, a troop-type icon and a health bar, never a head-count crowd, so
+readability and frame time do not grow with army size. Our token is
+battle-forge's (`presentation.md` §2: figures per squad by line, figure
+height ≥ 36 px, squad 120–220 px wide; `flows.md`: the realm token = 3
+figures of the march's largest line + the lord banner + a 44 px line
+medallion). Figures are the `hero3d` rig with the soldier kit — people are
+never code-built. blender-forge builds the hard parts:
+
+- **Soldier kit** per line and tier (helms, shields, spears, bows, crossbows,
+  blades, barding plates) at the map budget: ≤ 4k triangles and 512² per
+  piece (export.md "Map unit / prop"), one shared atlas per line. The line
+  reads from the silhouette at 36 px (spear ≥ 1.4× figure height, battle-forge);
+  the tier reads from the material ladder (§4.1 rule 6).
+- **Lord banner**: pole, crossbar and finial as real forms (forms.md), the
+  cloth animated by shape keys or a Godot vertex shader (animation.md), the
+  field carrying the tint mask (§7).
+- **Line medallion**: a Blender-made icon object, never a flat glyph
+  (game-art-director `references/ui-icons.md`).
+- **Siege engine tokens**: the siege-forge build recipes, same map budget.

@@ -41,7 +41,7 @@ Terms: **Goods** — the five resources and rp, shown as things (sacks, bound lo
 | Goods | crates of 1–24 h own output; rp scrolls | yes, own-output hours | allowance × 0.25 | sheds, gathering, camps, chests |
 | Production boosts | +50% mill output for 24 h | yes, at expected yield (= 12 h of that resource) | as goods | research, events |
 | Works | hourglasses 1 m–24 h; gem finish | yes, when USED | cap × 0.25; muster + infirmary ≤ 480 min per window (core-loop §5 rule 6) | daily chests, weekly writ, alliance Merit store |
-| Journeys | caravan haul; in-realm seat move | haul as goods; move: no | move not sold | own caravans ([economy.md](economy.md)); Hall summons (alliance.md §4) |
+| Journeys | caravan haul; in-realm seat move | haul as goods; move: no | move not sold | own caravans ([economy.md](economy.md)); seat-move writs from the season track ([world.md](world.md) §9); Hall summons (alliance.md §4) |
 | Cosmetics | dressings, banners, pennants, frames | no | sold | plain versions on the chronicle free track |
 | Illuminated chronicle | §7 | its goods and works: yes | sold | the free track |
 | Month's purse | gems each day for 30 days | when converted | sold | gems are also earned (MON-001) |
@@ -62,12 +62,12 @@ the city, so no offer inflates out of relevance or overpays a small keep.
 | # | Never on a paid surface | Why | Caught by |
 |---|---|---|---|
 | 1 | Plate count, permanent or rented | the genre's most resented sale: a core queue behind a status rung | grant whitelist |
-| 2 | A lord; a lord first seen or exclusive on a paid surface; talent points, respecs, random draws. Seals and lord XP: recommended never — if the owner accepts [lords.md](lords.md) §17 #2, only named Seals and XP, deterministic, ≤ 35 Seals + 5,040 XP per week | lord power is power (L2); exclusives make a sunk-cost ladder | whitelist; lords.md acquisition table: 0 paid-only rows |
+| 2 | A lord; a lord first seen or exclusive on a paid surface; talent points, respecs, random draws. Seals and lord XP: recommended never — if the owner accepts [lords.md](lords.md) §17 #2, only a named lord's Seals or Plain Seals and XP tomes, deterministic (lords.md §10 rule 4), ≤ 35 Seals + 5,040 XP per week | lord power is power (L2); exclusives make a sunk-cost ladder | whitelist; lords.md acquisition table: 0 paid-only rows |
 | 3 | Equipment, sets and their crafting materials (whetstones, gold leaf; iron is goods under §4) | structurally unsellable (L2) | whitelist |
 | 4 | Troops, troop tiers, combat stats, combat boosts (attack, defence, health, march size) | power | whitelist |
 | 5 | Stats on cosmetics, including "set bonuses" on looks | blurs look and power | `skin_contract_test`; cosmetic `stats == {}` |
 | 6 | War imagery on a buy screen; a buy button on a war screen | money-law (L1) | art tags; ux_flow_probe (§10) |
-| 7 | Wards of any kind ("a ward on sale is a shield on sale", onboarding.md §4; §13 #5); the Writ of Passage or any cross-realm move (liveops.md §7); a seat move in a war week, or while a hostile march is inbound (launch → 30 min after the last arrival, as combat.md) | buying out of an attack | cloud-forge rule test |
+| 7 | Wards of any kind ("a ward on sale is a shield on sale", onboarding.md §4; §13 #5); the Writ of Passage or any cross-realm move (liveops.md §7); a seat move in a war week, or while a hostile march is inbound (launch → 30 min after the last arrival; world.md §9, combat.md) | buying out of an attack | cloud-forge rule test |
 | 8 | Random items for money or gems: chests, keys, wheels, card flips | gambling law and PEGI-7 (§9) | no `random` grant on any paid SKU |
 | 9 | Earned honours: titles, landmark crests, season-victory banners, war honours, alliance rank — and their reserved laurel-and-seal motif | status must mean deeds | art register: motif only on earned (EVR/RNK) rows |
 | 10 | Activity points, chronicle levels, level skips, point boosters; favour past the weekly cap (§6) | ONE activity counter (core-loop §7) | whitelist |
@@ -141,7 +141,7 @@ Rejected: **overtime pricing** hides the rule inside prices; **down-weighting bo
 
 1. **Pop-ups**: ≤ 1 per day, ≤ 3 per week; none in an account's first 72 h or inside a guided
    step (onboarding.md §1 rule 7); none in a session's first 60 s (the glance, core-loop §8.1); none
-   within 30 min after a lost battle, a raid or a wall at zero; none on a war screen; never a push (A8).
+   within 30 min after a lost battle, a raid or a wall at zero; none on a war screen; never a push (core-loop A8).
 2. **Personalised by progress only** (keep age, lines trained, milestone reached) — never by spend history,
    predicted spend, days since the last purchase or a recent loss. Same goods, same price at the same progress.
 3. **Windows ≥ 48 h**; countdowns in days and hours ("2 d 4 h"), never seconds, never pulsing; every
@@ -213,8 +213,8 @@ whole-week alternatives: S 28 / 42 d → L 20 / 30, overflow 4 / 6 (5 levels per
 |---|---|---|
 | Each level | 1 h own output (odd levels, 13 h) or 1 h Universal (even levels, 12 h) | the same again (13 h + 12 h) |
 | Cosmetics | plain pennant 5, banner 10, portrait frame 20, keep dressing 25 | illuminated pieces at 5 / 10 / 15 / 20 / 25; the illuminated keep dressing at 25 |
-| Journeys | the Writ of Passage at 1,500 points (level 15; earned, never sold — liveops.md §7) | nothing more |
-| Lords | the free Plain Seals [lords.md](lords.md) §11 books (≈ 1.07 per day ≈ 37 per season) and Fable's free step | Seals only if paid Seals are accepted (§3 #2) |
+| Journeys | 2 seat-move writs (world.md §9); the Writ of Passage at 1,500 points (level 15; earned, never sold — liveops.md §7) | nothing more |
+| Lords | 40 Plain Seals per season ([lords.md](lords.md) §11, 1.14 per day) and Fable's free step | Seals only if paid Seals are accepted (§3 #2) |
 | Overflow page | 1 h own output | + an illuminated marginal flourish |
 
 1. Points are activity points: never sold, never boosted (no "+50% points"), no level skips.
@@ -327,15 +327,15 @@ confirmed with counsel and the current store policy before launch (owner item �
 
 | Genre pattern ([benchmark.md](benchmark.md)) | Where it hurts | Our move | Number |
 |---|---|---|---|
-| A status ladder fed by login streaks and 1 point per premium currency spent; a permanent second builder at a mid rung | a core queue sold; status = spend | patronage fed 1:1 by play; coin favour capped; no stat or plate perks | ≤ 700 coin favour per week |
+| A status ladder fed by login streaks and 1 point per premium currency spent; a permanent second builder at a mid rung | a core queue sold; status = spend | patronage fed by play (points 1:1 + Merit); coin favour capped; no stat or plate perks | ≤ 700 coin favour per week |
 | Leaders exclusive to status-tier or bundle offers | sunk-cost ladder; "stuck without the meta leader" | no lord or lord advancement on a paid surface | 0 paid rows |
 | Cosmetic city skins carrying stats | look and power blur | stat-free cosmetics, tested | `stats == {}` |
 | No spending ceiling; top ranking an open spending contest (top-server spenders "$10–20k+", reviews) | free players leave the top | the per-plate allowance | ≤ 1.93× Truce week, ≤ 1.23× war week, 1.37× per campaign |
 | Pass sells extra levels and +50% progress points | paid ranks on a shared track | points never sold; paid track ≤ free track | 1.0× on points |
-| Paid-key chance chests (≈ 3% of drops a top-rarity leader token; no pity found) | gambling risk, rating risk | no paid random items | 0 |
+| Chance chests opened by keys that a spend-fed status tier also grants (≈ 3% of drops a top-rarity leader token; no pity found) | gambling risk, rating risk | no paid random items | 0 |
 | Paid relocation and shields during war | buying out of attacks | wards and the Writ of Passage never sold; no seat move in war weeks or with an inbound march | 0 wards sold |
 | Offers crowding navigation, red-dot fatigue [observational] | offer blindness, resentment | pop-up and icon budget; no dots on offers | ≤ 1 per day, ≤ 3 per week |
-| Purchases gifting the alliance | spending normalised socially | [alliance.md](alliance.md) caps them; never names a price | — |
+| Purchases gifting the alliance | spending normalised socially | anonymous cosmetic Patron tokens only ([alliance.md](alliance.md) §6); buyer and price never named | ≤ 3 per alliance per day, 0 gift XP |
 | Paid shortcuts decide persistent war | strategy erased | war-week R and war-window cap | 1.25; ≤ 480 min |
 
 ## 12. Harness, save, server cost

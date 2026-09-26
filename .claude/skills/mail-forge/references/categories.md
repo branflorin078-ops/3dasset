@@ -97,7 +97,8 @@ Rules:
 | Delete read (per tab) | 3 (⋯ → Delete read → confirm) | skips unclaimed rewards and Kept; the result line counts what was skipped |
 | Multi-select delete | long-press 500 ms, tap rows, Delete | same skips; "3 letters still hold rewards — Claim & delete them?" |
 | Leave or lose an alliance | 0 | shared alliance mail disappears from the cache on the membership event (chat-forge parity); alliance mail sent to you personally stays |
-| Account deletion (GDPR) | — | own node deleted at once; letters the player wrote in other inboxes are hard-deleted within 30 d (chat-forge treats whispers the same) |
+| Account deletion (GDPR) | — | own node deleted at once; letters the player wrote in other inboxes are hard-deleted within 30 d; evidence copies name the sender "Former lord" (chat-forge safety.md §11) |
+| Log out | — | the local mail cache (encrypted, [ui.md](ui.md) §11) is wiped |
 
 "Never delete unclaimed rewards without warning" (brief) is stronger here: the database refuses
 the delete, so no client bug and no batch action can do it.
@@ -111,10 +112,12 @@ idle or addressed to the player; core-loop A7: ≤ 3 dots at open for the median
 badge = unclaimed Rewards letters
       + unread Personal letters from known senders, sent < 7 d ago
       + unread Alliance mail (to you or alliance-wide), sent < 7 d ago
+      + unread account notices (statement of reasons, security) — the only Notices that count
 shown: 1–9, then "9+"; 32 px digits; hidden at 0
 ```
 
-1. **Never counted**: Notices, Reports, Requests, anything older than 7 days, and Kept.
+1. **Never counted**: Notices (except account notices), Reports, Requests, anything older than 7
+   days, and Kept.
 2. Inside the screen every tab shows its own unread count, including Notices and Reports.
 3. **Batching**: arrivals within 10 s make ONE toast ("3 letters · 2 with rewards"). There is at most
    1 mail toast per 5 min, never over battle presentation (battle-forge), and never during a ceremony
@@ -166,17 +169,24 @@ letter or whisper you accepted, or to whom you wrote first.
 | Length | ≤ 500 characters, ≤ 1,500 bytes UTF-8, ≤ 6 line breaks; ≤ 1 share card (chat-forge format, ≤ 256 B) | cost ([backend-cost.md](backend-cost.md) §7) and a letter is not an essay |
 | Links | none, in any letter, for any account; URL and handle patterns are filtered | chat-forge rule; sellers |
 | Stranger letter | goes to Requests, text hidden until Accept; Ignore and Block are 1 tap each | a seller's first line never lands unread |
-| New recipients per day | trust T1: 3 · T2+: 10 (chat-forge safety.md §5 tiers) | caps cold contact |
+| New recipients per day | trust T0: alliance mates only · T1: 3 (as requests) · T2+: 10 (chat-forge safety.md §5: T0 = < 48 h or S < 2) | caps cold contact; alt farms |
 | Letters per day | ≤ 30; ≤ 5 per 10 min | caps flooding |
-| New accounts | < 72 h old or spine tier S1: letters to alliance mates only | alt farms (core-loop §6) |
-| Duplicate text | the same normalized text to ≥ 3 non-alliance recipients in 24 h → further copies held for moderation | gold-seller pattern |
-| Under-18 age band | letters only with alliance and Circle mates; never requestable by strangers; no push preview | chat-forge safety.md §10 |
+| Duplicate text | the same normalized text to ≥ 3 non-alliance recipients in 24 h → further copies held; the sender sees "Waiting for review" and gets a statement of reasons (§7 rule 2) | gold-seller pattern |
+| Under the age of digital consent (13–16 by country) | no free-text letters, sent or received; share cards and alliance templates only | chat-forge safety.md §10 (COPPA, GDPR Art. 8) |
+| Minor above it (to 17) | letters only with alliance and Circle mates, strict filter locked; never requestable by strangers; no push preview | chat-forge safety.md §10 |
 | Diplomacy | a Liege or Marshal may write to another alliance's Liege and officers without Requests; ≤ 10 such letters per day | pacts (alliance.md §12) need a formal channel |
 | Blocks | one block list with chat; a blocked sender's letters are dropped by the server without telling the sender | chat parity; no escalation |
 | Report a letter | 1 tap from the letter; a copy goes to chat-forge's evidence store (90 d) and moderation queue | one moderation pipeline |
 
 All of this is checked **server-side in the send function**, never in the client alone. The client
 only hides the Write button where the server would refuse ([backend-cost.md](backend-cost.md) §3).
+
+1. The filter, trust tier, age band, block list and moderation queue are chat-forge's (safety.md
+   §1–§10). The send function calls the same pipeline. Mail never keeps a second wordlist.
+2. **Statements of reasons** (EU Digital Services Act; legal to confirm applicability): every
+   restriction in chat or mail (message removed or held, mute, ban) sends the player an account
+   notice by mail: what was restricted, which rule, whether it was automated, how long, and how to
+   appeal (template `acct.restriction`, [templates.md](templates.md) §2.1).
 
 ## 8. Alliance mail
 
@@ -186,6 +196,7 @@ only hides the Write button where the server would refuse ([backend-cost.md](bac
 | How many | ≤ 3 alliance-wide mails per alliance per day | alliance.md §13 |
 | Body | ≤ 1,000 characters of text, or an officer template with typed args ([templates.md](templates.md) §2.3) | cost; templates read in each member's language |
 | Who reads | members; the database serves only mail sent after the reader joined (query rule, [attachments.md](attachments.md) §4) | a new member cannot read old war plans |
+| Young members | under the age of digital consent: officer text shown with the strict filter and contact masking; templates in full | chat-forge safety.md §10 (Hall parity) |
 | Scheduled | a scheduled announcement may also send as mail (alliance.md §9); it counts in the 3 | leader burnout tools |
 
 Alliance **system** mail to one member, per alliance.md §13: released member (reason and rejoin
