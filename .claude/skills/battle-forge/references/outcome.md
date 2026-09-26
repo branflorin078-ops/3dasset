@@ -10,11 +10,11 @@ next.** Every number is a **PROPOSAL**; loss buckets per context are design-forg
 
 1. **Losers are respected.** Defeat uses the same plate, size, frame and gilt rim as victory;
    no shake, no red wash, desaturation ≤ 15%, the loss stinger at the same loudness as the win
-   stinger (presentation.md §7). No enemy emote, no mocking line.
+   stinger (presentation.md §8). No enemy emote, no mocking line.
 2. **Safe before lost.** The first line under the headline is always what came back or what was
    protected — on both results.
 3. **One cause, in plain words.** The top cause from report-forge's explanation engine, with the
-   counter medallions the player saw in battle (presentation.md §4).
+   counter medallions the player saw in battle (presentation.md §5).
 4. **Three next actions at most**, each ≤ 2 taps to its result.
 5. **No purchase on any battle surface** (battle view, outcome card, report, warning banners,
    march form): 0 buy buttons, 0 offers, 0 gem prices. Items the player already holds may be

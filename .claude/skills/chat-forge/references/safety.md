@@ -189,7 +189,8 @@ threshold); only the **age band** is stored, never the date (data minimization).
 |---|---|---|---|
 | Free text | **off** (unless verified parental consent is added later — owner decision) | on, strict filter locked | on, strict by default, may choose standard |
 | Quick calls, stickers, share cards | on | on | on |
-| Market Cross | read-only quick calls and cards from others; own posts: quick calls only | read and write | read and write |
+| Hall (alliance) | reads mates' text with the strict filter plus contact masking (≥ 5 digits, e-mail shapes, handles shown as ✱); posts quick calls, stickers, cards | read and write | read and write |
+| Market Cross | sees only quick calls, stickers and cards (free text from others hidden); posts quick calls only | read and write | read and write |
 | Whispers | off | alliance and Circle mates only; never requestable by strangers | per setting |
 | Link-like text, lock-screen previews | off | off | per settings |
 

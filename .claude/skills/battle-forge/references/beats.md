@@ -30,6 +30,11 @@ Rule: the presentation is a pure function `timeline = compose(log, speed)`; the 
 `RandomNumberGenerator` (`rng.seed = seed`) picks every variant (sound take, debris count,
 figure that falls). Same log → same timeline, frame for frame, on every device.
 
+Runtime safety: a kind with no row (a resolver version the client does not know yet) plays as a
+neutral `hit` on its target with its losses applied, and logs `BATTLE_UNMAPPED <kind>` once per
+battle. It never crashes the view and never drops losses silently; `beat_coverage_test` exists
+so this path is never reached in a shipped build.
+
 ## 2. The six acts
 
 The presentation groups beats into six acts. Map each act to the resolver's six phases once
@@ -44,13 +49,15 @@ their names are verified; if the resolver phases differ, the act is taken from t
 | V Break | rout | rout, last breach | 5 |
 | VI Outcome | outcome pose | outcome pose, wall state | 6 |
 
-Chapter marks on the replay scrub bar are the act boundaries (presentation.md §7).
+Chapter marks on the replay scrub bar are the act boundaries (§5).
 
 ## 3. Beat → presentation table
 
 Durations at 1×, 60 fps (frames in brackets). "Min 2×" is the floor at double speed — text and
-badges below this cannot be read. Priority: **A** deciding (never dropped, never merged),
-**B** important (may be shortened to its min), **C** cosmetic (may be merged or overlapped).
+badges below this cannot be read. Priority: **A** deciding — never dropped; it may merge ONLY
+with identical A beats (same kind, actor, target and act) into one beat marked "×N", so every
+one is still counted on screen; **B** important (may be shortened to its min); **C** cosmetic
+(may be merged, overlapped or dropped).
 Clip names follow blender-forge `references/animation.md` (verb, snake case); troop figure
 clips come from the `hero3d` rig, engine clips from `siege-forge`.
 
@@ -109,7 +116,8 @@ The compositor runs these passes, in order, and stops at the first pass that fit
 2. **Merge**: consecutive same-kind C beats of the same actor inside one act become a salvo:
    one animation, impacts staggered 120 ms, at most 3 impacts shown; their losses sum into the
    last impact. Clash: at most 3 exchanges per pair per act; engine repeats: at most 3 per
-   engine type per act.
+   engine type per act. Identical A beats (e.g. the same counter volley 4 times, the same
+   lord's skill 3 times) merge into one beat marked "×N" with the badge or chip held once.
 3. **Shorten**: B beats go to their "Min 2×" value × 1.4.
 4. **Drop**: remaining C beats are dropped, oldest act first; their losses fold into the next
    shown beat of the same target. A beats and the first beat of each kind are never dropped.
@@ -137,7 +145,7 @@ salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 · counter volley 1
 | Fails when | Caught by |
 |---|---|
 | A long battle overruns 45 s, or a one-sided battle is padded with fake hits | [ ] `battle_timeline_probe` fixtures: max, min, and 0 hits inside holds |
-| Merging hides a counter or a skill | [ ] probe: count of A beats in = count shown |
+| Merging hides a counter or a skill | [ ] probe: A beats in the log = Σ ×N of A beats shown |
 | Two beats with a cause→effect link swap order (breach shown before the ram hits) | [ ] probe: for every shown pair, `i` order is kept |
 
 ## 5. Speed, skip, pause, replay
@@ -166,9 +174,10 @@ salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 · counter volley 1
 4. **`T_fight` (PROPOSAL for combat.md / world-forge)**: a fixed per-context fight length on the
    server. The surviving march departs at `contact + T_fight`; spectators on the map see the
    clash marker for exactly `T_fight`. When watching live, the compositor fits the timeline to
-   `T_fight` (it lies inside every budget band). If the natural timeline is more than 6 s
-   shorter, the winner regroups (`idle_ready`) and the player may leave early; the map token
-   still departs at `T_fight`. Replays use the natural fit.
+   `T_fight` (it lies inside every budget band): longer → passes 2–5; shorter by ≤ 4.5 s →
+   holds (pass 6: 3 × 1.5 s); shorter by more → after the outcome the winner regroups in
+   `idle_ready`, the player may leave, and the map token still departs at `T_fight`. Replays
+   use the natural fit.
 5. **Spectators cost nothing extra**: third parties never fetch beats. The map marker is drawn
    from the two march records (contact time is known — both marches are functions of time) and
    the result flag arrives with the normal map update. 0 additional reads per spectator.
@@ -178,7 +187,7 @@ salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 · counter volley 1
 | Fails when | Caught by |
 |---|---|
 | The outcome shows on the client before the server decided it | [ ] code review: `compose()` only runs on a received log; `beat_latency_probe` |
-| A player waits > 4.6 s on a frozen field | [ ] `beat_latency_probe` with 0 / 1.2 / 5 s injected delay |
+| A player waits > 4.6 s on a frozen field | [ ] `beat_latency_probe` with 0 / 1.2 / 4 / 8 s injected delay |
 | The map token leaves while the watcher still sees fighting | [ ] live-watch fixture: last shown beat ≤ `T_fight` |
 
 ## 7. Implementation pattern (Godot 4)
@@ -203,7 +212,7 @@ salvo 900 · bolt 750 · charge 1,400 · brace+counter 1,350 · counter volley 1
 
 - [ ] The shipped beat kind name is quoted with file:line (or "(path to confirm)").
 - [ ] Animation clip, VFX id, sound cue, camera move, 1× ms, frames, Min 2×, priority — all filled.
-- [ ] VFX cover and burst length inside presentation.md §6 limits.
-- [ ] Merge / drop behaviour stated; A beats are never merged.
+- [ ] VFX cover and burst length inside presentation.md §7 limits.
+- [ ] Merge / drop behaviour stated; A beats merge only with identical A beats, shown as ×N.
 - [ ] Cause precedes effect on screen (engine release before impact; ram swing before the gate cracks).
 - [ ] `beat_coverage_test` and `battle_timeline_probe` re-run; verdict lines pasted.

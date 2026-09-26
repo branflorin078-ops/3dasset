@@ -72,7 +72,7 @@ reach, window closing soonest first; unreachable rallies last, greyed with the r
 | Window | Suits | Joiner reach at war-march speed |
 |---|---|---|
 | 1 min | allies next door | ≤ 1 min march |
-| 3 min (default) | war windows | ≤ 3 min — covers the 60–180 s war-march band (core-loop §5) |
+| 3 min (default) | war windows | ≤ 3 min — covers the 60–180 s war-march band (core-loop §2 and §8.3) |
 | 5 min | spread-out alliances | ≤ 5 min |
 | 10 min | far strongholds, large camps, scheduled starts | ≤ 10 min |
 
@@ -99,7 +99,7 @@ Context "rally" in [beats.md](beats.md) §4: 30–45 s at 1×, `T_fight` 40 s (P
 | Squads | still ≤ 5 per side (presentation.md §2); joined troops merge into the leader's squads by line |
 | Pennons | each squad banner carries the pennons of the players whose troops are in it (≤ 6, "+N") |
 | Your troops | the squads that carry the viewer's troops get a gilt corner mark on their banner; tap-and-hold: "Your 3,200 archers are in this squad" |
-| Lords | only the leader's lord pair casts; their full moments follow presentation.md §5 |
+| Lords | only the leader's lord pair casts; their full moments follow presentation.md §6 |
 | Watch offer | every participant gets the watch toast at contact; the replay is shared from the rally report |
 
 | Fails when | Caught by |

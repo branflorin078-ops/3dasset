@@ -1,0 +1,6 @@
+{
+ "_comment": "Hunt summary (k 4): one march, 5 barbarian camps in a row (core-loop A6). Lost fights link a k 1 detail record in d.",
+ "v": 1, "id": "91c3e5a7b2d04f68", "k": 4, "ts": 1790410800, "rv": 12, "at": [405, 380],
+ "hu": [[7, 1, 40, 60, 0, 420], [7, 1, 35, 55, 0, 420], [8, 1, 60, 90, 0, 480], [8, 1, 55, 80, 0, 480], [9, 0, 210, 330, 0, 120]],
+ "rw": [[1101, 3], [1204, 1]], "rs": [12000, 18000, 18000, 6000, 2400], "d": "3d8e1f5a9c2b7046"
+}

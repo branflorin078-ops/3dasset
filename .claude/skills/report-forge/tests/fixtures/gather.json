@@ -1,0 +1,5 @@
+{
+ "_comment": "Gather trip (k 6): one completed trip; mail-forge groups a day of trips into one thread.",
+ "v": 1, "id": "4f7a2c9e1b3d5068", "k": 6, "ts": 1790410800, "rv": 12, "at": [412, 388], "pl": [4, 4],
+ "dur": 14400, "g": [0, 0, 96000, 0, 0], "b": 250, "lx": [[2, 600]]
+}

@@ -30,7 +30,7 @@ in range", "Enemy castles ≤ 3 min march", "Bookmarks". A row tap pans the came
 | Line | Content | Honesty rule |
 |---|---|---|
 | Header | name, alliance tag, relationship colour + shape marker | — |
-| Strength | power band vs the player: much weaker / weaker / even / stronger / much stronger (±20%, ±60% bands) with a shape icon; exact power on tap | never hidden, never a guess dressed as fact |
+| Strength | power band vs the player: even (within ±20%), weaker / stronger (20–60% apart), much weaker / much stronger (> 60% apart), each with a shape icon; exact power on tap (design-forge `numbers.md` §3 power) | never hidden, never a guess dressed as fact |
 | Intel | "Scouted 4 m ago" + the three facts that matter (garrison lines %, lord, wall %) or "Not scouted" | unknown fields show "?", never an estimate |
 | Protection | ward state and time left; "Much weaker — <combat.md's rule, e.g. reduced loot>" when it applies | the rule text comes from combat.md |
 | Travel | ETA per ready preset ("Preset 1: 2:14 · arrives 14:32") | server time (core-loop §4.6) |
@@ -55,7 +55,7 @@ in range", "Enemy castles ≤ 3 min march", "Bookmarks". A row tap pans the came
 | Failure | What the player sees | Next action offered |
 |---|---|---|
 | Target is warded | "Warded — 3 h 12 m. Scouts cannot enter." | Bookmark (1 tap) |
-| Scout turned back (watchtower beats scout level) | the partial report with "?" fields, never "failed" alone | Scout again after research X (link) |
+| Scout turned back (watchtower beats scout level) | the partial report with "?" fields, never "failed" alone | the research node that raises scout level (1 tap to it) |
 | Target moved before arrival | "Target moved — scout returning" | the new location if visible |
 
 ## 3. Forming a march — the march form
@@ -69,7 +69,7 @@ One screen, opened pre-filled by the last preset used against this target type.
 | Siege row | only when the target has structures: engine chips from siege-forge with load and speed | 1 per engine |
 | Presets | 5 named slots; tap applies, hold saves | 1 |
 | Auto by counter | fills lines against the scouted garrison using combat.md's counter graph (a helper in gameplay-forge; deterministic); greyed with "Scout first" when there is no report | 1 |
-| Matchup strip | each own line → the enemy line it meets, with the favoured / even / unfavoured medallion from presentation.md §4 | 0 |
+| Matchup strip | each own line → the enemy line it meets, with the favoured / even / unfavoured medallion from presentation.md §5 | 0 |
 | Summary | capacity bar, ETA "2:14 · arrives 14:32", speed (the slowest line governs, named), load, Resolve cost (camps), infirmary line (below) | 0 |
 | Send | bottom-right, thumb zone, 64 dp tall | 1 |
 
@@ -110,6 +110,11 @@ gate and its `open` clip. battle-forge owns what leaves the gate and in what ord
 | Input | never blocked > 400 ms on a repeat action (transition-forge rule); a tap anywhere skips to the realm |
 | Sent from the realm view | no gate shot: the march token appears at the castle gate on the map with a 400 ms banner-raise |
 
+| Fails when | Caught by |
+|---|---|
+| A repeat march-out holds the player > 400 ms | [ ] `battle_flows_probe` flow C timed twice in one session: second input free ≤ 400 ms |
+| Siege train leaves before the cavalry (column order reads as chaos) | [ ] capture review of the gate shot, frame of each squad's exit |
+
 ## 5. The march on the map
 
 world-forge owns paths, speeds and map rendering; battle-forge owns what a march tells the player.
@@ -123,6 +128,13 @@ world-forge owns paths, speeds and map rendering; battle-forge owns what a march
 | March card (tap the token) | composition, ETA + arrival clock, **Recall** (2 taps), **Follow** (1), **Scout target** (2), speed-up items (war-window caps: core-loop §5.6) |
 | Recall | the march turns back at once; time home = time already walked (a function of time); impossible after contact |
 | Dead air | while a march walks, Scout target and Reinforce are ≤ 2 taps away (core-loop §8.3: dead air ≤ 90 s) |
+| Crowding | ≥ 4 tokens within 60 px merge into one cluster chip "4 marches" (own first); a tap fans them out along a 120 px arc |
+
+| Fails when | Caught by |
+|---|---|
+| The ETA label jumps (up, or by > 1 s) as the march walks | [ ] `march_eta_probe`: label monotonic, 1 s steps |
+| A hostile march toward the player reads only by colour | [ ] colour-blind capture: width 8 px + pulse still tells it apart |
+| Tokens pile up over a busy castle and cannot be tapped | [ ] `ux_touch_probe` with 12 marches at one castle: every token or cluster ≥ 48 dp |
 
 ## 6. Interception
 
@@ -157,7 +169,7 @@ target's path (combat.md / world-forge own the math and whether interception exi
 2. Castle view at arrival: the column enters through the gate ≤ 1,200 ms (skipped when not in
    castle view). Loot flies to the resource bar and counts up (core-loop A1, 800 ms).
 3. Wounded go to the infirmary at resolution, not at arrival; the tracker shows "412 in the
-   infirmary — Heal all" (2 taps). Details: [outcome.md](outcome.md) §4.
+   infirmary — Heal all" (2 taps). Details: [outcome.md](outcome.md) §5.
 
 ## 9. Tap budget per flow
 
@@ -169,7 +181,7 @@ target's path (combat.md / world-forge own the math and whether interception exi
 | D Intercept a march | tap token · Intercept · Send | 3 | ≤ 10 |
 | E Recall a march | tap token · Recall · confirm | 3 | ≤ 5 |
 | F Try again after a defeat | outcome "Try <counter line>" (form pre-filled) · Send | 2 | ≤ 10 |
-| G Watch a battle from anywhere | toast · Watch | 1 | — |
+| G Watch a battle from anywhere | Watch on the toast | 1 | — |
 
 Every flow ≤ 3 taps to its first useful result except B, whose extra taps are the scouting
 decision itself (pillar 10: every core action ≤ 3 taps).

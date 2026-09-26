@@ -1,0 +1,9 @@
+{
+ "_comment": "Scout report, information tier 2 (scout.md section 2): counts rounded to 2 significant figures, no per-tier rows, lords by name only.",
+ "_names": {"20388": "Isolde"},
+ "v": 1, "id": "e2b94f0c6a1d7358", "k": 5, "ts": 1790450820, "rv": 12,
+ "at": [398, 405], "pl": [1, 5], "tid": 20388, "ttg": "HRT", "it": 2,
+ "sc": {"ct": 5, "pw": 1900000, "wb": 3, "wl": 1000,
+        "rs": [0, 84000, 130000, 56000, 21000], "tt": 11000, "tw": [4],
+        "tl": [[1, 6000], [3, 3000], [2, 2000]], "l": [[5], [4]], "rf": [1, 2400], "tr": [0]}
+}

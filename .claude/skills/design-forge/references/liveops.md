@@ -26,7 +26,7 @@ A realm is a story whose chapters open by **realm age** (days since it opened), 
 | 21–35 | — | registration closes (§1.1 rule 1) | cloud-forge |
 | 27 (Sat) | The First Crown | the realm's crown seat contested for the first time, in both war windows | world-forge |
 | 35 (Sun) | Founding chapter | chronicle chapter 1 names the first crown and the realm's Firsts | story-forge |
-| 33–61 | Campaigns | first campaign draw on a Friday at realm age ≥ 28 (§3.5); first contest week starts on realm day 36–64 | gameplay-forge |
+| 33–61 | Campaigns | first campaign draw on a Friday at realm day ≥ 28 (§3.5); first contest week starts on realm day 36–64 | gameplay-forge |
 | `D₇` … `D₁₀` | Ceilings rise | troop tiers t7 → t10 (cavalry t11) trainable in this realm (§1.2) | gameplay-forge, owner |
 | 90 | Mature | merge watch starts (§8; at 35 for a realm that closed under 0.5·`N_fill`); the realm counts as a migration destination | cloud-forge |
 | 365 | Year One | anniversary chapter; Founders' mark on still-active cities founded in days 1–7 | story-forge |
@@ -35,7 +35,7 @@ An arc date after day 7 that falls in a Truce week (§3) moves 7 days later: the
 
 **1.1 Opening realms.** A live realm has no title menu: a new player lands in the newest open realm automatically; realm choice appears only in the Writ of Passage flow (§7).
 
-1. Realms open on a Monday 00:00 UTC. Open the next one on the Monday before the newest realm is projected to reach `N_fill` registrations, or when it turns 21 days with ≥ 0.5·`N_fill`, or at 35 days. A newcomer never lands in a realm older than 35 days (late-joiner fix).
+1. Realms open on a Monday 00:00 UTC. Open the next one on the Monday before the newest realm is projected to reach `N_fill` registrations, or when it turns 21 days with ≥ 0.5·`N_fill`, or at 35 days. A newcomer never lands in a realm older than 35 days (late-joiner fix). A faster cadence (a new realm every 7 days) fills only above 8,500 ÷ 7 ≈ 1,200 installs a day; below that, realms drop under the dying line in about a month (model: 100 DAU per 1,000 registrations at day 30).
 2. `N_fill = D_live / r(180)`, with `r(180)` = DAU at day 180 per registration (0.035 in the model below): without migrants, the realm stays above the dying line (§8) until day 180. Planning model: retention `R(d) = 0.40·d^−0.473` (fitted to numbers.md §8's D1 40% / D30 8%), registrations spread evenly over 21 days, no migration. Replace it with cohort data after launch.
 
 | Realm day | 7 | 20 (peak) | 30 | 90 | 180 | 365 |
@@ -71,22 +71,22 @@ Genre pattern: a new-server event races players through week 1 with daily unlock
 | 6 | The Lords' Muster | Lords: lord XP | lord pairing, Trial Grounds chapter 1 | first lord in a complete four-piece set |
 | 7 | The First Tourney | the Lists opens (§4.3) | counters, in the Lists | first Lists champion |
 
-Founding-week event value ≤ 1.5× a standard week (§5 R6): generous on purpose, and checked with econ_sim like any other week.
+On the rail the Founding is ONE icon, shared with onboarding.md §6's founding chapters and counting the same actions: never two lists asking for different chores. Founding-week event value ≤ 1.5× a standard week (§5 R6): generous on purpose, and checked with econ_sim like any other week.
 
 ## 3. Campaign seasons — cross-realm competition
 
-**3.1 Length: 35 days = 1 Truce week + 4 Contest weeks, on ONE global clock** (owner decision). Every realm's Truce falls in the same week, so migration and merges happen once, together, and one calendar file serves every realm.
+**3.1 Length: 35 days = 1 Truce week + 4 Contest weeks, on ONE global clock** (owner decision). Every realm's Truce falls in the same week, so migration and merges happen once, together, and one calendar file serves every realm. [monetization.md](monetization.md)'s war-season rules apply to the 4 contest weeks; the Truce week is a peace week.
 
 | Length | Shape | War days | Seasons / year | Verdict |
 |---|---|---|---|---|
-| 4 weeks | Truce + 3 contest | 9 | 13.0 | four landmark tiers do not fit; 13 story frames a year |
-| **5 weeks** | **Truce + 4 contest** | **12** | **10.4** | recommended: one landmark tier per contest week; one rest week in five |
-| 6 weeks | Truce + 5 contest | 15 | 8.7 | acceptable; contest weeks 4–5 carry the burnout risk |
-| 8 weeks | Truce + 7 contest | 21 | 6.5 | rejected: the genre's long-war fatigue (~50-day wars [unverified]) |
+| 4 weeks | Truce + 3 contest | 9 (6 campaign + 3 home) | 13.0 | four landmark tiers do not fit; 13 story frames a year |
+| **5 weeks** | **Truce + 4 contest** | **12 (8 + 4)** | **10.4** | recommended: one landmark tier per contest week; one rest week in five |
+| 6 weeks | Truce + 5 contest | 15 (10 + 5) | 8.7 | acceptable; contest weeks 4–5 carry the burnout risk |
+| 8 weeks | Truce + 7 contest | 21 (14 + 7) | 6.5 | rejected: the genre's long-war fatigue (~50-day wars [unverified]) |
 
 Season track top = 0.70 × 35 × 100 → **2,500** points (25 full days of 35; core-loop §7 formula). The Writ of Passage sits at 1,500 (§7); a paid lane is [monetization.md](monetization.md)'s question.
 
-**3.2 War days.** Tue, Thu and Sat of contest weeks; none in the Truce week. Cross-realm fighting is lawful only inside the two war windows of a war day (60 min each, 12 h apart); "the Truce holds" on the other days (fiction: the medieval Truce of God limited fighting by weekday). One window per war day is enough for full honour, so scheduled war is **≤ 3 h per week, ≤ 12 h per season** per player.
+**3.2 War days.** Tue and Thu of contest weeks are **campaign** war days (the campaign map); Sat is the **home** war day (the realm's own landmarks and crown seat, world.md); none in the Truce week. War windows exist only on war days (core-loop §8.3's two windows 12 h apart, ≤ 60 min each). Cross-realm fighting is lawful only inside them; "the Truce holds" on the other days (fiction: the medieval Truce of God limited fighting by weekday). One window per war day is enough for full honour, so scheduled war is **≤ 3 h per week, ≤ 12 h per season** per player.
 Home cities are never attackable by another realm: players fight on the campaign map (working name "the Debatable Land", world.md) from a field camp, and a lost camp sends survivors home under [combat.md](combat.md)'s field context. No realm can burn or zero another realm's city (owner decision). Median war-day losses heal in ≤ 8 h without speed-ups (core-loop §8.3).
 
 **3.3 Time-zone fair windows.** The window pair (t, t+12 h) is fixed per campaign group at the draw, from the group's active-player time-zone histogram (last 14 days), maximising mean quality: start 17:00–22:00 local = 1.0; 08:00–17:00 or 22:00–23:00 = 0.6; 23:00–08:00 = 0. For ANY t, every UTC offset has exactly one window starting between 08:00 and 20:00 local. A realm not yet in a campaign uses the same war days with its own window pair.
@@ -100,14 +100,14 @@ def pick(hist):                             # hist = {utc_offset_h: share of act
 ```
 Worked: EU-heavy (55% UTC 0/+1, 30% Americas, 15% Asia) → 05:30 and 17:30 UTC, mean 0.85, 63% get an evening window. Americas-heavy → 11:30 and 23:30 UTC, 0.90, 75%. Asia-heavy → 11:30 and 23:30 UTC, 0.96, 90%.
 
-**3.4 Scoring — we score ground, not corpses.** Points = landmarks held at window end (hold value by landmark tier 1 / 2 / 4 / 8) + captures (1× the hold value, once per landmark per window). Kills of player troops score 0: the genre's kill points reward zeroing weak players.
+**3.4 Scoring — we score ground, not corpses.** Points = landmarks held at window end (hold value by landmark tier 1 / 2 / 4 / 8) + captures (1× the hold value, once per landmark per window). Kills of player troops score 0 toward standings and rewards: the genre's kill points reward zeroing weak players. combat.md's war score (casualties, with its weak-target factor) stays a feed and chronicle statistic only.
 Realm and alliance war-day score = **max(window A, window B)**, so a one-time-zone alliance is not behind a global one. Personal honour per war day is capped at `H_day`, reachable in ≈ 40 min of one window. Contest-week weights **1 / 1.5 / 2 / 3**: the last week is 40% of the season, and 67% of the weight is still open after two weeks, so a trailing realm still plays for the win.
-Group standing 1–4 gives realm colours in the chronicle and a pennant to members with ≥ 3 war days or ≥ 1,500 season-track points; alliance standing gives banner trims; personal honour gives milestones (§5). No standing gives power.
+Group standing 1–4 gives realm colours in the chronicle and a pennant to members with ≥ 3 campaign war days or ≥ 1,500 season-track points; alliance standing gives banner trims; personal honour gives milestones (§5). No standing gives power.
 
 **3.5 The draw (Truce day 5, Friday).** Groups of 4 realms (3 allowed; a lone realm runs a home campaign on its own crown seat). Strength `S_realm` = Σ power of its 200 strongest players active in the last 72 h. Sort eligible realms (realm day ≥ 28) by `S_realm` and cut consecutive groups of 4, inside one age band (< 90 d, 90–365 d, > 365 d) when the pool allows. Target max/min `S_realm` ≤ 1.25 per group; a group above it is flagged to ops before publication.
 
 **3.6 What the Truce resets.** Resets: campaign-map holdings, season scores and honour, the season track, the season rule (§9), the home crown seat (→ neutral; world.md decides). Never touched: city, troops, lords, gear, items, resources, research, alliance, cosmetics, titles, chronicle.
-**No season-only power**: no season tech and no stat that exists only in a season, so a realm in its first campaign fights on the same stat sheet as a veteran realm.
+**No season-only power**: no season tech and no stat that exists only in a season, so a realm in its first campaign fights on the same stat sheet as a veteran realm. Balance changes ([lords.md](lords.md) §12) land only on Truce day 1, posted on the Herald's Board ≥ 14 days before.
 
 | Fails when | Caught by |
 |---|---|
@@ -148,10 +148,10 @@ Worked (S3–4, 2 crews): crews busy 24 h = 2,880 min; a median free player keep
 
 **4.2 The Warlord's Hold.** One hold per alliance, placed near its territory (world.md), rally-only, 72 h. HP = κ × Σ power of the alliance's 30 strongest members active in 72 h; κ is set so a median alliance clears 100% in ≈ 12 rallies (4 per day). Alliance milestones at 25 / 50 / 75 / 100% HP pay every member who joined ≥ 1 rally. Personal damage share: floor 40% of the median participant's reward, cap 3×. HP scales with the alliance's own members, so a 12-member alliance can clear its hold.
 
-**4.3 The Lists (tourney).** Identical troops: 5 companies of equal size at the Tourney standard tier (t5 proposed), lines chosen freely. Lords at Tourney standard: fixed level, fixed skill levels, gear stats off, talents from 3 published presets; all 8 lords lent by the Crown, so a player can try a lord before investing (lords.md decides).
+**4.3 The Lists (tourney).** Identical troops: 5 companies of equal size at the Tourney standard tier (t5 proposed), lines chosen freely. Lords at lords.md §11's one loss-free template (L40, Fine rank, Fine gear, talents chosen freely), every lord available, so skill beats investment and a player can try a lord before investing in it.
 What wins: lord pair, line mix, rows, target priority, so counters decide ([combat.md](combat.md)). 5 bouts (in-world: jousts) a day, banked up to 10, never sold. The ladder is one pool across all realms. Rating: Elo K = 32; the player picks 1 of 3 opponents within ±100 rating. Weekly milestones: bouts 5 / 15 / 30 and wins 3 / 8 / 15 (the bout milestones carry ≥ 50% of the value). Bands top 1% / 5% / 20% → pennants. battle-forge plays the resolver's beats: 20–45 s at 1×, skippable after 3 s.
 
-**4.4 The Grand Melee and the Banner League.** 12 v 12, 30 min, loss-free: each player gets 3 identical companies; a beaten company returns to the muster point after 30 s; 5 banners score every 10 s; first to 1,000 or the most at 30:00.
+**4.4 The Grand Melee and the Banner League.** 12 v 12, 30 min, loss-free: each player gets 3 identical companies and one lord at the loss-free template; a beaten company returns to the muster point after 30 s; 5 banners score every 10 s; first to 1,000 or the most at 30:00.
 League: divisions of 8 alliances by league rating, across all realms; 4 match Sundays per campaign (contest weeks), Swiss pairing, 3 / 1 / 0 points, top 2 up, bottom 2 down. Sign-up 48 h before (the alliance picks window A or B), roster lock 1 h before; eligibility ≥ 12 members active in the last 7 days. Every member who played ≥ 2 matches gets the member chest.
 
 **4.5 The Trial Grounds.** Fixed armies in fixed scenarios, one rule per stage (a counter, a pairing, a ram against a gate, rally timing, a garrison swap); 3 stars; one-time rewards; no energy. 20 stages at launch; when a late system unlocks, its trial opens as the guided moment (onboarding.md) — the genre's tutorial never teaches these.
@@ -207,7 +207,7 @@ League: divisions of 8 alliances by league rating, across all realms; 4 match Su
 | Labours | Masons | Muster | Scriptorium | Harvest | Hunt | Lords | rest; weekly chest |
 | Warlord's Hold | — | — | opens | open | closes 23:59 | — | — |
 | The Lists | open | open | open | open | open | open | closes 20:00 |
-| War (campaign) | next landmark tier opens | war day | — | war day | — | war day | — |
+| War | next landmark tier opens | campaign war day | — | campaign war day | — | home war day | — |
 | League | — | — | — | — | — | roster lock | Melee, window A or B |
 | Scoring events | 2 | 2 | **3** | **3** | **3** | 2 | 2 |
 
@@ -221,7 +221,7 @@ League: divisions of 8 alliances by league rating, across all realms; 4 match Su
 
 Genre weak spot: power caps that rise with server age trap strong players, and moves are sold. Our rules:
 
-1. **Newcomer move**: free, once, within 7 days of account creation while at S ≤ 2, to any realm ≤ 35 days old that is open for registration.
+1. **Newcomer's passage**: [onboarding.md](onboarding.md) §8 owns it (once, free, while the peace ward holds, to a realm with registration open or to a friend's realm).
 2. **The Writ**: earned once per campaign at 1,500 season-track points; hold ≤ 1; used only on Truce days 1–4; account ≥ 14 days old; no attack sent or received in the last 72 h (nobody escapes a war); cooldown one campaign. Never sold (owner decision: a move changes who a player fights, so it is power, not a journey).
 3. **Destination fit** (all must hold): (a) arrivals this Truce ≤ 5% of the destination's DAU₇ (10% when it is Thinning, §8); (b) the player's highest troop tier ≤ the destination's ceiling (§1.2); (c) the player's power ≤ 1.5 × the destination's 90th-percentile active power, so nobody drops into a weaker realm to prey; (d) destination DAU₇ + arrivals ≤ `A_design`.
 4. **No trap**: every eligible player sees ≥ 3 destinations; when fewer pass, rule (c) relaxes to the 3 realms with the highest 90th-percentile power. The strongest realms are always open to the strongest players.
@@ -290,13 +290,13 @@ Gates: T−35 draft · T−28 frame + art order · T−21 published, merges anno
        T+7 milestone reach vs R4 · T+35 predictions vs results → lessons.md
 ```
 
-Calendar row fields (one per event): `id, type, frame, scope (realm | group | league | global), start_unix, end_unix, stages[], scoring_key, p_ref{S1-2, S3-4, S5-6}, milestones[6], bands[], rail_icon, push_type, tags[]`. Every event is a function of time: start and end are data, and the server never ticks an event.
+Calendar row fields (one per event): `id, type, frame, scope (realm | group | league | global), start_unix, end_unix, stages[], scoring_key, p_ref{S1-2, S3-4, S5-6}, milestones[6], bands[], rail_icon, push_type, tags[]`. There is no spend-score field and no SKU-prerequisite field ([monetization.md](monetization.md) red line 13). Every event is a function of time: start and end are data, and the server never ticks an event.
 
 ## 11. Harness, server cost, metrics
 
 | Proof | Measures | Verdict line (PROPOSED wording; qa-forge fixes it) |
 |---|---|---|
-| calendar audit (new, headless; qa-forge; path to confirm) | C1–C12, the 21-day merge notice, the TZ sweep, 3 open races on realm days 3–7 | `LIVEOPS CALENDAR OK - 35 days, max 3 concurrent, 0 faults` |
+| calendar audit (new, headless; qa-forge; path to confirm) | C1–C12, the 21-day merge notice, the TZ sweep, war windows ≤ 60 min and two per war day, 3 open races on realm days 3–7 | `LIVEOPS CALENDAR OK - 35 days, max 3 concurrent, 0 faults` |
 | staging clock run (cloud-forge) | the campaign at 1 day = 60 s: every start, end, auto-claim and mail fires once | `LIVEOPS CLOCK OK - 35 days, <n> transitions, 0 missed, 0 double` |
 | merge dry run (cloud-forge) | placement, archive count, rewards and mail before/after | `MERGE DRYRUN OK - <n> cities placed, 0 overlaps, 0 lost rewards` |
 | migration check | destinations per eligible player | `MIGRATION OK - 100% of eligible players have >= 3 destinations` |
@@ -315,7 +315,7 @@ Calendar row fields (one per event): `id, type, frame, scope (realm | group | le
 | Wars bound to one time zone | two windows 12 h apart; the best window counts | every offset has a window 08:00–20:00 local |
 | Winner-take-most weekly event | milestones hold all power value | rank power = 0 |
 | Events reward spending speed-ups | score work done; accelerated minutes capped | ≤ 1/3 of the top |
-| Kill points push zeroing weak players | ground, not corpses; home cities safe from other realms | kills = 0 points |
+| Kill points push zeroing weak players | ground, not corpses; home cities safe from other realms | kills = 0 standing points |
 | Season-only tech leaves young realms behind | no season-only power; tier ceilings by realm age | 0 season stats |
 | Too many events, red-dot fatigue | concurrency, rail, badge and push caps | ≤ 3 / ≤ 4 / ≤ 1 / ≤ 1 per day |
 | Migration caps trap players; moves sold | destination fit; the no-trap rule; never sold | ≥ 3 destinations |
@@ -328,7 +328,7 @@ Calendar row fields (one per event): `id, type, frame, scope (realm | group | le
 2. Home cities never attackable by another realm; campaign fighting from field camps; kills score 0 in campaigns.
 3. Tier ceilings by realm age (§1.2): touches progression pace and may meet a sacred constant.
 4. The Writ of Passage never sold (the money-law allows journeys; this file argues a move is power).
-5. War days Tue / Thu / Sat and the 00:00 UTC reset (also core-loop owner decision 6).
-6. Lords lent at Tourney standard in the Lists (lords.md; affects what owning a lord is worth).
+5. War days Tue / Thu (campaign) and Sat (home), and the 00:00 UTC reset (also core-loop owner decision 6).
+6. In the Lists and the Grand Melee, every lord at lords.md's loss-free template, owned or not (affects what owning a lord is worth).
 7. `N_fill` (8,500 or 12,000), with world.md's map capacity `A_design`.
 8. In-world names (story-forge canon): the Founding, the Settling, the Truce, the Debatable Land, the Crown's Labours, the Warlord's Hold, the Lists, the Grand Melee, the Banner League, the Trial Grounds, the Writ of Passage, the Herald's Board, Firsts of the Realm, the five season frames.

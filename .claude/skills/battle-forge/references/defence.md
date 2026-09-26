@@ -31,10 +31,16 @@ we keep is **time to react, shown honestly**. Four bands by time to contact:
 | Contact | ETA 0 | battle-view offer; automatic when in castle view | clash marker for `T_fight` | contact stinger | 1 push with the result after the battle |
 
 - Several marches: the banner counts them — "3 marches — first 0:42". Pushes group into ONE per
-  60 s (core-loop A8 push budget: ≤ 4 per day; war alerts are a separate opt-in channel).
+  60 s. War alerts are a separate opt-in channel beside core-loop A8's ≤ 4 pushes per day,
+  capped at 6 war pushes per day (PROPOSAL); after the 6th, one summary push at the end of the
+  war window. Under 90 s of ETA no push is sent: it would arrive too late to act on.
 - Quiet hours (22:00–08:00 local, core-loop A8) mute war pushes unless the player turned on
-  "Wake me for attacks". Default off: a castle is never lost for good while its lord sleeps
-  (combat.md's loss table must hold that promise; outcome.md shows it).
+  "Wake me for attacks". Default off is fair only if a sleeping defender's losses stay
+  recoverable — a requirement battle-forge sends to combat.md's loss table (the genre sends a
+  defender's severely wounded to the hospital rather than killing them).
+- Returning after attacks while away: the resume digest (core-loop §8.1, ≤ 3 lines) carries ONE
+  line — "2 attacks while you were away: walls held once, raided once" — with the reports in the
+  tracker. Never a stack of modal pop-ups (feel-forge's one-popup rule per the studio notes).
 - The warning band never changes the camera by itself (flows.md §7).
 
 **What the warning reveals, by watchtower tier** — display PROPOSAL; combat.md's scouting tiers
@@ -53,6 +59,7 @@ unknown row, "?" plus the tier that reveals it (the next goal stays visible):
 | Fails when | Caught by |
 |---|---|
 | An attack lands with no Detected row ever shown (hidden attack) | [ ] `warning_probe`: every hostile march creates the row at launch |
+| A player returns to 3 modal pop-ups for 3 attacks | [ ] `warning_probe` offline case: 1 digest line, 0 modals |
 | The Near banner appears later than 60 s or not at all | [ ] `warning_probe`: band change within ±1 s of ETA 60 s |
 | A push fires per march (5 attackers = 5 pushes) | [ ] `warning_probe`: pushes grouped, ≤ 1 per 60 s |
 
@@ -130,7 +137,7 @@ Tapping the bubble opens the Defence panel scrolled to the first failing check (
   before the ally commits; it never blocks the send (the troops may be wanted for a second wave).
 - In battle, stationed allies fight inside the garrison squads and show as pennons (≤ 6, then
   "+N"); their losses follow combat.md's "defending an ally" context and appear in THEIR outcome
-  card with the defender's name ([outcome.md](outcome.md) §3).
+  card with the defender's name ([outcome.md](outcome.md) §3–4).
 
 ## 6. Wall, gate and tower states
 
@@ -155,7 +162,7 @@ never as rates per tick.
 | No ward can be raised once a hostile march targets the castle (the genre bars relocation while attacked; monetization bars selling shields during an attack) | "Ward unavailable — an attack is on its way (0:48)" |
 | A ward ends when its owner attacks (the genre's newcomer shield breaks on attack) | march form confirm: "Attacking ends your ward (3 h 12 m left)" |
 | Ward state is public | pale-gold dome on the map; target cards say "Warded — 3 h 12 m" |
-| Outcome cards never sell a ward | a held ward item may appear as "Raise ward (held: 2)"; never a gem price (outcome.md §5) |
+| Outcome cards never sell a ward | a held ward item may appear as "Raise ward (held: 2)"; never a gem price (outcome.md §1 rule 5) |
 
 ## 8. Under attack — the response budget
 

@@ -31,13 +31,13 @@ FLIP_SAFETY = 1.25   # |n| >= 1.25 * |margin| before we claim the result would f
 T_CLOSE = 100        # |margin| below this: "close"
 T_BIG = 500          # |margin| at or above this: "crushing" / "heavy"
 T_OTHER_WARN = 100   # untagged share that raises a QA flag
-T_TIE = 20           # causes within 20 per mille are ordered by ACTION_ORDER
 MAX_ROWS = 3         # cause rows shown before "Details"
 MAX_SENTENCE = 64    # English characters per filled sentence (l10n room +40%)
 CASUALTY_ENDS = {0, 1, 2, 5}
 END_NAMES = {0: "annihilated", 1: "routed", 2: "withdrew", 3: "wall held",
              4: "gate broken", 5: "recalled"}
 PLACE_CASTLE = 1
+BATTLE_KINDS = (1, 2, 3)
 LINE_MAX_TIER = (10, 10, 10, 10, 11)
 # PROPOSAL counter graph (design-forge combat.md decides): line -> the line that counters it
 COUNTERED_BY = {4: 1, 2: 4, 3: 4, 0: 2, 1: 0}
@@ -112,6 +112,10 @@ def out(side):
     return light(side) + hosp(side) + dead(side)
 
 
+def healed(side):
+    return sum(l[4] for u in side["u"] for l in u.get("l", []))
+
+
 def dealt(side):
     total = sum(r[6] for _, r in rows(side))
     for u in side["u"]:
@@ -131,6 +135,8 @@ def castle_side(rep):
 
 
 def name_of(rep, pid):
+    if pid == 0:
+        return STR["rpt.name.garrison"]
     return rep.get("_names", {}).get(str(pid), STR["rpt.name.gone"])
 
 
@@ -184,15 +190,10 @@ def cause_text(rep, v, factor, polar):
 
 
 def order_causes(items):
-    """items: list of (factor, n). Sort by |n| desc; exact ties by ACTION_ORDER; then one
-    left-to-right pass swaps neighbours within T_TIE that are out of ACTION_ORDER."""
+    """items: list of (factor, n). Sort by the DISPLAYED percent, largest first, so the bars
+    always read in order; equal displayed percents fall back to ACTION_ORDER."""
     rank = {f: i for i, f in enumerate(ACTION_ORDER)}
-    items = sorted(items, key=lambda x: (-abs(x[1]), rank[x[0]]))
-    for i in range(len(items) - 1):
-        a, b = items[i], items[i + 1]
-        if abs(a[1]) - abs(b[1]) <= T_TIE and rank[b[0]] < rank[a[0]]:
-            items[i], items[i + 1] = b, a
-    return items
+    return sorted(items, key=lambda x: (-abs(pct(x[1])), rank[x[0]]))
 
 
 def advice(rep, v, factor):
@@ -284,7 +285,7 @@ def explain(rep, pov=0):
         against = cpt["factor"]
     elif outcome == "draw":
         against = next((r["factor"] for r in out_rows if r["n"] < 0), None)
-    if against is None and outcome == "loss":
+    if against is None and outcome in ("loss", "draw"):
         against = "even"
     adv = None
     if against:
@@ -355,8 +356,8 @@ def bar(n):
 
 
 def render(rep, pov=0):
-    if rep["k"] not in (1, 2, 3, 4):
-        return render_scout(rep) if rep["k"] == 5 else json.dumps(rep)
+    if rep["k"] not in BATTLE_KINDS:
+        return render_scout(rep) if rep["k"] == 5 else json.dumps(strip(rep))
     e = explain(rep, pov)
     v, o = pov, 1 - pov
     h = e["headline"]
@@ -395,6 +396,12 @@ def render(rep, pov=0):
             for l in u.get("l", []):
                 casts = ", ".join(f"{EXAMPLE_SKILLS.get((l[0], k), k)} ×{c}" for k, c in l[5])
                 L.append(f"  {LORDS[l[0]]:<7}({who:<4}) {l[2]:>3} {num(l[3]):>7} {num(l[4]):>7}  {casts}")
+    if rep["k"] == 3:
+        tot = dealt(rep["s"][v])
+        L.append("RALLY SHARE (damage dealt, all participants)")
+        for u in rep["s"][v]["u"]:
+            d = sum(r[6] for r in u.get("t", [])) + sum(l[3] for l in u.get("l", [])) + sum(e[4] for e in u.get("e", []))
+            L.append(f"  {name_of(rep, u['id']):<10} {num(d):>7}  {pct(round(1000 * d / tot)):>3}%")
     rs = rep.get("rs")
     if rs and any(rs):
         taken = ", ".join(f"{num(x)} {STR[f'res.{i}']}" for i, x in enumerate(rs) if x)
@@ -519,7 +526,7 @@ def size_report(rep):
     res = {"minified": len(full), "gzip": len(gz(full)), "sections": {}}
     for k, val in strip(rep).items():
         res["sections"][k] = len(json.dumps({k: val}, separators=(",", ":"), ensure_ascii=False).encode()) - 1
-    if rep["k"] in (1, 2, 3, 4):
+    if rep["k"] in BATTLE_KINDS:
         sm = mini(summary_form(rep))
         res["summary_minified"], res["summary_gzip"] = len(sm), len(gz(sm))
         ov = mini(opponent_view(rep, 0))
@@ -540,7 +547,9 @@ def check(rep):
         E("id must be 16 hex chars")
     if rep.get("k") == 5:
         return err + check_scout(rep)
-    if rep.get("k") not in (1, 2, 3, 4):
+    if rep.get("k") == 4 and len(rep.get("hu", [])) > 5:
+        E("a hunt holds at most 5 camp fights")
+    if rep.get("k") not in BATTLE_KINDS:
         return err
     S = rep["s"]
     if rep["win"] not in (0, 1, 2):
@@ -561,8 +570,10 @@ def check(rep):
         for u in sd["u"]:
             if u.get("ho", 0) > sum(r[5] for r in u.get("t", [])):
                 E(f"side {i}: overflow dead > dead")
-        if abs(dealt(sd) - S[1 - i]["lp"]) > 1:
-            E(f"side {i}: dealt {dealt(sd)} != power lost by the other side {S[1 - i]['lp']}")
+        net = dealt(sd) - healed(S[1 - i])
+        if abs(net - S[1 - i]["lp"]) > 1:
+            E(f"side {i}: dealt {dealt(sd)} - healed by the other side {healed(S[1 - i])}"
+              f" != power lost by the other side {S[1 - i]['lp']}")
     T = S[0]["lp"] + S[1]["lp"]
     F = rep["why"]["f"]
     for i in (0, 1):
@@ -721,7 +732,7 @@ def main(argv=None):
         n = 0
         for f in sorted(os.listdir(a.fixtures)):
             rep = load(os.path.join(a.fixtures, f))
-            if rep.get("k") not in (1, 2, 3, 4):
+            if rep.get("k") not in BATTLE_KINDS:
                 continue
             for pov in (0, 1):
                 e = explain(rep, pov)
@@ -740,8 +751,11 @@ def main(argv=None):
         sc = load(os.path.join(fx, "scout_t2.json"))
         szw = size_report(win)
         sizes = {"battle_gz": szw["gzip"], "summary_gz": szw["summary_gzip"], "scout_gz": size_report(sc)["gzip"]}
+        a.hunt_bytes = size_report(load(os.path.join(fx, "hunt.json")))["gzip"]
+        a.gather_bytes = size_report(load(os.path.join(fx, "gather.json")))["gzip"]
         text, _ = cost(a, sizes)
-        print(f"measured sizes (gzip): battle {sizes['battle_gz']} B, summary {sizes['summary_gz']} B, scout {sizes['scout_gz']} B")
+        print(f"measured sizes (gzip): battle {sizes['battle_gz']} B, summary {sizes['summary_gz']} B,"
+              f" scout {sizes['scout_gz']} B, hunt {a.hunt_bytes} B, gather {a.gather_bytes} B")
         print(text)
     return 0
 

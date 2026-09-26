@@ -1,6 +1,6 @@
 # Alliance — belonging you can measure
 
-The system that makes other players matter (game-director pillar 7, "Belonging"): ranks and offices, help, two currencies, charters (research), gifts, territory, rallies across time zones, leadership tools, hopping rules and public pacts. Implementation: **gameplay-forge** (rules, data, save), **ui-forge** (screens, calendar, badges), **cloud-forge** (membership, logs, server-side permission checks), **chat-forge** + **mail-forge** (§13), **world-forge** (Hall, banners, strongholds), **battle-forge** (rally flow), **story-forge** (names), **qa-forge** (harness). Genre patterns: [benchmark.md](benchmark.md), alliance section.
+The system that makes other players matter (game-director pillar 7, "Belonging"): ranks and offices, help, two currencies, charters (research), gifts, territory, rallies across time zones, leadership tools, hopping rules and public pacts. Implementation: **gameplay-forge** (rules, data, save), **ui-forge** (screens, calendar, badges), **cloud-forge** (membership, logs, server-side permission checks), **chat-forge** + **mail-forge** (§13), **world-forge** (Hall, standards, strongholds), **battle-forge** (rally flow), **story-forge** (names), **qa-forge** (harness). Genre patterns: [benchmark.md](benchmark.md), alliance section.
 
 **Every number is a PROPOSAL** (verify against `data/alliance.gd`, path to confirm) unless it quotes a canonical fact or [core-loop.md](core-loop.md); a shipped sacred constant keeps its value and this file's number becomes a proposal to the owner. All names are proposals for story-forge canon. `E` = embassy tier (1–6) of the member who asks for help (the embassy archetype is the alliance building — verify `data/buildings.gd`); `S` = spine tier ([progression.md](progression.md)); "active" = opened the game inside the named window (48 h, 7 d); the day resets at 00:00 UTC.
 
@@ -10,11 +10,13 @@ The system that makes other players matter (game-director pillar 7, "Belonging")
 - **Obstacle**: other members' presence across time zones; Treasury, earned only by members' effort; trust (ranks, two-key actions); rival alliances.
 - **Wait**: first help ≤ 15 min after the first request (waking hours, median alliance); first charter level on day 1; full charter tree 33 / 76 / 100 days (top / median / small, §5); 100 seats ≈ day 47 for a median alliance that funds seats first (§10).
 - **Witness**: each help shows its minutes; each gift names the deed and the member; pacts appear in the realm feed; territory tints the realm map; rank badge and office on the profile card.
-- **Free path**: every alliance benefit comes from membership and play; the one personal gate is `H`, by the member's own embassy tier. Nothing in the alliance is sold (§4 rule 5).
+- **Free path**: every alliance benefit comes from membership and play; the one personal gate is `H`, by the member's own embassy tier. Nothing in the alliance is sold (§4 rule 4).
 
 ## 1. The alliance in the five timescales ([core-loop.md](core-loop.md) §1)
 
-**Glance**: Help all, 1 tap ("Allies saved you 42 m"). **Check-in**: Donate ×5 (3 taps), Claim all gifts (1), Join a rally from its chat card (2) = **≤ 6 taps inside core-loop's 30-tap budget**. **Day**: the order "Give to the alliance" = 1 donation or 1 works march (core-loop §7, 10 points). **Week**: 2–3 scheduled rallies at muster hours, a charter row, a Great chest about every 6 days. **Season**: territory, pacts end, alliance standing ([liveops.md](liveops.md)). No alliance reward needs the player online at one single clock hour (§8).
+**Glance**: Help all, 1 tap ("Allies saved you 42 m"). **Check-in**: Donate ×5 (3 taps), Claim all gifts (1), Join a rally from its chat card (2) = **≤ 6 taps inside core-loop's 30-tap budget**. **Day**: the order "Give to the alliance" = 1 donation or 1 works march (core-loop §7, 10 points; its wording "gift or research donation" should read "donation or works march" — members do not send gifts here). **Week**: 2–3 scheduled rallies at muster hours, a charter row, a Great chest about every 6 days. **Season**: territory, pacts end, alliance standing ([liveops.md](liveops.md)). No alliance reward needs the player online at one single clock hour (§8).
+
+**Where it lives**: the embassy in the castle and the HUD alliance button open the alliance screen; every tab (Members, Help, Charters, Gifts, Calendar, Territory, Pacts, Roll) is ≤ 2 taps from the castle or the realm. Red dots only for claimable gifts and, for the Warden, waiting applicants (core-loop A7) — never for charters, rallies or pacts.
 
 ## 2. Ranks, offices and permissions
 
@@ -23,7 +25,7 @@ Five ranks; rank 4 holds four named offices, so the leader hands off whole jobs.
 | Rank | Name | Seats | Reached by |
 |---|---|---|---|
 | 5 | **Liege** | 1 | founding, transfer or succession (§9) |
-| 4 | **Officer** — Marshal (war), Steward (Treasury, charters, banners), Herald (announcements, recruiting, mail), Warden (membership) | 4, one per office; one person holds ≤ 1 office | appointed by the Liege |
+| 4 | **Officer** — Marshal (war), Steward (Treasury, charters, standards), Herald (announcements, recruiting, mail), Warden (membership) | 4, one per office; one person holds ≤ 1 office | appointed by the Liege |
 | 3 | **Knight** | no cap | promoted by the Warden or Liege |
 | 2 | **Yeoman** | no cap | automatic at 72 h membership + 30 helps given, or promoted |
 | 1 | **Recruit** | no cap | joining |
@@ -35,12 +37,12 @@ Five ranks; rank 4 holds four named offices, so the leader hands off whole jobs.
 | 3 | Launch a rally on a castle | ✓ | ✓ | ✓ | — | — |
 | 4 | Pin map targets (≤ 10 pins per alliance) | ✓ | ✓ | ✓ | — | — |
 | 5 | Schedule rallies, set muster hours, propose a pact | ✓ | Marshal | — | — | — |
-| 6 | Set the recommended charter; spend Treasury on charters and banners | ✓ | Steward | — | — | — |
+| 6 | Set the recommended charter; spend Treasury on charters and standards | ✓ | Steward | — | — | — |
 | 7 | Place or move the Hall, raise its tier | ✓ | — | — | — | — |
 | 8 | Accept applicants; set auto-accept and auto-release rules (§9) | ✓ | Warden | accept, if the Warden allows | — | — |
 | 9 | Promote or demote up to Knight | ✓ | Warden | — | — | — |
 | 10 | Appoint or remove officers | ✓ | — | — | — | — |
-| 11 | Release (kick) a member | ranks 1–4 | Warden: ranks 1–2 | — | — | — |
+| 11 | Release (kick) a member; mute in alliance chat ≤ 24 h | ranks 1–4 | Warden: ranks 1–2 | — | — | — |
 | 12 | Post or schedule announcements, alliance mail, edit profile and recruiting text | ✓ | Herald | — | — | — |
 | 13 | Sign or end a pact (two keys: Liege + any officer) | key 1 | key 2 | — | — | — |
 | 14 | Name heir or regent, transfer leadership, disband | ✓ | — | — | — | — |
@@ -76,10 +78,10 @@ Pattern ([benchmark.md](benchmark.md)): collective goods paid by many small acts
 | | **Treasury** (collective, counted in marks) | **Merit** (personal) |
 |---|---|---|
 | Earned by | donations (10 each); Spoils (300 × stronghold level per kill); held landmarks (rate: [world.md](world.md)) | helps 5; donations 10 (15 on the recommended charter); rallies joined 20 (first 5 per day); works marches 1 per march-minute (≤ 60 per day); war windows 50 (≥ 1 engagement, ≤ 2 per day) |
-| Spent on | charters (§5), banners, upkeep, Hall tiers (§7) | the Quartermaster (below) |
+| Spent on | charters (§5), standards, upkeep, Hall tiers (§7) | the Quartermaster (below) |
 | Spent by | Liege and Steward; every spend in the Roll | the member |
 | Leaves the alliance | never — no withdrawal, no transfer to a member | travels with the member (§11) |
-| Cap | none; banner upkeep drains it | 10,000 (≈ 26 days of median income); at cap earning pauses and the store says so |
+| Cap | none; standard upkeep drains it | 10,000 (≈ 26 days of median income); at cap earning pauses and the store says so |
 | Sold for money | never | never |
 
 **Merit per day**, median free player (P50) → maximum: helps 150 → 150; donations 125 (10, half on the recommended charter) → 360; rallies 40 → 100; works 20 → 60; war windows 50 → 100. **Total 385 → 770 per day (2,695 → 5,390 per week).**
@@ -102,7 +104,7 @@ Weekly shelf capacity 9,330 Merit > the maximum income of 5,390, so nobody hoard
 
 1. **Every benefit reaches every member**: charters, gifts and help received are not rationed. The free rider loses Merit (0 earned) and seat safety (§9 "idle contributor" rule).
 2. **Contribution score** (weekly) = donations × 10 + helps × 2 + rally joins × 20 + works minutes. Officers see a sorted list; members see their own score and others' badges only ("Steady" ≥ 500, "Stalwart" ≥ 1,500 per week) — no public ranking, so giving never becomes a race.
-3. **Donations**: 20 charges, regen 1 per 60 min (full in 20 h, so the 15-hour promise holds); "Donate ×5" = 1 tap; resource by charter row (§5); the donor's cost is ≤ 24 × 15 min = 6 h of one resource per day (economy.md counts it as a sink). Accounts < 72 h old or at S1–S2 earn Merit but add **0 Treasury** (farm accounts cannot fund a main's alliance).
+3. **Donations**: 20 charges, regen 1 per 60 min (full in 20 h, so the 15-hour promise holds); "Donate ×5" = 1 tap; resource by charter row (§5); the donor's cost is ≤ 24 × 15 min = 6 h of one resource per day (economy.md counts it as a sink). Accounts < 72 h old or at S1–S2 earn Merit but add **0 Treasury** (farm accounts cannot fund a main's alliance); a realm's first 7 days are exempt, so new alliances can fund Open Door on day 1.
 4. **Never sold**: rank, seat, Treasury, charter, help count, gift level, pact, Merit. Gems cannot be donated.
 
 **Checks**: [ ] alliance_sim Merit line — fails when: median member's Merit balance > 7 days of income at day 30 (hoarding) · [ ] donation unit test: S3 and S6 donors add 10 each — fails when: a donation's Treasury depends on city size or payment · [ ] shop-forge offer-data grep returns 0 — fails when: any alliance good appears on a paid surface.
@@ -115,12 +117,12 @@ Five branches × six rows; a row opens when the row above it in the same branch 
 
 | Row | Cost/level | Fellowship | Stores | Works | Arms | Realm |
 |---|---|---|---|---|---|---|
-| 1 | 3,000 | Open Door: help floor 120 → 180 s (1 lv) | Foragers: gathering +3%/lv (3) | Masons: build speed +1%/lv (3) | Drill: march speed +2%/lv (3) | Surveyors: banner cost −5%/lv (3) |
+| 1 | 3,000 | Open Door: help floor 120 → 180 s (1 lv) | Foragers: gathering +3%/lv (3) | Masons: build speed +1%/lv (3) | Drill: march speed +2%/lv (3) | Surveyors: standard cost −5%/lv (3) |
 | 2 | 4,650 | Great Table I: +5 seats (1) | Cellars: protected storage +5%/lv (3) | Scribes: research speed +1%/lv (3) | Rally Horn: rally capacity +5%/lv (3) | Roadwardens: march speed in own territory +5%/lv (3) |
-| 3 | 7,200 | Feast Hall: gift XP +10%/lv (3) | Wagonways: gathering load +4%/lv (3) | Masons II: build +1%/lv (3) | Shield Wall: troop defence +0.5%/lv (3) | Stewardship: banner upkeep −5%/lv (3) |
+| 3 | 7,200 | Feast Hall: gift XP +10%/lv (3) | Wagonways: gathering load +4%/lv (3) | Masons II: build +1%/lv (3) | Shield Wall: troop defence +0.5%/lv (3) | Stewardship: standard upkeep −5%/lv (3) |
 | 4 | 11,150 | Great Table II: +5 seats (1) | Foragers II: gathering +3%/lv (2) | Scribes II: research +1%/lv (2) | Keen Edge: troop attack +0.75%/lv (2) | Beacons: marches into own territory seen 30 s earlier/lv (2) |
-| 5 | 17,300 | Great Table III: +5 seats (1) | Granaries: healing cost −5%/lv (2) | Master Builders: build +1%/lv (2) | Surgeons: infirmary beds +5%/lv (2) | Summons: relocation cooldown −12 h/lv (2) |
-| 6 | 26,850 | Great Table IV: +5 seats (1) | Market Rights: member trade tax −5% (1) | Great Works: research +2% (1) | Iron Discipline: troop health +1.5% (1) | High Hall: Hall and banner durability +10% (1) |
+| 5 | 17,300 | Great Table III: +5 seats (1) | Herb Gardens: healing cost −5%/lv (2) | Master Builders: build +1%/lv (2) | Surgeons: infirmary beds +5%/lv (2) | Summons: relocation cooldown −12 h/lv (2) |
+| 6 | 26,850 | Great Table IV: +5 seats (1) | Market Rights: member trade tax −5% (1) | Great Works: research +2% (1) | Iron Discipline: troop health +1.5% (1) | High Hall: Hall and standard durability +10% (1) |
 
 Totals: 64 levels, **597,750 Treasury** at full price. Branch maxima: gathering +15%, build +8%, research +7%, **troop attack / defence / health +1.5% each** — collective combat stats stay small so charters never bury a counter (+20–50%, [numbers.md](numbers.md) §4; combat.md owns the stat budget).
 
@@ -135,11 +137,12 @@ Days to finish with all net Treasury on charters. Net Treasury per day: top 90 a
 | 5 | 463,500 | 25.3 d | 59.0 d | 77.2 d |
 | 6 | 597,750 | **32.7 d** | **76.1 d** | **99.6 d** |
 
-Everything (charters + Hall tier 6 + banners: 200 top, 60 median) ≈ 72 d top, ≈ 121 d median. The top : small spread is 3 : 1, not the 12 : 1 of one flat price with no discount.
+Everything (charters + Hall tier 6 + standards: 200 top, 60 median) ≈ 72 d top, ≈ 121 d median. The top : small spread is 3 : 1, not the 12 : 1 of one flat price with no discount.
 
 1. The Steward (or Liege) sets one **recommended charter**; donations to it pay 15 Merit instead of 10. Any open charter accepts donations.
 2. Donated resource by row: rows 1–2 food or wood, 3–4 stone, 5–6 iron (the resource ladder of numbers.md §2; economy.md may override).
 3. Joining gives the new alliance's charters at once; leaving loses the old ones (belonging, not a reward — nothing to gain by hopping).
+4. Each charter has a Blender-made icon (30 icons, ui-forge + blender-forge; never line glyphs); the card shows the effect as a number before and after ("gathering +6% → +9%").
 
 **Checks**: [ ] alliance_sim charter line — fails when: median full tree < 45 d (nothing left to fund) or > 120 d, or a small alliance needs > 7 d for row 1 · [ ] data lint (gameplay-forge) — fails when: the sum of charter combat stats exceeds combat.md's budget.
 
@@ -150,37 +153,37 @@ Pattern: one member's deed becomes a small gift to every member, so success is s
 | Gift | Created when | Each member receives ("own output" = minutes of that member's own production) | Gift XP |
 |---|---|---|---|
 | **Hunt** | a member first clears a camp level (camp ladder, world.md) | 5 min own food + wood | 1 |
-| **Spoils** | the alliance destroys a stronghold of level L (1–6) | 10·L min own output (all five) + one 15 m Universal at L ≥ 4 | 5·L |
+| **Spoils** | the alliance destroys a stronghold of level L (1–6 assumed; world.md) | 10·L min own output (all five) + one 15 m Universal at L ≥ 4 | 5·L |
 | **Feast** | a member reaches a spine tier, unlocks a troop tier in any line, or completes a lord's four-piece set (≤ 1 per member per day) | 15 min own output + 5 Resolve | 10 |
 | **Great chest** | every 400 gift XP | 1 h Universal + 1 h own output | — |
-| **Patron token** | any member's purchase — buyer never named, ≤ 3 per alliance per day | 1 cosmetic fragment (10 = a pennon dye or a feast emote) | 0 |
+| **Patron token** | any member's purchase — buyer never named, ≤ 3 per alliance per day; a refund withdraws its unclaimed tokens | 1 cosmetic fragment (10 = a pennon dye or a feast emote) | 0 |
 
 **Gift level** 1–10, +5% contents per level (level 10 = +45%); XP to the next level `200 · 1.3^(ℓ−1)` = 200, 260, 338, 439, 571, 743, 965, 1,255, 1,631 (6,402 in total). Median ≈ 70 XP per day (10 hunts, 2 level-3 strongholds, 3 feasts) → level 10 at ≈ day 91, a Great chest every ≈ 6 days; top ≈ 205 → day 31.
 
-1. **Daily cap per member: 240 min of own output from gifts** (Great chests excluded); above it contents turn into gift XP. Median ≈ 155 min per day at level 1, 225 at level 10; a top alliance (≈ 440 raw) hits the cap — its edge over a median alliance is ≤ 85 min of production per day.
+1. **Daily cap per member: 240 min of own output from gifts** (Great chests excluded); above it contents turn into gift XP. Median ≈ 155 min per day at level 1, 225 at level 10; a top alliance (≈ 440 raw) hits the cap — its edge over a median alliance is ≤ 85 min of production per day. In week 1, when members first-clear several camp levels a day, the cap binds for every alliance.
 2. **Not retroactive**: a member receives only gifts created after joining; Spoils and Great chests need ≥ 24 h membership. Gifts are bound to the account; resources land in protected storage (core-loop §7 rule 7).
 3. "Claim all" = 1 tap; each line names the deed ("Spoils — level-4 stronghold, rally led by <member>"). Unclaimed gifts expire after 72 h; on leaving, pending gifts are claimed automatically.
 4. A gift is ONE append to the alliance gift log; claim-all moves one per-member cursor — never one write per member per gift (§15).
 
 **Checks**: [ ] alliance_sim gift line — fails when: gift output > 240 min per member per day · [ ] shop-forge offer-data grep + gift unit test — fails when: a purchase creates a non-cosmetic gift, or names the buyer · [ ] hop_exploit_test — fails when: a new member receives gifts created before joining.
 
-## 7. Territory — the Hall and banners
+## 7. Territory — the Hall and standards
 
 [world.md](world.md) owns map geometry, landmarks, strongholds, relocation and the relationship palette; this section owns who, cost, upkeep and cap.
 
 | Item | Rule (PROPOSAL) |
 |---|---|
-| **Hall** | one per alliance, placed by the Liege: 2,000 Treasury + 300 works march-minutes. Tiers 2–6 cost 10k / 20k / 35k / 55k / 80k Treasury (200k total) + 300 × tier works-minutes; each tier +8 seats (§10) |
-| **Banner** | placed by the Steward or Liege, touching own territory. Cost of the b-th banner `500 · 1.15^floor((b−1)/10)`: #1 500, #51 1,006, #101 2,023, #200 7,116; 60 banners 43,769 in total, 200 banners 512,218 |
-| Cap and fading | cap `min(200, 3 × 7-day-active members)` — territory follows activity, not history. Over the cap, or at Treasury 0, the banner farthest from the Hall fades every 6 h; the Hall never fades |
-| Upkeep | first 20 banners free, then 20 Treasury per banner per day (−5% per Stewardship level); a function of time, settled on any Treasury read — 0 server ticks. Median 60 banners = 800 per day (13% of income); top 200 = 3,600 (16%) |
-| Works | members build the Hall and banners with works marches: Merit 1 per march-minute (≤ 60 per day) |
+| **Hall** | one per alliance, placed by the Liege; tier 1 costs 0 Treasury + 300 works march-minutes, so a new alliance plants it on day 1. Tiers 2–6 cost 10k / 20k / 35k / 55k / 80k Treasury (200k total) + 300 × tier works-minutes; each tier +8 seats (§10); the tier card shows the next tier's render at ≥ 40% of screen height (ART SHOWN BIG) |
+| **Standard** (a planted war flag that marks alliance ground) | placed by the Steward or Liege, touching own territory. Cost of the b-th standard `500 · 1.15^floor((b−1)/10)`: #1 500, #51 1,006, #101 2,023, #200 7,116; 60 standards 43,769 in total, 200 standards 512,218 |
+| Cap and fading | cap `min(200, 3 × 7-day-active members)` — territory follows activity, not history. Over the cap, or at Treasury 0, the standard farthest from the Hall fades every 6 h; the Hall never fades |
+| Upkeep | first 20 standards free, then 20 Treasury per standard per day (−5% per Stewardship level); a function of time, settled on any Treasury read — 0 server ticks. Median 60 standards = 800 per day (13% of income); top 200 = 3,600 (16%) |
+| Works | members build the Hall and standards with works marches: Merit 1 per march-minute (≤ 60 per day) |
 | Benefits | gathering bonus inside, march speed inside (Roadwardens), Hall summons, owned resource points — values in economy.md and world.md |
-| No seats from banners | the genre adds a member seat per 10 flags; we do not — seats never reward sprawl |
+| No seats from standards | the genre adds a member seat per 10 territory markers; we do not — seats never reward sprawl |
 
-**Fiction and art**: the Hall is a 3D building made through blender-forge, following the tier language of game-art-director `references/buildings.md` (tier 1 rough timber → tier 6 fine ashlar with gilt civic trim). Hall, banners and pennons carry the alliance's two tinctures only through the tint mask (blender-forge `references/architecture.md` §7); the sigil is ALS art; tinctures never match a relationship colour or a line accent.
+**Fiction and art**: the Hall is a 3D building made through blender-forge, following the tier language of game-art-director `references/buildings.md` (tier 1 rough timber → tier 6 fine ashlar with gilt civic trim). Hall, standards and pennons carry the alliance's two tinctures only through the tint mask (blender-forge `references/architecture.md` §7); the sigil is ALS art; tinctures never match a relationship colour or a line accent.
 
-**Checks**: [ ] alliance_sim banner-vs-activity line — fails when: an alliance with < 10 active members still holds > 30 banners after 14 days · [ ] sd_cost_probe: 0 scheduled writes — fails when: upkeep or fading needs a server job · [ ] contrast_test + a11y_audit on the realm-zoom map — fails when: a tincture pair reads as a relationship colour.
+**Checks**: [ ] alliance_sim standard-vs-activity line — fails when: an alliance with < 10 active members still holds > 30 standards after 14 days · [ ] sd_cost_probe: 0 scheduled writes — fails when: upkeep or fading needs a server job · [ ] contrast_test + a11y_audit on the realm-zoom map — fails when: a tincture pair reads as a relationship colour.
 
 ## 8. Rallies across time zones
 
@@ -189,9 +192,9 @@ Pattern: one member's deed becomes a small gift to every member, so success is s
 | Tool | Rule (PROPOSAL) |
 |---|---|
 | Rally wait, pledge | 5 / 10 / 30 / 60 min, or **scheduled** 15 min – 24 h ahead on a 15-min grid, shown in each member's local time. A scheduled rally carries a **Pledge** button (2 taps): the march leaves at launch if the member is online, or offline if they allowed it |
-| **Muster hours** | the Marshal sets ≤ 3 per day. The calendar shows a 24-hour activity strip (7-day-active members per hour, last 14 days, in the viewer's local time) and the coverage: share of 7-day-active members usually active within ±1 h of a muster hour. Target ≥ 60% |
-| **Standing pledge** (auto-join) | PvE targets only (strongholds, AI lords): ≤ 20% of the field army by default (max 50%), ≤ 3 per day (max 5), a lord preset, never the last free banner. It fills only places still open at 50% of the wait — people first |
-| Castle rallies | no offline auto-join: attackers' losses are heavy ([combat.md](combat.md)). A "war pledge" inside realm war windows, ≤ 20% of army, is an owner decision (§16) |
+| **Muster hours** | the Marshal sets ≤ 3 per day. The calendar shows a 24-hour activity strip (7-day-active members per hour, last 14 days, in the viewer's local time) and the coverage: share of 7-day-active members usually active within ±1 h of a muster hour. Target ≥ 60%. Counts only — the strip never shows who is online when |
+| **Standing pledge** (auto-join) | PvE targets only (strongholds, AI lords): ≤ 20% of the field army by default (max 50%), ≤ 3 per day (max 5), a lord preset, never the last free march banner (core-loop §2). It fills only places still open at 50% of the wait — people first |
+| Castle rallies | no offline auto-join: attacking a castle is the costliest loss context ([combat.md](combat.md)). A "war pledge" inside realm war windows, ≤ 20% of army, is an owner decision (§16) |
 | Rewards | stronghold rewards: **50% shared equally** among participants, 50% by damage share (the genre pays by damage share alone, so the biggest accounts take most). Auto-joiners earn the same; Merit 20 for the first 5 rallies per day |
 | Guards | auto-join needs S3+ and an account ≥ 72 h old (farm guard); no auto-join while an attack on the member's castle is incoming; departures use the march arrival trigger of world.md (no new server job) |
 
@@ -211,9 +214,9 @@ Target: with auto-rules on, the Liege has **0 required daily actions**, and a we
 | Auto-release, inactive | off / 7 / 10 / 14 days without a session; default 14 with "only when ≥ 90% full" ON; warning mail at N − 3 days; members "On leave" exempt; a released member may rejoin within 30 days with no cooldown, as a Yeoman |
 | Auto-release, idle contributor | optional: < 100 contribution in 14 days while active |
 | On leave | a member marks ≤ 14 days, once per 30 days; inactivity clocks pause. A Liege on leave names a regent with all powers except transfer and disband |
-| **Succession** | Liege without a session: day 5 mail to officers; day 7 mail to all + pinned countdown; **day 10** leadership passes to (1) the named heir if active in the last 48 h, else (2) the officer with the most 30-day contribution among those active in 48 h, else (3) such a Knight, else (4) such a Yeoman; nobody active in 48 h → "fading" (§10). The old Liege becomes a Knight. Evaluated on the next alliance read — no server job |
+| **Succession** | Liege without a session: day 5 mail to officers; day 7 mail to all + pinned countdown; **day 10** leadership passes to (1) the named heir if active in the last 48 h, else (2) the officer with the most 30-day contribution among those active in 48 h, else (3) the Knight with the most, else (4) the Yeoman with the most; nobody active in 48 h → "fading" (§10). The old Liege becomes a Knight. Evaluated on the next alliance read — no server job |
 | Transfer | voluntary: 24 h delay, cancellable, the receiver must accept (a stolen account cannot hand the alliance away at once) |
-| Disband | 72 h delay; any officer may "take the banner" in that time — leadership passes to them and the disband is cancelled. Treasury is lost on disband |
+| Disband | 72 h delay; any officer may "take the seat" in that time — leadership passes to them and the disband is cancelled. Treasury is lost on disband |
 
 Rejected: **votes of no confidence** (politics become the game; burnout grows); **one leader with every power** (the genre's burnout source).
 
@@ -225,8 +228,8 @@ Rejected: **votes of no confidence** (politics become the game; burnout grows); 
 
 | Rule | PROPOSAL |
 |---|---|
-| Founding | S ≥ 3; costs 8 h of own output (all five), never gems; name, 3–4 letter tag, sigil (ALS), two tinctures; one founding per account per 30 days |
-| Fading, merging | < 10 seven-day-active members for 14 days → listed on the merge board. A merge needs both Lieges (two keys per side); members move in one step with no cooldown; each charter keeps the higher level; Treasury adds up; absorbed officers become Knights; the absorbed Hall is removed, its touching banners transfer, the rest fade |
+| Founding | S ≥ 3; costs 8 h of own output (all five), never gems; name and 3–4 letter tag (through chat-forge's name filter), sigil (ALS), two tinctures; one founding per account per 30 days |
+| Fading, merging | < 10 seven-day-active members for 14 days → listed on the merge board. A merge needs both Lieges (two keys per side); members move in one step with no cooldown; each charter keeps the higher level; Treasury adds up; absorbed officers become Knights; the absorbed Hall is removed, its touching standards transfer, the rest fade |
 | Suggestion, nudge | at S2 (onboarding.md picks the moment): 3 alliances with the same language, activity overlap ≥ 50%, open seats, auto-accept on, ≥ 60% of members active in 72 h; join = 1 tap. Unaffiliated players at S2+ see one digest line per day: "An alliance would have saved you 34 m today", computed from their real helpable timers |
 | **Welcome chest** | once per account, ever: 3 × 1 h Universal + 8 h own output + the alliance tabard (cosmetic). Opens after 24 h membership AND 5 helps given — it teaches helping. The genre gives premium currency; gems or not is an owner decision (§16) |
 
@@ -252,7 +255,7 @@ Rejected: **votes of no confidence** (politics become the game; burnout grows); 
 
 | Pact | Effect (enforced by the server, not by trust) | Term | Sign | End early |
 |---|---|---|---|---|
-| **Truce** | members of the two alliances cannot attack, scout or rally against each other's castles, banners, Hall or gatherers | 1–7 days, renewable | two keys per side (Liege + one officer) | 12 h public notice |
+| **Truce** | members of the two alliances cannot attack, scout or rally against each other's castles, standards, Hall or gatherers | 1–7 days, renewable up to 28 days in a row, then 7 days with no pact between the same two | two keys per side (Liege + one officer) | 12 h public notice |
 | **Accord** | Truce + members may reinforce each other's castles; shared map pins; partner marches in the ally colour with a distinct marker shape (world.md) | until season end | same | 24 h public notice |
 
 1. **≤ 3 pacts per alliance, ≤ 1 of them an Accord** — no realm-wide web of non-aggression.
@@ -260,7 +263,7 @@ Rejected: **votes of no confidence** (politics become the game; burnout grows); 
 3. **Suspended** at the realm's top landmark contest (world.md) and in the last 72 h of a season: the top is always contested. All pacts end at season end.
 4. Ending a pact before half its term marks the alliance "Oathbreaker" for 7 days — a word on its profile, no stat effect.
 
-**Checks**: [ ] pact_test: 5 action types blocked — fails when: an attack between Truce partners resolves · [ ] pact_test notice and suspension cases — fails when: a pact ends without its notice, or holds at the top landmark · [ ] alliance_sim realm line; liveops.md reviews — fails when: a realm freezes (≥ 60% of the top 10 alliances in pacts with each other for 14 days).
+**Checks**: [ ] pact_test: 5 action types blocked — fails when: an attack between Truce partners resolves · [ ] pact_test notice, renewal and suspension cases — fails when: a pact ends without its notice, a Truce runs > 28 days in a row, or a pact holds at the top landmark · [ ] alliance_sim realm line; liveops.md reviews — fails when: a realm freezes (≥ 60% of the top 10 alliances in pacts with each other for 14 days).
 
 ## 13. Chat and mail hooks (chat-forge, mail-forge)
 
@@ -268,13 +271,13 @@ Rejected: **votes of no confidence** (politics become the game; burnout grows); 
 |---|---|---|---|
 | Member joins, leaves, is promoted, released, warned | system line (not for warnings) | to the member: promotion or office; release reason and rejoin rule; auto-release warning at N − 3 days | — |
 | Help, gifts | none (digest and gift list only) | — | never |
-| Rally launched (wait ≥ 10 min) | rally card with Join (2 taps) | — | pledged and opted-in members |
+| Rally launched | rally card with Join (2 taps) | — | opted-in members, only when the wait is ≥ 10 min |
 | Rally scheduled | pinned card + calendar entry | alliance mail if ≥ 6 h ahead | 10 min before, pledged members only |
 | Charter level or Great chest | 1 line; ≥ 3 per hour merge into one | — | — |
 | Announcement | pinned line | optional | optional |
 | Liege absent day 5 / 7 / 10 | pinned countdown from day 7 | officers (5), all (7, 10) | all at day 10 |
 | Pact proposed / signed / notice / ended | line + realm feed line | officers (proposed); all members (signed, notice) | officers at notice |
-| Banner fading (Treasury 0 or over cap) | line | Steward and Liege | — |
+| Standard fading (Treasury 0 or over cap) | line | Steward and Liege | — |
 
 Budgets: ≤ 20 system lines per alliance per day (extra lines merge into one "Alliance news" line); ≤ 3 alliance-wide mails per day; ≤ 1 alliance push per member per day besides pledged rallies. Share cards (coordinates, reports, invites) are chat-forge's; mail templates and claim rules are mail-forge's.
 
@@ -287,7 +290,7 @@ Budgets: ≤ 20 system lines per alliance per day (extra lines merge into one "A
 | Alliance hopping | cooldown ladder; tenure-gated rewards; caps follow the player | 4 h / 24 h / 72 h |
 | Gifts from purchases make spending a social duty | anonymous cosmetic tokens only, 0 gift XP | ≤ 3 per alliance per day |
 | Truces freeze the map | public, capped, server-enforced pacts, suspended at the top | ≤ 3 pacts; truce ≤ 7 d |
-| One dominant alliance holds a late realm | banner cap by activity; upkeep; realm charter discount; seats ≤ 100 | cap = 3 × 7-day actives |
+| One dominant alliance holds a late realm | standard cap by activity; upkeep; realm charter discount; seats ≤ 100 | cap = 3 × 7-day actives |
 | Farm accounts feed a main through the alliance | no Treasury or helper pay from new or low accounts; bound gifts | < 72 h or S ≤ 2 → 0 Treasury |
 | Stronghold rewards by damage share alone | half shared equally | 50 / 50 |
 | Officers stock the alliance store from collective funds | endless stock, per-player weekly caps | 0 stocking taps |
@@ -297,9 +300,9 @@ Budgets: ≤ 20 system lines per alliance per day (extra lines merge into one "A
 
 | Proof | Measures | Verdict line (PROPOSED — qa-forge fixes the wording) |
 |---|---|---|
-| alliance_sim (new, headless; qa-forge; path to confirm) | 90 days; top / median / small; 3 time-zone clusters: charter days, Merit, gift minutes, first help, rally fill per muster hour, Liege minutes, banners vs activity, realm pacts | `ALLIANCE SIM OK - charters 33/76/100 d, merit p50 385/d, gifts <= 240 m/d, first help p50 <= 15 m, fill >= 80% x3, liege <= 15 m/wk` |
+| alliance_sim (new, headless; qa-forge; path to confirm) | 90 days; top / median / small; 3 time-zone clusters: charter days, Merit, gift minutes, first help, rally fill per muster hour, Liege minutes, standards vs activity, realm pacts | `ALLIANCE SIM OK - charters 33/76/100 d, merit p50 385/d, gifts <= 240 m/d, first help p50 <= 15 m, fill >= 80% x3, liege <= 15 m/wk` |
 | alliance_perm_test (unit; gameplay-forge + cloud-forge) | the §2 matrix, allowed and refused, rate limits | `PERMS OK - 16 actions x 5 ranks x 4 offices, 0 faults` |
-| succession_probe (clock skip) · hop_exploit_test · pact_test | heir, officer, Knight, fading, regent, return · every §11 row · blocks, notices, suspensions | `SUCCESSION OK - 6 cases, 0 faults` · `HOP OK - 9 rules, 0 exploits` · `PACT OK - 5 blocks, 2 notices, 2 suspensions` |
+| succession_probe (clock skip) · hop_exploit_test · pact_test | heir, officer, Knight, fading, regent, return · every §11 row · blocks, notices, suspensions | `SUCCESSION OK - 6 cases, 0 faults` · `HOP OK - 9 rules, 0 exploits` · `PACT OK - 5 blocks, 2 notices, 1 renewal cap, 2 suspensions` |
 | ux_flow_probe · ux_touch_probe · a11y_audit | Help all 1 tap, Donate ×5 3 taps, Join from card 2, Claim all 1; badges by shape + word | existing verdict lines |
 | `core/sd_cost_probe.gd` | alliance writes per player per day | alliance share ≤ €20 of the €200 per month |
 
@@ -319,5 +322,5 @@ Spec checklist: [ ] every §2 action mapped to a server check · [ ] help dials 
 4. **Peace ward and patron points in the Merit store** (monetization.md must agree).
 5. **Offline war pledge** for castle rallies inside war windows (recommended: not at launch). **Succession at day 10; auto-release default 14 days.**
 6. **Charter combat stats** (+1.5% attack, defence, health) against shipped sacred constants and combat.md's stat budget.
-7. **Names** (story-forge canon): Liege, Marshal, Steward, Herald, Warden, Knight, Yeoman, Recruit, Treasury (marks), Merit, Quartermaster, charters, Hall, banners, Hunt / Spoils / Feast / Great chest, muster hours, pledge, Truce, Accord, the Roll, Oathbreaker.
+7. **Names** (story-forge canon): Liege, Marshal, Steward, Herald, Warden, Knight, Yeoman, Recruit, Treasury (marks), Merit, Quartermaster, charters, Hall, standards, Hunt / Spoils / Feast / Great chest, muster hours, pledge, Truce, Accord, the Roll, Oathbreaker.
 8. Any dial here that collides with a shipped value (the shipped value wins until the owner decides).

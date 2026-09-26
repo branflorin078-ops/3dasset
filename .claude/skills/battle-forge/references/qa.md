@@ -30,11 +30,11 @@ Run pattern (PowerShell 5.1, no `&&`; `$g` as in game-director SKILL.md):
 | Probe (path to confirm) | Mode | Input | Asserts | Verdict line |
 |---|---|---|---|---|
 | `beat_coverage_test` | headless | every beat kind the resolver can emit (read from the frozen shape, not hand-listed) | each kind has a beats.md row: clip, VFX id, SFX id, camera, 1× ms, min 2×, priority; every id resolves to a real resource | `BEAT COVERAGE OK - 18 kinds, 0 unmapped, 0 missing resources` |
-| `battle_timeline_probe` | headless | fixtures §3 | 1× length inside the context budget; skip time; 2× floors; A beats in = A beats shown; `i` order kept; 0 hits inside holds; full lord moments ≥ 6,000 ms apart; ≤ 1 camera move per 3 s outside A beats | `TIMELINE OK - 10 fixtures, field 20.6s, siege 32.5s, rally 41.0s, 0 dropped A beats` |
+| `battle_timeline_probe` | headless | fixtures §3 | 1× length inside the context budget; skip time; 2× floors; A beats in the log = Σ ×N of A beats shown; `i` order kept; 0 hits inside holds; full lord moments ≥ 6,000 ms apart; ≤ 1 camera move per 3 s outside A beats | `TIMELINE OK - 10 fixtures, field 20.6s, siege 32.5s, rally 41.0s, 0 dropped A beats` |
 | `battle_determinism_probe` | headless | each fixture × 3 runs × {1×, 2×} | identical cue lists (hash of `t_ms, kind, actor, variant`) | `DETERMINISM OK - 60 runs, 1 hash per fixture-speed` |
 | `beat_latency_probe` | headless | log delivery delayed 0 / 1.2 / 4 / 8 s | act I covers ≤ 1.6 s; hold ≤ 3 s; fallback plate at 4.6 s; no outcome before the log | `LATENCY OK - hold max 3.0s, fallback at 4.6s, 0 early outcomes` |
 | `counter_readability_probe` | windowed | a fixture with every counter pair in both directions | badge per counter beat (1:1); badge ≥ 72 px at peak; contrast ≥ 4.5:1 against the field; three state icons with alpha-mask IoU < 0.6; ≤ 2 badges at once | `COUNTERS OK - 10 pairs x 2 directions, min contrast 5.1, max IoU 0.42` |
-| `vfx_budget_probe` | windowed, Movie Maker | every fixture | per beat: cover %, emitters, particles, dynamic lights vs presentation.md §6; flashes ≤ 3 per any 60 frames | `VFX BUDGET OK - peak cover 38% (breach), max particles 470, flashes <= 2/s` |
+| `vfx_budget_probe` | windowed, Movie Maker | every fixture | per beat: cover %, emitters, particles, dynamic lights vs presentation.md §7; flashes ≤ 3 per any 60 frames | `VFX BUDGET OK - peak cover 38% (breach), max particles 470, flashes <= 2/s` |
 | `battle_frame_probe` | windowed, reference phone | heaviest fixture (castle + rally 20 joiners + 3 engines) | p95 frame ≤ 16.7 ms, no frame > 33.3 ms at beat boundaries, draw calls ≤ 150, skinned figures ≤ 70, 0 sync loads | `BATTLE FRAME OK - p95 14.2ms, worst 29.8ms, draws 131, figures 64` |
 | `march_eta_probe` | headless (extends `march_probe`) | 200 random marches, intercepts, recalls | shown ETA, contact and recall times within ±1 s of the server functions | `MARCH ETA OK - 200 marches, max error 0.4s` |
 | `warning_probe` | headless | hostile marches at ETA 30 s / 90 s / 10 min; 5 attackers; quiet hours | bands at the right times ±1 s; pushes grouped ≤ 1 per 60 s; ward blocked while targeted | `WARNING OK - 4 bands, pushes 1 per 60s, ward blocked 5/5` |
@@ -99,7 +99,7 @@ stop and report the residual gap honestly).
 | 1 | Cause readable | 5 of 5 testers name the main cause ≤ 10 s after the card | 3–4 of 5 | ≤ 2 of 5 |
 | 2 | Counters visible | every counter badged, both directions | missing in one direction | badges absent or wrong |
 | 3 | Lord moments | each lord's moment named by testers; ≥ 6 s apart | named but crowded | indistinct |
-| 4 | Restraint | all §6 limits met, flashes ≤ 3/s | one limit exceeded by ≤ 10% | any "Never" column hit |
+| 4 | Restraint | all presentation.md §7 limits met, flashes ≤ 3/s | one limit exceeded by ≤ 10% | any "Never" column hit |
 | 5 | Timing | inside the context budget; skip on time | ≤ 10% outside | outside by more |
 | 6 | Truth | shown beats = log; 0 invented hits; order kept | a cosmetic mismatch | an invented or reordered deciding beat |
 | 7 | Muted read | the whole battle reads with sound off | one cue lacks a visual twin | depends on sound |
@@ -142,7 +142,7 @@ by our own measured rows:
 
 1. A counter bonus of about 5% is invisible under talent, gear and status stacks; reviewers
    concluded that PvP "isn't about tactics, just raw power". A counter must be big enough to
-   matter (combat.md) AND shown when it lands (presentation.md §4).
+   matter (combat.md) AND shown when it lands (presentation.md §5).
 2. Armies drawn as a small squad + banner + troop-type icon + health bar keep mass battles
    readable at mid zoom [observational]; count-true crowds do not scale.
 3. About one combat turn per second and a skill every ~10 turns [community estimate] give a
