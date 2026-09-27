@@ -72,7 +72,7 @@ of what to do or when it changes. The technical code goes last, at 32 px in INK 
 
 1. **Offline banner**: an IRON band of 764 × 72 at the top of the clear world window
    (x 152, y 316; hud.md §3): the offline line + a connection icon. Toasts move below it
-   (y 404). Spends, claims, marches and purchases are disabled
+   (y 404). When the threat banner shows (hud.md §9), the offline band goes under it. Spends, claims, marches and purchases are disabled
    with the reason "Needs the realm road". Cached screens stay browsable, marked "Saved
    14:20".
 2. **Optimistic actions** (shown at once, confirmed later, rolled back with a toast on

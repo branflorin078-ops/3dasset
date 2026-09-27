@@ -158,6 +158,7 @@ two-step, components.md §5).
 
 | Priority | Bubble | Building | Tap does |
 |---|---|---|---|
+| 0 | Threat: "Attack 2:40", or readiness "Defence 3/4" (battle-forge defence.md §2, §4) | the fortress | opens the Defence panel at the first failing check |
 | 1 | Finish free (hourglass art) | any building with a plate under the threshold | finishes (1 tap) |
 | 2 | Idle (plate icon + "Idle" tag) | an idle muster yard or scriptorium desk | opens its action surface |
 | 3 | Wounded waiting (bed count tag) | infirmary | opens the infirmary |
@@ -170,8 +171,9 @@ two-step, components.md §5).
   (godot.md §8).
 - **Size**: a parchment medallion Ø 104 with a 6 px gilt rim, icon 64 px, hit 144. Its bottom
   sits 24 px above the anchor point.
-- **Caps**: ≤ 5 visible at castle overview (P1–P3 only), ≤ 8 at castle close. Two bubbles
+- **Caps**: ≤ 5 visible at castle overview (P0–P3 only), ≤ 8 at castle close. Two bubbles
   whose centres are < 120 px apart merge: the higher priority shows, with a "+1" pip (32 px).
+  P0 is never merged away, and it shows only while a check fails or a threat exists.
 - **Zoom**: shown at C1 and C2, hidden at R and M; fade in 150 ms, out 120 ms on
   `level_changed` (transition-forge zoom-model.md §6).
 - **Motion**: appear = scale 0.6 → 1 + fade in 180 ms. Resolve = shrink in 120 ms, then
@@ -207,6 +209,11 @@ two-step, components.md §5).
   next goal.
 - **Digest on resume** (core-loop §8.1): ≤ 3 lines of 42 px on an INK scrim of 70%,
   880 wide, at y 316. It hides after 2.5 s or on the first tap, whichever comes first.
+- **Threat banner** (battle-forge defence.md §2, the "Near" band, ETA ≤ 60 s): 764 × ≤ 130
+  at the top of the clear window (x 152, y 316): the countdown and **Call allies · Recall
+  marches · Defence** (3 buttons, 132 px hits). The offline band and toasts move below it. It
+  is a war surface: no offer or gem button appears while it shows (monetization.md §10).
+  Hostile marches also appear as WAX-edged rows at the top of the Banners drawer.
 - **Help all (H7)**: art of two clasped gauntlets (Blender), with the request count pill. It
   appears only while a request exists. A tap sends ONE append to the help log (core-loop §6).
   Toast: "Helped 7 allies — −1 h 12 m in total".

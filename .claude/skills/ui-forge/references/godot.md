@@ -185,11 +185,11 @@ func _new_tween() -> Tween:
 Test it: open, then close at frame 3; open again at frame 5. The sheet must reverse twice with
 no jump and no hide in between (the `hide` callback dies with the killed tween).
 
-## 6. Collapsing portrait header (lord detail, screens.md S5)
+## 6. Parallax header (event and profile headers; never on lord detail)
 
-The portrait sits BEHIND the ScrollContainer; the content starts with a 580 px transparent
-spacer. On scroll value `v`: portrait `position.y = -v * 0.5`, name band `modulate.a = 1 -
-clamp(v / 300, 0, 1)`, and a compact 320 px header fades in at `v ≥ 580`. Nothing is resized.
+The header art sits BEHIND the ScrollContainer; the content starts with a transparent spacer of
+the art's height. On scroll value `v`: art `position.y = -v * 0.5`, title band `modulate.a = 1 -
+clamp(v / 300, 0, 1)`, and a compact 200 px title bar fades in once the art is gone. Nothing is resized.
 
 ## 7. One timer for every countdown
 

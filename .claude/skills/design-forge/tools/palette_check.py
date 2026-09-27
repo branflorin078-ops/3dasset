@@ -3,14 +3,17 @@ simulated protanopia, deuteranopia and tritanopia. Pure Python, no dependencies,
 deterministic (same input -> same output, byte for byte).
 
     python palette_check.py --colours self=#FAF6EA ally=#2042D8 enemy=#FF4F19 neutral=#786868
-    python palette_check.py --colours a=#... b=#... --against GILT=#C9A04C Sound=#4F7FD6 \
-        --min 20 --min-against 15 --allow self:PARCHMENT [--all] [--json]
+    python palette_check.py --colours self=#... ally=#... --against GILT=#C9A04C Sound=#4F7FD6 \
+        --min 20 --min-against 15 --clash-conditions normal --allow self:PARCHMENT [--all] [--json]
 
 What it answers: "can a player tell these colours apart, including players with a
 colour-vision deficiency (CVD), and do they collide with colours that already have
 another job?" For each condition it prints
   - the worst pair INSIDE --colours (every pair is checked), and
   - the worst clash between a --colours entry and an --against entry.
+--min holds inner pairs in all four conditions; --min-against holds clashes in the
+--clash-conditions (default all four; every condition is always reported). --allow
+exempts a pair that another rule already fixes (say which rule in the spec).
 The last line is a verdict: PALETTE OK / PALETTE FAIL, then the exit code is
 0 (all pass), 1 (a pair is below a threshold) or 2 (bad input).
 
@@ -203,13 +206,16 @@ def parse_allow(items, colour_names, against_names):
 
 
 def check(colours, against=(), min_de=15.0, min_against=15.0, allow=frozenset(),
-          conditions=CONDITIONS):
+          conditions=CONDITIONS, clash_conditions=CONDITIONS):
     """Every pair inside `colours` and every colours x against pair, per condition.
 
+    `min_de` applies to inner pairs in every condition; `min_against` applies to
+    clashes in `clash_conditions` only (the others are still reported).
     Returns a dict: per condition the sorted inner pairs and cross pairs
     (de, name_a, name_b, allowed), the worst of each, and an overall `ok`.
     """
-    result = {"conditions": {}, "failures": [], "min": min_de, "min_against": min_against}
+    result = {"conditions": {}, "failures": [], "min": min_de, "min_against": min_against,
+              "clash_conditions": tuple(c for c in conditions if c in clash_conditions)}
     for cond in conditions:
         labs = {n: hex_to_lab(h, cond) for n, h in list(colours) + list(against)}
         inner = sorted((round(ciede2000(labs[a], labs[b]), 6), a, b, frozenset((a, b)) in allow)
@@ -224,11 +230,12 @@ def check(colours, against=(), min_de=15.0, min_against=15.0, allow=frozenset(),
             if not p[3] and p[0] < min_de:
                 result["failures"].append((cond, "pair") + p[:3])
         for p in cross:
-            if not p[3] and p[0] < min_against:
+            if cond in clash_conditions and not p[3] and p[0] < min_against:
                 result["failures"].append((cond, "clash") + p[:3])
-    cvd = [(result["conditions"][c]["worst_inner"], c) for c in conditions
-           if c != "normal" and result["conditions"][c]["worst_inner"]]
-    result["worst_cvd"] = min(cvd) if cvd else None
+    for key, kind in (("worst_cvd", "worst_inner"), ("worst_cvd_clash", "worst_cross")):
+        cvd = [(result["conditions"][c][kind], c) for c in conditions
+               if c != "normal" and result["conditions"][c][kind]]
+        result[key] = min(cvd) if cvd else None
     result["ok"] = not result["failures"]
     return result
 
@@ -252,24 +259,31 @@ def report(res, colours, against, show_all=False):
             if against:
                 lines.append("        clashes: " + ", ".join("%s/%s %.1f%s" % (a, b, d, " (allowed)" if al else "")
                                                          for d, a, b, al in data["cross"]))
-    allowed = sorted({"%s/%s %.1f %s" % (a, b, d, c) for c, data in res["conditions"].items()
-                      for d, a, b, al in data["cross"] + data["inner"] if al})
+    allowed = ["%s/%s %.1f %s" % (a, b, d, c) for c, data in res["conditions"].items()
+               for d, a, b, al in data["inner"] + data["cross"] if al]
     if allowed:
-        lines.append("allowed (exempt, give the reason in the spec): " + "; ".join(allowed))
-    w = res["worst_cvd"]
-    summary = []
-    if w:
-        summary.append("worst CVD pair %.1f %s (%s/%s)" % (w[0][0], w[1], w[0][1], w[0][2]))
+        lines.append("allowed (exempt; the spec gives the reason): " + "; ".join(allowed))
     n = res["conditions"].get("normal")
+    pairs, clashes = [], []
     if n and n["worst_inner"]:
-        summary.append("normal %.1f" % n["worst_inner"][0])
+        pairs.append("normal %.1f" % n["worst_inner"][0])
+    if res["worst_cvd"]:
+        (d, a, b, _), c = res["worst_cvd"]
+        pairs.append("worst CVD %.1f %s (%s/%s)" % (d, c, a, b))
     if against and n and n["worst_cross"]:
-        summary.append("clash %.1f normal (%s/%s)" % (n["worst_cross"][0], n["worst_cross"][1], n["worst_cross"][2]))
+        clashes.append("normal %.1f (%s/%s)" % (n["worst_cross"][0], n["worst_cross"][1], n["worst_cross"][2]))
+    if against and res["worst_cvd_clash"]:
+        (d, a, b, _), c = res["worst_cvd_clash"]
+        clashes.append("worst CVD %.1f %s (%s/%s)" % (d, c, a, b))
+    summary = "pairs " + ", ".join(pairs) + ("; clashes " + ", ".join(clashes) if clashes else "")
+    rule = "min %g" % res["min"]
+    if against:
+        rule += ", min-against %g in %s" % (res["min_against"], "/".join(res["clash_conditions"]) or "none")
     if res["ok"]:
-        lines.append("PALETTE OK - " + ", ".join(summary) + "; min %g, min-against %g" % (res["min"], res["min_against"]))
+        lines.append("PALETTE OK - %s [%s]" % (summary, rule))
     else:
-        lines.append("PALETTE FAIL - %d below threshold (min %g, min-against %g): %s" % (
-            len(res["failures"]), res["min"], res["min_against"],
+        lines.append("PALETTE FAIL - %d below threshold [%s]: %s" % (
+            len(res["failures"]), rule,
             "; ".join("%s %s %s/%s %.1f" % (c, k, a, b, d) for c, k, d, a, b in res["failures"][:8])))
     return "\n".join(lines)
 
@@ -280,6 +294,7 @@ def to_json(res, colours, against):
     return json.dumps({
         "colours": dict(colours), "against": dict(against),
         "min": res["min"], "min_against": res["min_against"], "ok": res["ok"],
+        "clash_conditions": list(res["clash_conditions"]),
         "conditions": {c: {"worst_pair": pl(d["worst_inner"]), "worst_clash": pl(d["worst_cross"])}
                        for c, d in res["conditions"].items()},
         "failures": [{"condition": c, "kind": k, "de00": round(d, 2), "a": a, "b": b}
@@ -297,6 +312,8 @@ def main(argv=None):
     ap.add_argument("--min", type=float, default=15.0, help="min dE00 inside --colours, every condition (15)")
     ap.add_argument("--min-against", type=float, default=None,
                     help="min dE00 colours vs --against, every condition (default: same as --min)")
+    ap.add_argument("--clash-conditions", nargs="+", choices=CONDITIONS, default=list(CONDITIONS),
+                    help="conditions in which --min-against is enforced (default: all four; all are reported)")
     ap.add_argument("--allow", nargs="*", default=[], metavar="A:B",
                     help="exempt a known, mitigated pair (e.g. self:PARCHMENT because of a keyline)")
     ap.add_argument("--all", action="store_true", help="print every pair, not only the worst")
@@ -315,7 +332,7 @@ def main(argv=None):
         print("palette_check: %s" % e, file=sys.stderr)
         return 2
     min_against = args.min if args.min_against is None else args.min_against
-    res = check(colours, against, args.min, min_against, allow)
+    res = check(colours, against, args.min, min_against, allow, CONDITIONS, tuple(args.clash_conditions))
     print(to_json(res, colours, against) if args.json else report(res, colours, against, args.all))
     return 0 if res["ok"] else 1
 

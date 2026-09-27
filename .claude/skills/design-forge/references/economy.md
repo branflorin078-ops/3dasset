@@ -125,11 +125,11 @@ player who gathers · [ ] CSV window 61–90 in 1.05–1.20 — fails when: no t
 
 1. **City = the floor**: safe, offline, no decision after the build. ≥ 40% of total income at every stage, so a castle in a hostile zone still grows: the no-map player keeps 76% / 68% / 48% / 42% of the intended pace on food / wood / stone / iron (model day 90, 1 / ratio).
 2. **Map = the variable**: needs banners, choices and exposure. Target share of income: ~20% in month 1 → 35–40% late (model 21% → 36%).
-3. **Yield rule**: an 8 h march on a node of the player's own stage returns 15–20% of the player's daily city output (vu). Rate `ρ · 1.2^(N−1)` per node level N (1–6); a march gathers at `min(N, S + 1)`. Node capacity = 1.5 × one 8 h load, so two marches share a node.
+3. **Yield rule**: an 8 h march on a node of the player's own stage returns 15–20% of the player's daily city output (vu). Rate `ρ · 1.2^(N−1)` per node level N (1–6); a march gathers at `min(N, S + 1)`. Node capacity = 1.5 × one 8 h load, so two marches share a node. Model check: late map income = 0.82 × city output a day ≈ 4–5 such marches (≈ 3 of 5 banners gather; camps, rallies and war take the rest).
 4. **Load**: a full march of stage S carries ≥ 10 h of rate at N = S (loads per line: combat.md §3; engine wagons 4.0×), so "until I'm back" ([core-loop.md](core-loop.md) A3) is never cut by load.
 5. **Function of time**: `gathered(t) = min(load, rate · (t − arrive))`, settled when the march leaves, is attacked or is resent — 0 ticks. Nodes are seeded `hash(realm, day, chunk)` → 0 spawn writes.
 6. **A decision, not busywork**: the node card shows yield per hour, travel time and danger (hostile marches within 10 tiles in the last hour) in one read; richer nodes lie farther and in contested rings. Resend all = 1 tap (A2).
-7. **Gathering bonuses add inside one category** (numbers.md §9): research ≤ +60%, lord ≤ +30%, territory +20%, gathering writ +20% for 8 h ([alliance.md](alliance.md) Quartermaster) → cap +130%.
+7. **Gathering bonuses add inside one category** (numbers.md §9): research ≤ +60%, lord ≤ +30%, territory +20%, alliance charters ≤ +15% ([alliance.md](alliance.md) §5), gathering writ +20% for 8 h (alliance.md §4 Quartermaster) → cap +145%.
 
 **Checks**: [ ] model channel shares per stage — fails when: map < 25% of late income (territory is
 decoration) or > 50% (the city stops mattering) · [ ] core-loop loop sim — fails when: median banner
@@ -140,14 +140,14 @@ an "until I'm back" batch early.
 
 | Effect | PROPOSAL | Note |
 |---|---|---|
-| Gathering inside own alliance territory | +20% rate | genre +25% [benchmark.md §3]; our map already carries 36% of late income |
-| Ring richness | outer N 1–3, middle 3–5, inner 5–6 | seams and veins only at N ≥ 3 ([world.md](world.md) draws the rings) |
-| Held landmarks ([world.md](world.md) ladder) | +3% to +8% city output of ONE resource to members, by landmark tier | Treasury rates: [alliance.md](alliance.md) §4 |
-| Cap and test | territory ≤ +25% of a member's total income (≤ +35% with inner-ring nodes); a median territorial member earns +10–20% over an unaligned player | 36% map × 20% + landmarks ≈ +12%: worth a fight, never decisive |
+| Gathering inside own alliance territory | +20% rate (§5 rule 7) | genre +25% [benchmark.md §3]; ≈ +4% of total income at every stage (20% × 21% map share early; 20/190 × 36% late, research and lord at max) |
+| Ring richness | outer N 1–3, middle 3–5, inner 5–6 | seams and veins only at N ≥ 3 ([world.md](world.md) §2 draws the rings) |
+| Held landmarks ([world.md](world.md) §3: caps, Treasury rates) | +3% to +8% city output of ONE resource to members, by landmark tier | one landmark = 0.15–0.6% of a member's late income (iron least: the mine is 20% of iron); a cap-holder's best set ≈ +4.6% |
+| Cap and test (model §12, days 61–90) | territory (rows 1 + 3) ≤ +10% of a member's total income: median ≈ +5%, cap-holder ≈ +9% | membership adds charters (gathering ≤ +15%) and gifts (155–225 min own output a day, [alliance.md](alliance.md) §5–6): median member ≈ +11%, top ≈ +18% over an unaligned player — worth a fight, never decisive |
 
 ## 7. Protection — allowance, sheds, pledge, plunder
 
-**Warehouse allowance** `Wp(r) = h_w · H(r)`:
+**Warehouse allowance** `Wp(r) = h_w · H(r) · (1 + 0.05·c)`, `c` = the alliance's Cellars charter level 0–3 ([alliance.md](alliance.md) §5):
 
 | Warehouse tier | 1 | 2 | 3 | 4 | 5 | 6 |
 |---|---|---|---|---|---|---|
@@ -156,31 +156,32 @@ an "until I'm back" batch early.
 1. **Sheds** hold 15 h of `P` per building ([core-loop.md](core-loop.md) 15-hour promise) and are never plundered; collect-on-open moves them to the yard. The promise covers waste (caps, expiry), not war: plunder takes only what the player chose to keep above the allowance.
 2. **Yard** has no cap (nothing is lost to a full store; exposure is the price of holding). Stock `Y(r)` above the allowance is plunderable: `L(r) = max(0, Y(r) − max(0, Wp(r) − I(r)))`.
 3. **Items — the genre loophole closed.** New content creates **no holdable resource item**: chests, events, camps and goods ([monetization.md](monetization.md) §2) land in the yard at delivery (core-loop §7's "protected storage" = the allowance). If shipped resource items exist (`data/items.gd`), their unopened value `I(r)` uses the allowance first, and any value above `Wp` opens into the yard after a 7-day notice. Total untouchable per resource = `Wp` + one pledge — never more.
-4. **Pledge — an honest way to save** (in the genre, items were the only safe way to save). On a building card, "Save for this" (2 taps) moves stock into a pledge: one pledge at a time; ≤ the remaining cost of one startable upgrade; only once ≥ 50% of that cost is held; ≤ 72 h; consumed when the upgrade starts; after cancel or expiry, 24 h before the next. Pledged stock is not plunderable and not spendable elsewhere.
+4. **Pledge — an honest way to save** (in the genre, items were the only safe way to save). On a building card, "Save for this" (2 taps) moves stock into a pledge: one at a time, for one upgrade whose keys are met; ≤ its remaining cost; opens once ≥ 25% of that cost is held; lapses 72 h after the last deposit (a deposit ≥ 10% of the cost restarts the clock), so a growing save stays safe and a parked vault lapses in 3 days; consumed when the upgrade starts; after cancel or lapse, 24 h before the next. Keep 30 (≈ 14 days of income, §0): safe from 25% on, ≥ 8 deposits. Pledged stock is not plunderable and not spendable elsewhere.
 5. **Plunder** on a won castle assault: takes `50% · L(r)` per resource, up to the survivors' load; the attacker receives **75%**, **25% is destroyed** (spoiled in the sack — a sink and a tax on raid-feeding).
-6. **Sacked**: only the first 2 won assaults on one castle in 12 h plunder; then 8 h with plunder 0. A breach adds no plunder ([combat.md](combat.md) §10 rule 5). Worst 12 h: −75% of `L`, 0% of the allowance.
+6. **Sacked**: at most 2 plundering assaults on one castle in any 12 h; the second starts 8 h of plunder 0. A breach adds no plunder ([combat.md](combat.md) §10 rule 5). Worst 12 h: −75% of `L` (1 − 0.5²); worst 24 h: −94% (1 − 0.5⁴); 0% of the allowance.
 7. **Attacker cap**: plunder received ≤ 24 H(r) of the attacker per resource per day; above it the carts come home empty and the defender loses nothing.
-8. **Plunder 0** from: peace ward and newcomer ward ([onboarding.md](onboarding.md)), accounts linked to the attacker (§9 F8), same alliance or left it < 7 d, caravan partners of the last 14 d. A defeated gathering march loses 50% of its cart by the same split. Gems and rp: never. Wounded in beds: never.
-9. **Honesty**: the scout report shows `L` ±20% (combat.md scout tier 2); the warehouse card shows "Safe: 210,000 · At risk: 290,000"; a goods offer shows how much of it will sit above the allowance.
+8. **Plunder 0** from: warded castles (peace and return wards, [onboarding.md](onboarding.md) §4, §8; arrival ward, [liveops.md](liveops.md) §7), accounts linked to the attacker (§9 F8), same alliance or left it < 7 d, caravan partners of the last 14 d. **Shuttered** castles (72 h offline, [world.md](world.md) §15 A8): plunder × 0.5 per further offline day — inactive cities stop being farms. A defeated gathering march loses 50% of its cart by the same split. Gems and rp: never. Wounded in beds: never.
+9. **Honesty**: the scout report shows `L` ±20% (combat.md §11, level 2); the warehouse card shows "Safe: 210,000 · At risk: 290,000"; a goods offer shows how much of it will sit above the allowance.
 
 Worked (S5, `H(food)` = 10,000/h, warehouse tier 5 → `Wp` = 210,000; yard 500,000, no items): `L` =
 290,000 → plunder 1 takes 145,000 (attacker +108,750, 36,250 destroyed) → plunder 2 takes 72,500 →
-sacked. Loss 217,500 (43%). With a 250,000 pledge for the keep: `L` = 40,000 → loss 30,000 (6%).
+sacked for 8 h. Loss 217,500 = 43.5% of the yard, 75% of `L`. With a 250,000 pledge for the keep: `L` = 40,000 →
+20,000 + 10,000 → loss 30,000 (6%). Tier 1 (12 h) would leave `L` = 380,000 → loss 285,000 (57%).
 
 **Checks** (plunder and pledge unit tests, gameplay-forge + cloud-forge): [ ] items case — fails
 when: opening items lifts untouchable stock above `Wp` + pledge ([benchmark.md](benchmark.md) check) ·
 [ ] 3-assault case — fails when: one castle loses > 75% of `L` in 12 h, or anything under `Wp` ·
-[ ] pledge case — fails when: a pledge outlives 72 h, exceeds one upgrade, or chains without the 24 h gap.
+[ ] pledge case — fails when: a pledge outlives 72 h after its last deposit, exceeds one upgrade, or chains without the 24 h gap.
 
 ## 8. Upkeep — light rations, no deaths (the decision)
 
 | Option | For | Against | Model (free food, d30 / d90) |
 |---|---|---|---|
 | None (genre: apparently none [unverified]) | simplest | food HOARDs late; idle troop stacks cost nothing → power inflation | 0.77 / 0.80 HOARD |
-| Heavy (older browser 4X: starving troops die) | strong sink | deaths while away break the 15-hour promise | — |
-| **Light rations, no deaths (recommended)** | the only sink that scales with army SIZE; lost troops stop eating; food keeps a job to the end. Cutting farm output 17% instead would tax every castle alike | one more line on the resource bar | 0.93 / 0.96 |
+| Heavy (older browser 4X, not in our research file: starving troops die) | strong sink | deaths while away break the 15-hour promise | — |
+| **Light rations, no deaths (recommended)** | the only sink that scales with army SIZE; lost troops stop eating; food keeps a job to the end. Taking the same food (16% of food income) by cutting farms would be −31% farm output on every castle, army or not | one more line on the resource bar | 0.93 / 0.96 |
 
-1. A unit eats its own food training cost in `D(t) = 150 + 15·(t − 1)` days (t1 150 d, t10 285 d, cavalry t11 300 d). With food cost ∝ power, upkeep per power at t10 = 150/285 = 53% of t1: quality over mass.
+1. A unit eats its own food training cost in `D(t) = 150 + 15·(t − 1)` days (t1 150 d, t10 285 d, cavalry t11 300 d). Upkeep per power at t10 = 1.37 (cost per power, combat.md §3) × 30/55 (food share, §4) × 150/285 = 39% of t1: quality over mass.
 2. Target: median free army's upkeep = 10–20% of food income (model 15–16%); max army ≤ 35%. Outside the band, move `D`.
 3. Wounded in beds, routed troops and engines eat 0; reinforcements at an ally are fed by their owner.
 4. Closed form, 0 ticks: net `n = P(food) − U`. `n ≥ 0`: `shed(t) = min(15·P, s0 + n·Δt)`. `n < 0`: shed 0, `Y(t) = max(0, Y0 + n·Δt)`.
@@ -193,14 +194,14 @@ when: opening items lifts untouchable stock above `Wp` + pledge ([benchmark.md](
 | F1 | Caravans only between members of one alliance, both ≥ 7 d in it | 7 d | cross-alliance feeding, join-drain-leave |
 | F2 | Caravan tax (a sink) | 20%; 15% with Market Rights ([alliance.md](alliance.md) §5) | cheap funnels |
 | F3 | Receive cap per resource per day, all senders together | ≤ 8 H(r) of the RECEIVER | all alts together add ≤ 8 of 24 hours (≈ +33%) of a main's own output |
-| F4 | Send cap by keep stage | S1–S2: none · S3: ≤ 12 H of own, no iron · S4+: ≤ 12 H incl. iron | fresh alts send nothing; an alt sends ≤ half a day of its own output |
+| F4 | Send cap by keep stage | S1–S2: none · S3: ≤ 12 H of own, no iron · S4+: ≤ 12 H incl. iron | fresh alts send nothing; an alt sends ≤ half a day of its own output; S3 comes on day 0.3–1.3 (progression.md §9), so F1 and F5 carry the weight |
 | F5 | Sender account age | ≥ 7 d | throwaway alts |
 | F6 | Travel | 30–90 min by distance; the server may hold and reverse | instant funnels |
 | F7 | Never transferable; bound chest rewards ([core-loop.md](core-loop.md) §7); 0 Treasury from new or S1–S2 accounts ([alliance.md](alliance.md) §4) | gems, rp, hourglasses, Resolve, lord items | bound value |
-| F8 | Device link: same install id or device-fingerprint hash within 30 d (salted hashes only, kept 90 d; cloud-forge, privacy law) | caravans blocked, plunder 0, help pays 0 ([alliance.md](alliance.md)), one vein cap per device | several accounts on one phone |
+| F8 | Device link: same install id or device-fingerprint hash within 30 d (salted hashes only, kept 90 d; cloud-forge, privacy law) | caravans blocked, plunder 0, help pays 0 ([alliance.md](alliance.md) §3), one vein cap per device | several accounts on one phone |
 | F9 | Shared network: same public IP with overlapping sessions ≥ 3 days in 7 | flag + F3/F4 caps halved; never a ban on IP alone | families, schools, carrier NAT stay safe |
 | F10 | Flow audit, nightly over caravan + plunder ledgers | flag a pair when one sender's outflow to one receiver > 50% of its income for 14 d and the sender built nothing | caps 0 for 14 d + human review |
-| F11 | Moving realms ([onboarding.md](onboarding.md) passage, [liveops.md](liveops.md) migration) | passage: ≤ `Wp`; voluntary migration: ≤ 72 H per resource; realm merges: in full | the feeder guard |
+| F11 | Moving realms | newcomer passage ([onboarding.md](onboarding.md) §8): ≤ `Wp` · the Writ ([liveops.md](liveops.md) §7, once per 35-day campaign): **≤ 72 H per resource — PROPOSAL; liveops.md §7 rule 5 still says "in full" and must align** (§16) · merges: in full | the feeder guard. 72 H = 1.5 × the 48 h median held stock (§10 rule 5), so the median migrant loses nothing; the Writ card shows "carried / left behind" before the confirm; stock above the cap stays behind (a sink) — spend it first; a pledge cancels |
 
 **Checks**: [ ] caravan server test by stage (benchmark.md check) — fails when: a young account
 moves more than its stage allows · [ ] plunder unit test, linked case — fails when: linked accounts

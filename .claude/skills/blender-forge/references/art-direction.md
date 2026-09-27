@@ -10,9 +10,8 @@ scale (§5–7). Detail never rescues a bad value plan.
 
 ## 1. Shape language — big, medium, small
 
-- **Budget of the read**: primary forms 60% (silhouette, big planes), secondary
-  30% (guard, grip, pommel, bands, straps, openings), tertiary 10% (rivets,
-  wire, engraving, scratches) — forms.md, here as a budget of attention.
+- **Budget of the read** (forms.md): primary forms 60% (silhouette, big
+  planes), secondary 30% (guard, grip, bands, openings), tertiary 10%.
 - **Size ladder**: neighbouring size classes differ by **2.5–4×**. Below 1.8×
   two elements compete; above 6× the middle is missing and the eye jumps from a
   calm shape straight to noise. Sunforged: blade 1020 mm → quillon span 310 mm
@@ -20,11 +19,10 @@ scale (§5–7). Detail never rescues a bad value plan.
 - **Mass, not needles**: a feature longer than 10× its width reads as a line.
   Ornament meant as a mass keeps length/width ≤ 5. The canon rays: 50–88 mm on
   a 12.4 mm root tapering with exponent 0.85 → mean width ≈ 6 mm, L/W ≈ 13.
-- **Rest is planned**: 10–25% of the subject may be calm (the `flat` gate), far
-  from the focal (upper third of a blade, a shield field, a roof field).
+- **Rest is planned**: 10–25% of the subject may be calm (the `flat` gate),
+  far from the focal (upper third of a blade, a shield field, a roof field).
 
-Detail size at card resolution, `px/mm = card_px × fill / length_mm` (canon
-card: tip to pommel 1846 px at 1600 px for 1.37 m):
+Detail size at card size, `px/mm = card_px × fill / length_mm` (canon: 1846 px for 1.37 m at 1600):
 
 | Card width | px/mm | 1 px = | 0.6 mm bevel | 6 mm edge bevel |
 |---|---|---|---|---|
@@ -33,11 +31,9 @@ card: tip to pommel 1846 px at 1600 px for 1.37 m):
 | 512 (card spec) | 0.43 | 2.3 mm | 0.26 px | 2.6 px |
 | 128 (read test) | 0.11 | 9 mm | — | 0.7 px |
 
-At 512 px a detail of **≥ 3 px is shape** (read one by one), **1–3 px is
-texture** (a value change of its area), **< 1 px is sheen** (moves average
-roughness, nothing else). Failure modes: equal-size ornament everywhere;
-needles instead of masses; detail spread evenly with no rest; sub-pixel detail
-counted as detail.
+At 512 px a detail of **≥ 3 px is shape**, **1–3 px is texture** (a value
+change of its area), **< 1 px is sheen** only. Failure modes: equal-size
+ornament, needles, detail spread evenly, sub-pixel detail counted as detail.
 
 ## 2. Value — plan three values before any material
 
@@ -53,16 +49,14 @@ def value_mat(key):                        # blockout-only material: flat grey d
 ```
 
 `<card>_3val.png` must read the object in three values. Sunforged plan: blade
-flat mid; edge bevels light on the lit side, dark on the shade side, each with
-a light edge line; fuller light (glow); sunburst light on a dark écusson; grip
-dark with light wire; pommel a light ring on a dark face.
+flat mid, edge bevels light/dark by side, fuller light, sunburst light on a dark
+écusson, grip dark with light wire, pommel a light ring on a dark face.
 
 **Metal takes its value from what it reflects, not from its albedo.** The canon
 blade base `#7E7466` is L* 49; the render shows L* 66–93, sRGB (200, 196, 191):
-the 1.2 m key softbox, mirrored. Set a metal's value with roughness (higher =
-wider, dimmer highlight), with the size, position and radiance of the lights it
-mirrors (`area_light`, §8) and with the dark world (`world_dark`) it mirrors
-between highlights.
+the 1.2 m key softbox, mirrored. Set a metal's value with roughness, with the
+size, position and radiance of the lights it mirrors (`area_light`, §8) and with
+the dark world (`world_dark`) it mirrors between highlights.
 
 **The focal area wins on local contrast.** Choose it before any detail:
 
@@ -75,10 +69,9 @@ between highlights.
 | Building (game camera) | door + job prop on the lit face (architecture.md §3) | roof field, back faces |
 | Siege engine | the working joint (arm pivot, windlass) | frame beams |
 
-Gate numbers are in qa.md §2, the reasoning in §9.3. Bands are necessary, not
-sufficient: the canon card has balanced bands (30.6 / 34.7 / 34.7) and is still
-34.6% flat — one smooth gradient supplies all three values without a single
-designed step.
+Gates: qa.md §2, reasoning §9.3. Bands are necessary, not sufficient: the canon
+card has balanced bands (30.6 / 34.7 / 34.7) and is still 34.6% flat — one
+smooth gradient supplies all three values without one designed step.
 
 ## 3. Material contrast — neighbours differ on two axes
 
@@ -95,24 +88,20 @@ of hue). One axis alone merges them at 128 px.
 | stone / timber / plaster | 0.78 / ~0.65 / ~0.85 | value + hue | alternate dark and light storeys |
 | cloth / metal | 0.85 / 0.2–0.45 | all three | cloth sheen 0.5–0.7 |
 
-**Rendered range inside one material** (p5–p95, probe `--region`): polished
-metal ≥ 50 L*; satin metal 35–55; leather 15–35; cloth 10–25; stone, wood
-20–35. Metal below 30 reads as paint; leather above 45 reads wet or plastic.
-Canon grip: albedo `#4A1418` is L* 15.6, the render gives mean 36.4, p5–p95
-9.8–63.2, sRGB (125, 72, 70) — the key's sheen on `spec` 0.35 and roughness
-0.55 turned oxblood into dusty rose. Hero metal needs `rough_var` ≥ 0.20 (the
-default 0.12 is ±0.06: uniform sheen). No `mat_wood` exists yet (library
-request, TEAM.md): use `F.MB` + a `ShaderNodeTexWave` (BANDS) stretched along
-the grain by a Mapping node, roughness 0.60–0.75, rendered range 20–35 L*.
+**Rendered range inside one material** (p5–p95, `--region`): polished metal
+≥ 50 L*, satin metal 35–55, leather 15–35, cloth 10–25, stone and wood 20–35.
+Canon grip: albedo `#4A1418` (L* 15.6) renders at mean 36.4, p5–p95 9.8–63.2,
+sRGB (125, 72, 70) — `spec` 0.35 at roughness 0.55 turned oxblood to dusty rose.
+Hero metal needs `rough_var` ≥ 0.20 (0.12 = ±0.06, a uniform sheen). No
+`mat_wood` yet (library request): `F.MB` + a `ShaderNodeTexWave` (BANDS)
+stretched along the grain, roughness 0.60–0.75.
 
 ## 4. Colour temperature and reserved colours
 
-- **Item cards**: key neutral white (1.2 m softbox upper-left), fill `#C9D4E6`
-  at 20%, rim = tier colour behind-right, hair 15%, backdrop `#2A1B0C` →
-  `#030304` (lighting-render.md). The key stays neutral: `TIERS` were
-  calibrated under it (glow.md, lessons #29).
-- **Buildings, map pieces**: the house light of the painted identity — warm
-  sun or torch upper-left, cool shadow lower-right (architecture.md §1).
+- **Item cards**: neutral white key, fill `#C9D4E6` at 20%, rim = tier colour,
+  warm backdrop (lighting-render.md); the key stays neutral because `TIERS`
+  were calibrated under it (lessons #29). **Buildings**: warm sun or torch
+  upper-left, cool shadow lower-right (architecture.md §1).
 - **Chroma budget**: ≤ 3 material hue families + the tier colour (canon: steel,
   gold, oxblood + legendary amber). Props and icon objects anchor on GILT
   `#C9A04C`, WAX `#8A1F24`, PARCHMENT `#E8D9B5`, OAK `#4A2E1B`, IRON `#3B4048`,
@@ -129,14 +118,14 @@ ferrule to grip, hinge to board), **edges** (arrises catch light and wear),
 **touch points** (grip centre, handles, door ring, lock plate), **load points**
 (rivets at stress, straps at folds). It rests on the fields between.
 
-- A focal cluster holds **5 ± 2 distinct features** inside a circle ~10% of the
-  object's length (canon guard: finials, écusson, rays, gem, ferrule, wire ends).
+- A focal cluster holds **5 ± 2 distinct features** within ~10% of the
+  object's length (canon guard: finials, écusson, rays, gem, ferrule).
 - **Rest ≠ empty**: a rest field has no tertiary FORMS but keeps micro-surface
   (roughness breakup, long scratches ≥ 1 px at 1024), so most of it stays above
   the 2 L* detail line. Flat pixels belong to glow cores, mirror highlights and
   the calmest third of the largest plane. No rest area above 30% of the subject.
 - Buildings: clusters at door, job prop, eaves, quoins; roof and wall fields
-  rest but keep course or tile texture of 3–6 px at the overview.
+  keep course or tile texture of 3–6 px at the overview.
 
 ## 6. Wear — one history, placed by use
 
@@ -155,10 +144,9 @@ mark, not scattered noise. Wear follows `brush_axis`.
 | Wood | corners, handles, thresholds | 2–6 mm rounded, lighter; hand zones darker | MB (no `mat_wood`) |
 | Stone | arrises, steps | chips 5–30 mm, irregular, never a clean line | geometry + `mat_stone` |
 
-AO mask distance ≈ 15% of the part's thickness (materials.md). `mat_leather`
-exposes it (`edge=`); `mat_metal` uses a fixed 4 mm (`_edge_mask` default) —
-right for parts ~25–30 mm thick, suspect on 2–10 mm blades (library request:
-`mat_metal(edge=)`).
+AO mask distance ≈ 15% of the part's thickness (materials.md): `mat_leather(edge=)`
+exposes it; `mat_metal` is fixed at 4 mm — suspect on 2–10 mm blades (library
+request: `mat_metal(edge=)`).
 
 ## 7. Scale cues — real sizes the eye uses as a ruler
 
@@ -191,8 +179,7 @@ are approximate; measure the real object through reference-forge.
 | Leather pink or rose | sheen lifts dark red by +20 L* | darker base, rough 0.68–0.72, spec 0.22 | `mat_leather(rough=)`, `set_in(mb.p, IN["spec"], …)` |
 | Wire wrap busy but flat | wire/leather ΔL* 11 | ≥ 30 | darker leather; gold rough 0.18 |
 | Shadow-side edges merge | the rim reaches one side only | low kickers aimed at the dark part | `area_light(name, loc, target, energy, size, size_y=)` |
-| A dark bevel on the silhouette | the faceted plane mirrors the dark world | a strip at the plane's mirror direction, 0.1–0.3× key radiance | `area_light(…, size=0.10, size_y=1.8)` |
-| Blown streak or washed-out card after "fixing" | strip radiance too high | radiance = energy ÷ area; key 480 W ÷ 1.44 m² = 333 W/m² | `area_light` energy |
+| A dark bevel on the silhouette; or a blown streak after "fixing" it | the plane mirrors the dark world; or the strip's radiance is too high | a strip at the plane's mirror direction at 0.1–0.3× key radiance (energy ÷ area; key 480 W ÷ 1.44 m² = 333 W/m²) | `area_light(…, size=0.10, size_y=1.8)` |
 | Focal lost after a detail pass | the rest gained local contrast | raise the focal (dark ground, more steps) or calm the rest | probe `--focal` |
 | Materials merge | neighbours differ on < 2 axes | §3 table | `mat_*` parameters |
 | Whole part reads as "edge" | AO mask distance > 15% of thickness | scale the mask | `mat_leather(edge=)` |
@@ -203,9 +190,8 @@ are approximate; measure the real object through reference-forge.
 
 ### 9.1 The probe (Pillow + numpy, outside Blender; copy it next to the renders)
 
-`py value_probe.py card.png --mask card_mask.png --tier legendary --focal
-0.24,0.55,0.40,0.74 --region blade=0.56,0.14,0.93,0.44` (missing numpy:
-`py -m pip install numpy pillow`).
+Run: `py value_probe.py card.png --mask card_mask.png --tier legendary --focal
+0.24,0.55,0.40,0.74` (missing numpy: `py -m pip install numpy pillow`).
 
 ```python
 """value_probe.py - value, contrast and empty-look numbers for one render (Pillow + numpy).
@@ -217,28 +203,22 @@ from PIL import Image
 S, SUBJ, FLAT, LO, HI = 1024, 6.0, 2.0, 30.0, 70.0   # width, subject L*, flat RMS, band edges
 GATE = dict(flat=(10.0, 25.0), clip=2.0, clip_hot=5.0, clip_w=5, band=15.0,
             sep=70.0, lost=10.0, focal=1.20, cr=4.5)
-
 def lstar(im):                                # sRGB -> linear Y -> CIE L* (0..100)
     a = np.asarray(im.convert('RGB'), np.float64) / 255
     Y = np.where(a <= 0.04045, a / 12.92, ((a + 0.055) / 1.055) ** 2.4) @ np.array([0.2126, 0.7152, 0.0722])
     return np.where(Y > 216 / 24389, 116 * np.cbrt(Y) - 16, Y * 24389 / 27), Y
-
 def box(img, r):                              # mean over a (2r+1)^2 window (integral image)
     k = 2 * r + 1; c = np.pad(img, ((r + 1, r), (r + 1, r)), 'edge').cumsum(0).cumsum(1)
     return (c[k:, k:] - c[:-k, k:] - c[k:, :-k] + c[:-k, :-k]) / k ** 2
-
 def sel(shape, spec):                         # "x0,y0,x1,y1" fractions -> boolean box
     x0, y0, x1, y1 = map(float, spec.split(',')); h, w = shape; b = np.zeros(shape, bool)
     b[int(y0 * h):int(y1 * h), int(x0 * w):int(x1 * w)] = True; return b
-
 def row(tag, s):
     v, f = L[s], det[s & inner]; p5, p95 = np.percentile(v, [5, 95])
     print(f"{tag:<10} px {s.sum():>6} meanL {v.mean():5.1f} p5-p95 {p5:3.0f}-{p95:3.0f} "
           f"flat {100 * (f < FLAT).mean() if f.size else 0:5.1f}% clip {100 * (v >= 98).mean():4.1f}%")
-
 def gate(name, ok, text):
     print(f"QA_VALUE {name:<10} {text:<52} {'PASS' if ok else 'FAIL'}"); return ok
-
 args = sys.argv[1:]; path, pairs = args[0], list(zip(args[1::2], args[2::2])); opt = dict(pairs)
 im = Image.open(path); im = im.resize((S, round(im.height * S / im.width)), Image.LANCZOS); L, Y = lstar(im)
 if '--mask' in opt:                           # the alpha pass (9.2), or any white-on-black mask
@@ -284,24 +264,19 @@ Image.fromarray(np.select([~m, L < LO, L < HI], [0, 60, 140], 230).astype(np.uin
 
 ```python
 bpy.data.objects["Backdrop"].hide_render = True      # backdrop_radial() names it "Backdrop"
-s = bpy.context.scene; s.render.film_transparent = True; s.cycles.samples = 8
-F.render(os.path.join(OUT, f"{asset}_{MODE}_mask.png"))   # RGBA: alpha = the subject
+s = bpy.context.scene; s.render.film_transparent = True; s.cycles.samples = 8   # 25 s on 4 CPU cores
+F.render(os.path.join(OUT, f"{asset}_{MODE}_mask.png"))   # RGBA, alpha = subject; render it LAST
 ```
-
-8 samples suffice for coverage (25 s on 4 CPU cores at 1000², about a second on
-the owner's GPU). Render it last: it changes the scene.
 
 ### 9.3 What the numbers mean — and why the gates sit where they do
 
-- **CIE L\*** (0–100): equal steps look equal; ~1 L* is the smallest visible
-  step on a flat patch. Images are resized to 1024 px wide first: the canon
-  flat share reads 34.6 / 34.5 / 32.3% from its 1600 / 768 / 512 px versions.
+- **CIE L\*** (0–100): equal steps look equal. Images are resized to 1024 px
+  first: the canon flat share reads 34.6 / 34.5 / 32.3% at 1600 / 768 / 512 px.
 - **flat 10–25%**: detail RMS < 2 L* at the 3–7 px scale (3.5–8 mm on a
   greatsword at 1024). Above 25%: large areas without one designed step — the
   empty look. Below 10%: no rest, busy. The backdrop's noise floor is 0.03 L*,
   so the 2 L* line measures design, not render noise.
-- **bands ≥ 15% each**: three values present; catches washed-out cards (test E
-  in §10: dark 13.3%). Never enough alone (§2).
+- **bands ≥ 15% each**: catches washed-out cards (test E: dark 13.3%).
 - **clipped ≤ 2%** keeps highlights as glints. Legendary and mythic cores clip
   by calibration (core `#FFF3C4` at 7.5 × the hot factor): the canon fuller core
   is 58% of its clipped pixels, 4.0–4.5% of the subject, 3 px wide — hence 5%
@@ -312,18 +287,16 @@ the owner's GPU). Render it last: it changes the scene.
   margin for phone glare. 70%, not 100%, leaves room for planned lost edges.
   Only with `--mask`: the threshold mask swallows bloom halos (57.2% vs 67.4%
   with the alpha pass on the same render).
-- **focal ×1.20**: mean local contrast (15 px window) in the focal box over the
-  rest of the subject. Moving the box ±2% of the frame moves the ratio about
-  ±0.10, so 1.20 means "clearly wins"; draw the box tight, ≤ 15% of the frame.
-  4.5:1 against the backdrop is ui-forge's body-text contrast.
+- **focal ×1.20**: mean local contrast (15 px window), focal box over the rest.
+  Moving the box ±2% of the frame moves it ±0.10, so 1.20 = "clearly wins";
+  box tight, ≤ 15% of the frame. 4.5:1 is ui-forge's body-text contrast.
 
 ### 9.4 When the probe lies
 
 Bloom halos inflate the threshold mask (use `--mask`); parts darker than L* 6
-drop out of it (holes in `_flat.png`); a busy backdrop breaks the backdrop
-estimate; boxes are fractions of the IMAGE — redraw them after reframing. The
-gates are a PROPOSAL calibrated on one card family (a 1.4 m weapon, fill ~0.78):
-record every approved card's numbers in lessons.md and re-tune after five.
+drop out of it; a busy backdrop breaks the backdrop estimate; boxes are image
+fractions (redraw after reframing). Gates are a PROPOSAL calibrated on one card
+family (1.4 m weapon, fill ~0.78): log approved cards in lessons.md, re-tune after five.
 
 ## 10. Worked example — the canon Sunforged card
 
@@ -338,7 +311,6 @@ the owner keeps it as `art/forge/baseline/sunforged_final.png`.
 | Blade lower half `0.39,0.35,0.69,0.62` | 62.8 | 16–100 | 29.3% | 6.8% |
 | Guard + sunburst `0.24,0.55,0.40,0.74` | 45.5 | 8–99 | 23.1% | 5.5% |
 | Grip `0.06,0.68,0.28,0.87` | 37.3 | 7–81 | 0.1% | 1.4% |
-| Pommel `0.01,0.85,0.11,0.94` | 36.3 | 7–82 | 7.7% | 1.6% |
 
 Gates: flat 34.6% **FAIL**; clipped 4.0%, 3 px PASS; bands PASS; silhouette
 **FAIL** (alpha pass of the 1000 px control: 67.4% ≥ 15 L*, 17.8% < 8 — the
@@ -350,27 +322,22 @@ designed step.
 
 **Diagnosis → fix**, ranked (all values tested below):
 1. **Rod section** — the lenticular `y = T·(1−|x|^2.2)^0.62` mirrors the key as
-   one gradient → hexagonal section: crowned flat to |x| = 0.74·W, edge bevel
-   over the outer 26%, samples ON the shoulders, `hard_surface(blade,
-   width=0.0004, segments=2, angle=15)` (the old `angle=35` smoothed the
-   ~25–30° shoulder).
-2. **No ricasso** — 95 mm of flat, unsharpened section above the guard (1.08·T
-   thick, blunt chamfered edge, a crisp step into the blade).
-3. **Uniform sheen, sub-pixel scratches** — `mat_metal(rough=0.34,
-   rough_var=0.22, scratch=0.5)` + long scratches + a polished bevel band.
-4. **No etched band** — a panel beside the fuller, z 0.11–0.26 m, base
-   `#2E2A24`, roughness 0.62, wave motif (BANDS, scale 70, distortion 6).
+   one gradient → hexagonal: crowned flat to |x| = 0.74·W, edge bevel over the
+   outer 26%, samples ON the shoulders, `hard_surface(blade, width=0.0004,
+   segments=2, angle=15)` (the old `angle=35` smoothed the ~25–30° shoulder).
+2. **No ricasso** — 95 mm flat, unsharpened, 1.08·T thick, a crisp step.
+3. **Uniform sheen** — `mat_metal(rough=0.34, rough_var=0.22, scratch=0.5)` +
+   long scratches + a polished bevel band. 4. **No etched band** — panel beside
+   the fuller, z 0.11–0.26 m, `#2E2A24`, rough 0.62, wave BANDS scale 70.
 5. **Spikes** — 7 rays per side (62/85/66/95 mm alternating), root half-width
    10 mm, taper exponent 0.55, 2.6 mm proud; disc r 30 mm with a stepped face;
    an amber `gem_cabochon` (r 18.6 mm) as the sun; a blackened-iron écusson
    (`#1B1A1A`, rough 0.55, r 36 mm) behind the rays.
-6. **Rose grip** — `mat_leather(base='#3A0F12', rough=0.70)`,
-   `F.set_in(leather.p, F.IN["spec"], 0.22)`.
-7. **Light** — hot gradient peak 1.0 → 0.45 (the bake gate's analytic peak
-   changes with it: recompute, qa.md §1); bevel strips 15 W and 8 W (0.10 ×
-   1.8 m at each bevel's mirror direction, 1.6 m out: 0.25× and 0.13× key
-   radiance); two hilt kickers of 250 W (0.5 × 1.2 m, behind and below the
-   grip, left and right).
+6. **Rose grip** — `mat_leather(base='#3A0F12', rough=0.70)` + `spec` 0.22.
+7. **Light** — hot gradient peak 1.0 → 0.45 (recompute the bake gate's analytic
+   peak, qa.md §1); bevel strips 15 W / 8 W (0.10 × 1.8 m at each bevel's mirror
+   direction, 1.6 m out: 0.25× / 0.13× key radiance); two 250 W hilt kickers
+   (0.5 × 1.2 m, behind and below the grip, left and right).
 
 Fixes 3–4 use an overlay built only from existing API (`get_in`, `IN`, `MB`):
 
@@ -378,7 +345,7 @@ Fixes 3–4 use an overlay built only from existing API (`get_in`, `IN`, `MB`):
 def overlay(mb, key, fac, value):          # mix a new layer over what feeds a Principled input
     sock = F.get_in(mb.p, F.IN[key]); src = sock.links[0].from_socket
     mb.link(mb.mix_col(fac, src, value) if key == 'base' else mb.mix_f(fac, src, value), sock)
-m = blade_m; ax = m.math('ABSOLUTE', m.obj_axis('X')); z = m.obj_axis('Z')
+m = blade_m; ax = m.math('ABSOLUTE', m.obj_axis('X')); z = m.obj_axis('Z')   # L, W0: the example's DIMENSIONS
 w = m.math('MULTIPLY', m.math('SUBTRACT', 1.0, m.math('MULTIPLY', z, 0.22 / L)), W0)
 u = m.math('DIVIDE', ax, w)                                   # 0 at the spine, 1 at the edge
 overlay(m, 'rough', m.map_range(u, 0.725, 0.755), 0.16)       # honed edge bevel
@@ -392,29 +359,22 @@ legendary`; "thr" = no alpha pass, silhouette not gated):
 | A | canon | 34.3% | 4.5%, 3 px | 29 / 34 / 37 | 67.4 / 17.8 | ×1.26 | 3/5 |
 | B | A + fixes 1–6 | 24.0% thr | 4.1%, 3 px | 37 / 23 / 40 | — | ×1.12 | 3/4 |
 | C | B + strips 260/140 W, backdrop falloff 0.5 | 46.4% thr | 8.6%, 7 px | 41 / 21 / 39 | — | ×1.66 | 2/4 |
-| D | B + hot 0.45, hilt kickers 700 W ×2 | 14.7% | 5.5%, 3 px | 25 / 30 / 45 | 67.3 / 24.1 | ×1.10 | 2/5 |
+| D | B + hot 0.45, écusson r 36 mm, hilt kickers 700 W ×2 | 14.7% | 5.5%, 3 px | 25 / 30 / 45 | 67.3 / 24.1 | ×1.10 | 2/5 |
 | E | D + strips 40/20 W, kickers 450 W | 22.4% | 6.6%, 3 px | 13 / 29 / 58 | 95.5 / 1.5 | ×1.38 | 3/5 |
 | F | D + strips 15/8 W, kickers 250 W | 20.3% | 4.9%, 3 px | 17 / 31 / 53 | 91.8 / 3.3 | ×1.29 | **5/5** |
 
-What the log teaches: (a) section and material carry the blade (lower-half
-flat 31.6% → 2.7% in B); (b) a strip on mirror metal shows the light's own
-radiance — 260 W on 0.18 m² is 4.3× the key and blew the bevels (C), 40 W
-washed the card out (E), 15 W is enough (F); (c) detail added to the rest
-steals from the focal (×1.26 → ×1.10 in D): re-check the focal after every
-detail pass; (d) a brighter backdrop (falloff 0.35 → 0.5) LOWERED separation to
-57.9% — dark parts lost their dark-on-darker edge; (e) the canon's glowing
-edges already separated; its failure was the unlit hilt. F passes; its tip half
-is still 42% flat — the planned rest area (§1), judged by eye in `_flat.png`.
+Lessons: (a) section + material carry the blade (lower-half flat 31.6% → 2.7%
+in B); (b) a strip on mirror metal shows its own radiance — 260 W on 0.18 m² is
+4.3× the key and blew the bevels (C), 40 W washed the card out (E); (c) detail
+added to the rest steals from the focal (×1.26 → ×1.10, D); (d) a brighter
+backdrop (falloff 0.5) LOWERED separation to 57.9%; (e) the canon failed on the
+unlit hilt, not the glowing edges. F's tip half (42% flat) is the planned rest.
 
 ## 11. Checklist — before preview, before final
 
-- [ ] Value plan in three greys; `_3val.png` reads the object; focal chosen and
-      boxed; one rest area planned away from it.
-- [ ] Size ladder 2.5–4×; masses L/W ≤ 5; tertiary detail ≥ 1 px at 512 or
-      accepted as sheen.
-- [ ] Touching materials differ on two axes; metals placed by what they
-      reflect; no rose leather, no plastic metal.
-- [ ] One history mark placed by use; wear widths from §6; scale cues at real
-      size, repeated ≥ 3×.
+- [ ] Value plan in three greys reads in `_3val.png`; focal boxed; rest planned.
+- [ ] Size ladder 2.5–4×; masses L/W ≤ 5; tertiary ≥ 1 px at 512 or sheen only.
+- [ ] Materials differ on two axes; metals placed by what they reflect; one
+      history mark; wear widths §6; scale cues real, repeated ≥ 3×.
 - [ ] Alpha pass rendered; probe run with `--mask --tier --focal`; `QA_VALUE
       verdict PASS` and the region table pasted; `_flat.png`, `_3val.png` opened.

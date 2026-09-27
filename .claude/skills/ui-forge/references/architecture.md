@@ -84,7 +84,7 @@ count. Counted from HUD rest, with the commit tap included. The core-loop check-
 | 16 | Claim all mail rewards | Mail (H4) → Claim all | 2 | 2 |
 | 17 | Reply in alliance chat | ticker (H9) → type → send | 2 + typing | 2 |
 | 18 | Open the calendar (Herald's Board) | event rail head | 1 | 2 (liveops §6.1) |
-| 19 | Equip the best gear on a lord | Lords → lord → "Equip best" | 3 | 3 |
+| 19 | Equip the best gear on a lord | Lords → lord chip → "Equip best" (Kit tab) | 3 | 3 |
 | 20 | Change a setting | More → Settings → toggle | 3 | 3 |
 
 **The chip goes where the work is**: a tracker chip whose group has an idle plate opens that
@@ -116,7 +116,7 @@ HUD REST (castle or realm)
 ├─ WORLD TAP  castle: building → building card sheet (1) → Upgrade (2) · Work → function surface (2) → act (3)
 │             realm:  tile → tile sheet (1) → Scout / Attack / Gather / Rally (2) → composer → Send (3)
 └─ H10 bottom bar
-    ├─ Lords ───────────── roster (1) → lord (2) → tab: skills · talents · gear · pairing (3)
+    ├─ Lords ───────────── the Hall (1) → lord chip (2) → tab: overview · skills · talents · kit · pairing (3)
     ├─ Alliance ────────── alliance home (1) → help · gifts · members · charters · territory · rallies · pacts · Roll (2)
     ├─ WORLD SEAL ──────── castle ⇄ realm (1)
     ├─ Chronicle ───────── daily orders · weekly writ · season track, Open all (1–2)
@@ -152,6 +152,8 @@ open surfaces ONLY through routes, never by instancing scenes themselves.
 | `profile/{player_id}` | profile full screen | 1 | hud |
 | `settings` · `settings/{section}` | settings full screen | 2–3 | more |
 | `realm/tile/{x}/{y}` · `realm/march/{id}` | tile sheet 40% / camera to march | 1 | hud |
+| `march/new/{target}` | march form sheet 92% (battle-forge flows.md §3) | 2 | realm/tile |
+| `defence` | Defence panel (battle-forge defence.md) | 1 | hud |
 | `chat/{channel}` · `mail/{folder}` · `report/{id}` | chat-forge, mail-forge and report-forge surfaces | 1–2 | hud |
 | `ledger` · `ledger/{lesson}` | the ledger (onboarding.md §7) | 2 | lords |
 

@@ -40,7 +40,9 @@ LIMITS = {
     "block_repeat_ms": 400.0,   # longest input-block window on a repeat action
     "block_first_ms": 3500.0,   # longest block for a first-time ceremony
     "overshoot_pct": 1.5,       # distance overshoot past the end value (log space)
-    "dropped_max": 1,           # frames >= 1.5 x target per shot
+    "dropped_max": 1,           # frames >= 1.5 x target per shot (warm runs)
+    "dropped_max_cold": 2,      # run 1 = first appearance after boot
+    "gpu_max_ms": 12.0,         # heaviest frame's GPU time (PROPOSAL, reference phone)
     "stall_max": 0,             # frames >= 2 x target + 2 ms (a whole refresh lost)
     "p95_factor": 1.05,         # p95 frame time <= 1.05 x target
     "duration_tol": 0.03,       # |measured - spec| <= max(1 frame, 3 %)
@@ -93,6 +95,7 @@ def analyse(rows, fps=60.0, hfov=30.0):
     m["max_dt"] = max(dts) if dts else 0.0
     m["p95_dt"] = sorted(dts)[max(0, int(math.ceil(0.95 * len(dts))) - 1)] if dts else 0.0
     m["dropped"] = sum(1 for d in dts if d >= 1.5 * target)
+    m["gpu_max"] = max((_f(r, "gpu_ms") for r in rows), default=0.0)
     m["stalls"] = sum(1 for d in dts if d >= 2.0 * target + 2.0)
     m["duration_ms"] = sum(_f(r, "dt_ms") for r in mov[1:]) if len(mov) > 1 else 0.0
     m["spec_ms"] = _f(rows[0], "spec_ms") if rows else 0.0
@@ -137,8 +140,11 @@ def faults_for(sid, run, m):
 
     if m["stalls"] > L["stall_max"]:
         add("stalls (frame >= 2x target)", m["stalls"], L["stall_max"])
-    if m["dropped"] > L["dropped_max"]:
-        add("dropped frames (>= 1.5x target)", m["dropped"], L["dropped_max"])
+    cap_drop = L["dropped_max_cold"] if run == 1 else L["dropped_max"]
+    if m["dropped"] > cap_drop:
+        add("dropped frames (>= 1.5x target)" + (" cold" if run == 1 else ""), m["dropped"], cap_drop)
+    if m["gpu_max"] > L["gpu_max_ms"]:
+        add("GPU frame time", m["gpu_max"], L["gpu_max_ms"], " ms")
     if m["p95_dt"] > L["p95_factor"] * t:
         add("p95 frame time", m["p95_dt"], L["p95_factor"] * t, " ms")
     if m["zoom_peak"] > L["zoom_peak_dbl_s"]:
@@ -166,7 +172,7 @@ def cmd_report(path, fps, hfov, quiet=False):
     shots = load_rows(path)
     faults, ids, runs, block_max = [], set(), set(), 0.0
     if not quiet:
-        print(f"{'shot':22s} run  dur_ms  spec  max_dt  p95  drop stall  zoom  pan   rot  roll  block  over%")
+        print(f"{'shot':22s} run  dur_ms  spec  max_dt  p95  drop stall   gpu  zoom  pan   rot  roll  block  over%")
     for (sid, run), rows in sorted(shots.items()):
         m = analyse(rows, fps, hfov)
         ids.add(sid)
@@ -174,7 +180,7 @@ def cmd_report(path, fps, hfov, quiet=False):
         block_max = max(block_max, m["block_ms"])
         if not quiet:
             print(f"{sid:22s} {run:3d} {m['duration_ms']:7.0f} {m['spec_ms']:5.0f} {m['max_dt']:7.1f}"
-                  f" {m['p95_dt']:5.1f} {m['dropped']:4d} {m['stalls']:5d} {m['zoom_peak']:5.2f}"
+                  f" {m['p95_dt']:5.1f} {m['dropped']:4d} {m['stalls']:5d} {m['gpu_max']:5.1f} {m['zoom_peak']:5.2f}"
                   f" {m['pan_peak']:4.2f} {m['rot_peak']:5.1f} {m['roll_max']:5.2f}"
                   f" {m['block_ms']:6.0f} {m['overshoot_pct']:5.2f}")
         faults += faults_for(sid, run, m)
@@ -299,6 +305,12 @@ def selftest():
     print(f"SELFTEST good shot: zoom peak {gm['zoom_peak']:.2f} dbl/s (analytic 7.36), "
           f"duration {gm['duration_ms']:.0f} ms")
     ok = ok and not missing and abs(gm["zoom_peak"] - 7.36) < 0.25
+    cold = _synth("CASTLE_ENTER", 1, 1399.5, 143.9, 42, spec_ms=700.0)
+    for f in (10, 20):
+        cold[f]["dt_ms"] = 26.0
+    warm = [dict(r, run=2) for r in cold]
+    ok = ok and not faults_for("CASTLE_ENTER", 1, analyse(cold)) \
+        and any("dropped" in f for f in faults_for("CASTLE_ENTER", 2, analyse(warm)))
     try:
         from PIL import Image, ImageDraw
         fdir = os.path.join(tmp, "frames")

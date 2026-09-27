@@ -39,7 +39,8 @@ footer. Their title row is 96 high.
   content: a vertical path of node cards 1032 × 200 (icon 128 Blender art · name 50 px ·
   effect "+8% wood output" 42 px · time and cost), done nodes collapsed into 120 px rows ·
   bottom tabs = branches (≤ 5) · footer [back] [Start — Primary].
-- **Suggested node**: GILT_LIT outline + the "Suggested" tag, selected and scrolled into view
+- **Suggested node**: the INK-edged gilt outline (components.md §5 Selected) + the "Suggested"
+  tag, selected and scrolled into view
   when the screen opens from an idle desk (2 taps from HUD rest).
 - **Rules**: a locked node shows its requirement; the effect line uses the same number the
   battle or economy code reads (one source of truth: data files, gameplay-forge).
@@ -50,7 +51,8 @@ footer. Their title row is 96 high.
 ## S3 Muster yard — `muster/{line}` · sheet 92% (1766) · depth 1–2
 
 - **Answers**: "Which troops, how many, until when?"
-- **Layout**: 24 · title 96 · 16 · troop row 650: TRP card 520 × 650 (4:5 painting, units.md)
+- **Layout**: 24 · title 96 · 16 · troop row 650: the rung's art in a 520 × 650 frame (the
+  `units` group's full-body art, 51 rungs; the TRP recruiting card where one exists; units.md)
   + a stats column 496 wide (tier, attack/defence as numbers, "Strong vs" / "Weak vs" with line
   icons, upkeep per hour) · 16 · tier strip 132 (t1–t10/11 chips 120 × 120; locked tiers
   carry a padlock + requirement) · 16 · time-first presets 132: 1 h · 3 h · 8 h · "Until I'm
@@ -73,24 +75,22 @@ footer. Their title row is 96 high.
 - **Rules**: the same money-law row rule as S3. The words say what dies at 100% (the combat.md
   loss model). Reports link here with "Heal".
 
-## S5 Lords — `lords` roster, `lords/{id}/{tab}` detail · full screen · depth 1–3
+## S5 Lords — `lords` (the Hall), `lords/{id}/{tab}` · full screen · depth 1–3
 
-- **Answers**: roster: "Who do I have, and who needs me?" Detail: "What makes this lord
-  worth fielding, and what is the next step?"
-- **Roster**: a 3-column grid of lord cards 320 × 400 (CMD portrait bust, name, role icon,
-  level tag, sworn = gilt rim + gilt frame variant); a dot only when points or gear can be
-  applied now. The ledger (onboarding.md §7) is a row at the grid's end: 2 taps from the hall.
-- **Detail**: portrait 720 × 900 (47% of the height) at the top, with name and role over a 70%
-  INK scrim band. It collapses to a 320 px header when the content scrolls (godot.md §6). Tabs
-  (bottom): Overview · Skills · Talents · Gear · Pairing. Footer: [back] [the tab's batch action
-  — "Equip best", "Spend on the suggested path", "Pair with…"].
-- **Gear tab**: the 4-piece set as 4 item cards of 240 (rarity frame + studs), the 2- and
-  4-piece bonus lines, missing pieces with "Where from" links (equipment.md sets; commander-forge
-  owns the data).
-- **Talents**: the recommended path for the lord's role is lit (onboarding.md FTM "Talents");
-  points held / cap in the header.
-- **Rule**: commander-forge owns portraits, hall figures and data. Portraits are never cropped
-  above the chin or below the eyes' upper-third line (portraits.md).
+- **Content, states and tap budget**: commander-forge `references/screens.md` §1–9 (Hall, lord
+  detail, tabs Overview · Skills · Talents · Kit · Pairing, card states, ceremonies, money-law
+  on lord surfaces). ui-forge builds it with this kit. Where the numbers differ, the frame
+  rules here win, as commander-forge's own file states.
+- **Hall**: the 3D stage with the selected lord on the plinth (hero3d figure ≥ 55% of the
+  height) and the lord chip strip (120 px chips) directly above the footer.
+- **Lord detail frame**: the art zone y 6–58% stays on EVERY tab (≥ 45% of the height; no
+  collapsing header); tab content 58–84%; the **tab strip directly above the footer**
+  (84–90%, the easy zone: ui-forge's tab rule replaces the 58–63% position proposed there);
+  footer 92–100% with the tab's batch action as Primary ("Equip best", "Spend on the suggested
+  path", "Save preset").
+- **Marks**: "can be applied now" is an arrow on the slot or node, never a red dot
+  (commander-forge §4); the Lords entry in H10 gets a dot only for a claimable reward.
+- **The ledger** (onboarding.md §7) is an entry in the Hall, 2 taps from HUD rest.
 
 ## S6 Alliance — `alliance`, `alliance/{section}` · full screen · depth 1–2
 
@@ -117,7 +117,8 @@ footer. Their title row is 96 high.
   "what counts" in ≤ 12 words · "Top reward: about 3 visits a day" (liveops §6.1). Grouped by
   week, with a "Today" marker. Freeze notices appear as pinned rows in WAX with a seal.
 - **Event — answers**: "How do I score, and what have I earned?" Header art 1080 × 620
-  (32% of the screen area; a painted board from game-art-director, no text in the art) · the
+  (32% of the screen area; a painted board from game-art-director, no text in the art; it
+  parallaxes away on scroll, godot.md §6) · the
   time left in days and hours · the milestone ladder as rows of 144 (threshold, reward cards
   128, Claim) · "How to score" rows, each a route link · rules ≤ 5 lines.
 - **Rules**: no offer inside an event screen that sells what the event scores (liveops R5);
@@ -194,14 +195,18 @@ licences). Every change applies at once. No "Save" button.
 - Realm tools (hud.md §4): Search (coordinates, player, alliance; last 5), Bookmarks (a
   virtual list), Home.
 
-## S15 March composer — battle-forge's flow on this kit · sheet 92%
+## S15 March form — battle-forge's flow on this kit · sheet 92%
 
-- **Layout**: lord slots (primary 320 × 400 card + secondary 240; pairing rule from lords.md)
-  · 5 line rows (silhouette, available count, slider, number) · presets A/B/C as a
-  segmented control · capacity bar · ETA · a power estimate with counter hints as line icons
-  ("+counter vs their cavalry") · footer [back] [Send — Primary].
-- **Rules**: a war screen (no money); "Send" stays the same size and place in every march type
-  so muscle memory works in a war window.
+- **Content and zones**: battle-forge `references/flows.md` §3 (lords pair, 5 line rows with
+  sliders, siege row, 5 presets, "Auto by counter", matchup strip, summary with the infirmary
+  line, Send). ui-forge supplies the components and enforces the frame.
+- **Frame**: opened pre-filled from the last preset against this target type; Send is the
+  Primary L button raised to 160 px (battle-forge's 64 dp at 2.5 px/dp) in the hand-side
+  footer slot, the same size and place in every march type, so muscle memory works in a war
+  window. The infirmary warning is a WAX rim + icon + words, never colour alone, never
+  flashing.
+- **Rules**: a war screen (no money, monetization.md §10). A retried Send carries the same
+  request id (battle-forge flows.md §3; states.md §2): one tap never makes two marches.
 
 ## S16 Guide overlay, pointer, cards and the ledger (onboarding-forge's content)
 

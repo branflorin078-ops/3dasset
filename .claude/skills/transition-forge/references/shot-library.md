@@ -26,8 +26,11 @@ func play(id: StringName, params := {}) -> void
 func frame_building(building: Node3D, world_rect: Rect2) -> void
 func handoff(owner: StringName) -> bool             # battle-forge takes the rig
 func release(owner: StringName) -> void             # rig returns to the stored pose
-func probe_ids() -> PackedStringArray               # qa.md §2
+func is_shot_running() -> bool
+func rig_state() -> Dictionary                      # {focus, yaw, pitch, distance, fov, level}
+func probe_ids() -> PackedStringArray               # qa.md §2 — the probe contract
 func probe_play(id: StringName) -> Dictionary       # {"spec_ms": float, "repeat": bool}
+func probe_reset() -> void                          # C2 rest on the keep, no shot running
 ```
 
 **Priority rules**

@@ -217,8 +217,8 @@ Label padding ≥ 40 px per side. Button icon 72 / 56 / 48 px, then s3 before th
 | Card | Art source | Sizes | Frame and code |
 |---|---|---|---|
 | Item (gear, goods) | Blender card render (blender-forge; 512 source) | 256 detail · 160 grid · 128 compact | rarity frame + studs on an INK back |
-| Troop | TRP painted card, 4:5 (game-art-director units.md) | 320 × 400 list · 640 × 800 muster | 12 px line band + line icon 56 |
-| Lord | CMD portrait bust, 4:5 (commander-forge) | 320 × 400 roster · 720 × 900 detail | sworn = gilt rim light + gilt frame variant; role icon |
+| Troop | the `units` group's full-body art (51 rungs) or a TRP recruiting card, 4:5 (game-art-director units.md) | 320 × 400 list · 520 × 650 muster | 12 px line band + line icon 56 |
+| Lord | CMD portrait bust, 4:5, or the Hall figure (commander-forge) | 320 × 400 roster · the art zone y 6–58% in detail | sworn = inner gilt edge 2–3 px #E0BC6A + gilt frame variant (commander-forge screens.md §5); role icon |
 | Building | engine render (`core/build_thumbs.gd`, castle-forge) | ≥ 40% of screen height on its card | tier numeral tag |
 | Offer / goods | SHP/JRN art, Blender goods | the goods ≥ 50% of the card (monetization.md §10) | no war imagery |
 | Share card | chat-forge's layouts on this kit | 880 × 320 | — |
